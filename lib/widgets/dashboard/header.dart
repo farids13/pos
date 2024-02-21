@@ -1,0 +1,1 @@
+// TODO: application/shop branding, current user icon, profile icon, logout button, change user button (behaviour: logout then log in with new user), login button if current state is logged out

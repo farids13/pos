@@ -1,0 +1,1 @@
+// TODO: summary of current Point of Sale. how many item with stock, sum of sales receipt, sum of sales value, sum of sales amount (goods piece), "etc"
