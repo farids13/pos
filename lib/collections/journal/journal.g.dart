@@ -142,14 +142,16 @@ P _journalDeserializeProp<P>(
 }
 
 const _JournaljournalStatusEnumValueMap = {
-  'opened': 0,
-  'posted': 1,
-  'cancelled': 2,
+  'draft': 0,
+  'opened': 1,
+  'posted': 2,
+  'cancelled': 3,
 };
 const _JournaljournalStatusValueEnumMap = {
-  0: JournalStatus.opened,
-  1: JournalStatus.posted,
-  2: JournalStatus.cancelled,
+  0: JournalStatus.draft,
+  1: JournalStatus.opened,
+  2: JournalStatus.posted,
+  3: JournalStatus.cancelled,
 };
 const _JournaljournalTypeEnumValueMap = {
   'purchase': 0,

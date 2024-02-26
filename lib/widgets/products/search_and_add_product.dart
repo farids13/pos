@@ -64,139 +64,7 @@ class _SearchAndAddProduct extends ConsumerState<SearchAndAddProduct> {
             showDialog(
               context: context,
               builder: (BuildContext context) {
-                final formKey = GlobalKey<FormState>();
-
-                final priceController = TextEditingController();
-                final quantityController = TextEditingController();
-                final totalController = TextEditingController();
-
-                return AlertDialog(
-                  title: const Text("Add product"),
-                  content: Form(
-                    key: formKey,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        TextFormField(
-                          controller: priceController,
-                          keyboardType: TextInputType.number,
-                          decoration: const InputDecoration(
-                            labelText: "Price",
-                          ),
-                          onChanged: (event) {
-                            var price = priceController.text;
-                            var quantity = quantityController.text;
-                            if (![double.infinity, double.nan, null]
-                                    .contains(double.tryParse(price)) &&
-                                ![double.infinity, double.nan, null]
-                                    .contains(double.tryParse(quantity))) {
-                              var total =
-                                  double.parse(price) * double.parse(quantity);
-                              totalController.text = total.toString();
-                            }
-                          },
-                          validator: (value) {
-                            if (value == null ||
-                                value.isEmpty ||
-                                [double.infinity, double.nan, null]
-                                    .contains(double.tryParse(value))) {
-                              return "Please enter item price";
-                            }
-                            return null;
-                          },
-                        ),
-                        TextFormField(
-                          autofocus: true,
-                          controller: quantityController,
-                          keyboardType: TextInputType.number,
-                          decoration: const InputDecoration(
-                            labelText: "Quantity",
-                          ),
-                          onChanged: (event) {
-                            var price = priceController.text;
-                            var quantity = quantityController.text;
-                            if (![double.infinity, double.nan, null]
-                                    .contains(double.tryParse(price)) &&
-                                ![double.infinity, double.nan, null]
-                                    .contains(double.tryParse(quantity))) {
-                              var total =
-                                  double.parse(price) * double.parse(quantity);
-                              totalController.text = total.toString();
-                            }
-                          },
-                          validator: (value) {
-                            if (value == null ||
-                                value.isEmpty ||
-                                [double.infinity, double.nan, null]
-                                    .contains(double.tryParse(value))) {
-                              return "Please enter quantity";
-                            }
-                            return null;
-                          },
-                        ),
-                        TextFormField(
-                          controller: totalController,
-                          keyboardType: TextInputType.number,
-                          decoration: const InputDecoration(
-                            labelText: "Total",
-                          ),
-                          onChanged: (event) {
-                            var total = totalController.text;
-                            var quantity = quantityController.text;
-                            if (![double.infinity, double.nan, null]
-                                    .contains(double.tryParse(total)) &&
-                                ![double.infinity, double.nan, null]
-                                    .contains(double.tryParse(quantity))) {
-                              var price =
-                                  double.parse(total) / double.parse(quantity);
-                              priceController.text = price.toString();
-                            }
-                          },
-                          validator: (value) {
-                            if (value == null ||
-                                value.isEmpty ||
-                                [double.infinity, double.nan, null]
-                                    .contains(double.tryParse(value))) {
-                              return "Please enter total amount for this item";
-                            }
-                            return null;
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                  actions: [
-                    TextButton(
-                      child: const Text("Cancel"),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        if (formKey.currentState!.validate()) {
-                          var amount = double.parse(quantityController.text);
-                          var price = isar?.productPrices
-                                  .filter()
-                                  .product((p) => p.idEqualTo(product.id))
-                                  .sortByCreatedDesc()
-                                  .findFirstSync()
-                                  ?.price ??
-                              0;
-                          JournalDetail jd = JournalDetail()
-                            ..product.value = product
-                            ..amount = amount
-                            ..price = price;
-                          setState(() {
-                            selectedProduct.add(jd);
-                          });
-                          Navigator.of(context).pop();
-                        }
-                      },
-                      child: const Text("OK"),
-                    ),
-                  ],
-                );
+                return productDetailInputForm(product, context);
               },
             );
           },
@@ -213,6 +81,148 @@ class _SearchAndAddProduct extends ConsumerState<SearchAndAddProduct> {
       );
     }
     return items;
+  }
+
+  Widget productDetailInputForm(Product product, BuildContext context) {
+    final formKey = GlobalKey<FormState>();
+
+    final priceController = TextEditingController();
+    final quantityController = TextEditingController();
+    final totalController = TextEditingController();
+
+    return AlertDialog(
+      title: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(product.name),
+          Text(
+            product.code,
+            style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 12),
+          ),
+        ],
+      ),
+      content: Form(
+        key: formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextFormField(
+              autofocus: true,
+              controller: quantityController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                labelText: "Quantity",
+              ),
+              onChanged: (event) {
+                var price = priceController.text;
+                var quantity = quantityController.text;
+                if (![double.infinity, double.nan, null]
+                        .contains(double.tryParse(price)) &&
+                    ![double.infinity, double.nan, null]
+                        .contains(double.tryParse(quantity))) {
+                  var total = double.parse(price) * double.parse(quantity);
+                  totalController.text = total.toString();
+                }
+              },
+              validator: (value) {
+                if (value == null ||
+                    value.isEmpty ||
+                    [double.infinity, double.nan, null]
+                        .contains(double.tryParse(value))) {
+                  return "Please enter quantity";
+                }
+                return null;
+              },
+            ),
+            TextFormField(
+              controller: priceController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                labelText: "Price",
+              ),
+              onChanged: (event) {
+                var price = priceController.text;
+                var quantity = quantityController.text;
+                if (![double.infinity, double.nan, null]
+                        .contains(double.tryParse(price)) &&
+                    ![double.infinity, double.nan, null]
+                        .contains(double.tryParse(quantity))) {
+                  var total = double.parse(price) * double.parse(quantity);
+                  totalController.text = total.toString();
+                }
+              },
+              validator: (value) {
+                if (value == null ||
+                    value.isEmpty ||
+                    [double.infinity, double.nan, null]
+                        .contains(double.tryParse(value))) {
+                  return "Please enter item price";
+                }
+                return null;
+              },
+            ),
+            TextFormField(
+              controller: totalController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                labelText: "Total",
+              ),
+              onChanged: (event) {
+                var total = totalController.text;
+                var quantity = quantityController.text;
+                if (![double.infinity, double.nan, null]
+                        .contains(double.tryParse(total)) &&
+                    ![double.infinity, double.nan, null]
+                        .contains(double.tryParse(quantity))) {
+                  var price = double.parse(total) / double.parse(quantity);
+                  priceController.text = price.toString();
+                }
+              },
+              validator: (value) {
+                if (value == null ||
+                    value.isEmpty ||
+                    [double.infinity, double.nan, null]
+                        .contains(double.tryParse(value))) {
+                  return "Please enter total amount for this item";
+                }
+                return null;
+              },
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          child: const Text("Cancel"),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        TextButton(
+          onPressed: () {
+            if (formKey.currentState!.validate()) {
+              var amount = double.parse(quantityController.text);
+              var price = isar?.productPrices
+                      .filter()
+                      .product((p) => p.idEqualTo(product.id))
+                      .sortByCreatedDesc()
+                      .findFirstSync()
+                      ?.price ??
+                  0;
+              JournalDetail jd = JournalDetail()
+                ..product.value = product
+                ..amount = amount
+                ..price = price;
+              setState(() {
+                selectedProduct.add(jd);
+              });
+              Navigator.of(context).pop();
+            }
+          },
+          child: const Text("OK"),
+        ),
+      ],
+    );
   }
 
   Widget _buildSearchField() {

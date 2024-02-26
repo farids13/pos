@@ -1,8 +1,12 @@
+import 'package:cashier_app/collections/journal/journal_detail.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../collections/journal/journal.dart';
 import '../../collections/product/product.dart';
+import '../../modules/transactions/sales/sales_management_screen.dart';
+import '../../widgets/products/search_and_add_product.dart';
 
 List<Widget> prepareJournalListTiles(
     BuildContext context, List<Journal> journals) {
@@ -26,7 +30,7 @@ List<Widget> prepareJournalListTiles(
   return result;
 }
 
-class ReceiptTile extends StatelessWidget {
+class ReceiptTile extends ConsumerWidget {
   const ReceiptTile({
     super.key,
     required this.item,
@@ -39,75 +43,21 @@ class ReceiptTile extends StatelessWidget {
   final double value;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Card(
       child: ListTile(
         onTap: () {
-          List<TableRow> tableData = [];
-          for (var detail in item.details) {
-            tableData.add(
-              TableRow(
-                children: [
-                  TableCell(
-                    child: Text(
-                      detail.product.value?.name ?? "",
-                    ),
-                  ),
-                ],
-              ),
+          if (item.journalStatus == JournalStatus.opened) {
+            List<JournalDetail> journalDetail =
+                ref.watch(selectedProductProvider);
+            journalDetail.clear();
+            journalDetail.addAll(item.details);
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const SalesManagementScreen()),
             );
-            tableData.add(
-              TableRow(
-                children: [
-                  TableCell(
-                      child: Table(
-                    columnWidths: const {
-                      0: FlexColumnWidth(6),
-                      1: FlexColumnWidth(1),
-                      2: FlexColumnWidth(2),
-                      3: FlexColumnWidth(3),
-                    },
-                    children: [
-                      TableRow(
-                        children: [
-                          Text(
-                            "@${detail.price.toStringAsFixed(0)},-",
-                            textAlign: TextAlign.end,
-                          ),
-                          const TableCell(
-                            child: Text(
-                              "x",
-                              textAlign: TextAlign.end,
-                            ),
-                          ),
-                          Text(
-                            "${detail.amount}",
-                            textAlign: TextAlign.end,
-                          ),
-                          Text(
-                            "${(detail.price * detail.amount).toStringAsFixed(0)},-",
-                            textAlign: TextAlign.end,
-                          ),
-                        ],
-                      ),
-                    ],
-                  )),
-                ],
-              ),
-            );
+          } else {
+            popUpDisplay(context);
           }
-          Table t = Table(
-            children: tableData,
-          );
-          showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                    title: Text(
-                      item.code,
-                      textAlign: TextAlign.end,
-                    ),
-                    content: t,
-                  ));
         },
         title: Text(item.code),
         subtitle: Row(
@@ -124,5 +74,73 @@ class ReceiptTile extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void popUpDisplay(BuildContext context) {
+    List<TableRow> tableData = [];
+    for (var detail in item.details) {
+      tableData.add(
+        TableRow(
+          children: [
+            TableCell(
+              child: Text(
+                detail.product.value?.name ?? "",
+              ),
+            ),
+          ],
+        ),
+      );
+      tableData.add(
+        TableRow(
+          children: [
+            TableCell(
+                child: Table(
+              columnWidths: const {
+                0: FlexColumnWidth(6),
+                1: FlexColumnWidth(1),
+                2: FlexColumnWidth(2),
+                3: FlexColumnWidth(3),
+              },
+              children: [
+                TableRow(
+                  children: [
+                    Text(
+                      "@${detail.price.toStringAsFixed(0)},-",
+                      textAlign: TextAlign.end,
+                    ),
+                    const TableCell(
+                      child: Text(
+                        "x",
+                        textAlign: TextAlign.end,
+                      ),
+                    ),
+                    Text(
+                      "${detail.amount}",
+                      textAlign: TextAlign.end,
+                    ),
+                    Text(
+                      "${(detail.price * detail.amount).toStringAsFixed(0)},-",
+                      textAlign: TextAlign.end,
+                    ),
+                  ],
+                ),
+              ],
+            )),
+          ],
+        ),
+      );
+    }
+    Table t = Table(
+      children: tableData,
+    );
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+              title: Text(
+                item.code,
+                textAlign: TextAlign.end,
+              ),
+              content: t,
+            ));
   }
 }

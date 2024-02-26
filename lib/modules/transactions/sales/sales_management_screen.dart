@@ -1,8 +1,11 @@
+import 'package:cashier_app/collections/journal/journal.dart';
 import 'package:cashier_app/collections/journal/journal_detail.dart';
 import 'package:cashier_app/widgets/products/search_and_add_product.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+
+final temporaryJournalProvider = Provider<List<Journal>>((_) => []);
 
 class SalesManagementScreen extends ConsumerStatefulWidget {
   const SalesManagementScreen({super.key});
@@ -31,9 +34,23 @@ class _SalesManagementScreenState extends ConsumerState<SalesManagementScreen> {
 
     calculateTransactionValue();
 
+    var title = "Receipt Page";
+    if (journalDetails.isNotEmpty) {
+      title = "Edit Receipt";
+    }
+
     return Scaffold(
         appBar: AppBar(
-          title: const Text("Sales"),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              List<JournalDetail> journalDetail =
+                  ref.watch(selectedProductProvider);
+              journalDetail.clear();
+              Navigator.of(context).pop(false);
+            },
+          ),
+          title: Text(title),
         ),
         body: ListView(
           children: [
@@ -74,7 +91,7 @@ class _SalesManagementScreenState extends ConsumerState<SalesManagementScreen> {
                   },
                   child: const Padding(
                     padding: EdgeInsets.all(8.0),
-                    child: Text("Add more item(s)"),
+                    child: Text("Add items in stock"),
                   )),
             ),
             const Padding(

@@ -42,6 +42,7 @@ enum JournalType {
 }
 
 enum JournalStatus {
+  draft,
   opened,
   posted,
   cancelled,
