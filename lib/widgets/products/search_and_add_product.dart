@@ -1,16 +1,16 @@
 import 'dart:async';
 
+import 'package:cashier_app/collections/journal/journal.dart';
 import 'package:cashier_app/collections/journal/journal_detail.dart';
 import 'package:cashier_app/collections/product/product.dart';
 import 'package:cashier_app/collections/product/product_price.dart';
+import 'package:cashier_app/states/selected_journal_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:isar/isar.dart';
 
 import '../../main.dart';
-
-final selectedProductProvider = Provider<List<JournalDetail>>((_) => []);
 
 class SearchAndAddProduct extends ConsumerStatefulWidget {
   const SearchAndAddProduct({super.key});
@@ -29,11 +29,11 @@ class _SearchAndAddProduct extends ConsumerState<SearchAndAddProduct> {
   List<Product> products = [];
 
   NumberFormat numberFormat = NumberFormat("#,##0.00", "en_US");
-  List<JournalDetail> selectedProduct = [];
+  late SelectedJournal selectedJournal;
 
   @override
   Widget build(BuildContext context) {
-    selectedProduct = ref.watch(selectedProductProvider);
+    selectedJournal = ref.watch(selectedJournalProvider);
     isar = ref.watch(isarProvider);
     updateSearchQuery(_searchQueryController.text);
     return Scaffold(
@@ -209,12 +209,16 @@ class _SearchAndAddProduct extends ConsumerState<SearchAndAddProduct> {
                       .findFirstSync()
                       ?.price ??
                   0;
-              JournalDetail jd = JournalDetail()
-                ..product.value = product
-                ..amount = amount
-                ..price = price;
               setState(() {
-                selectedProduct.add(jd);
+                Journal j = selectedJournal.journal;
+                JournalDetail jd = JournalDetail()
+                  ..journal.value = selectedJournal.journal
+                  ..product.value = product
+                  ..amount = amount
+                  ..price = price;
+                j.details.add(jd);
+                isar?.writeTxnSync(() => j.details.saveSync());
+                selectedJournal.journal = j;
               });
               Navigator.of(context).pop();
             }

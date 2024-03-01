@@ -1,5 +1,5 @@
 import 'package:cashier_app/collections/journal/journal.dart';
-import 'package:cashier_app/collections/journal/journal_detail.dart';
+import 'package:cashier_app/states/selected_journal_provider.dart';
 import 'package:cashier_app/widgets/products/search_and_add_product.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -19,35 +19,39 @@ class _SalesManagementScreenState extends ConsumerState<SalesManagementScreen> {
   double _totalSales = 0;
   final double _discount = 0;
 
-  List<JournalDetail> journalDetails = [];
+  bool _isClosed = false;
+
+  late SelectedJournal selectedJournal;
 
   @override
   void initState() {
     super.initState();
-    calculateTransactionValue();
+    // calculateTransactionValue();
   }
 
   @override
   Widget build(BuildContext context) {
     NumberFormat numberFormat = NumberFormat("#,##0.00", "en_US");
-    journalDetails = ref.watch(selectedProductProvider);
+    selectedJournal = ref.watch(selectedJournalProvider);
+
+    if (selectedJournal.journal.journalStatus == JournalStatus.posted) {
+      setState(() {
+        _isClosed = true;
+      });
+    }
 
     calculateTransactionValue();
 
-    var title = "Receipt Page";
-    if (journalDetails.isNotEmpty) {
-      title = "Edit Receipt";
-    }
+    selectedJournal.journal.details.loadSync();
+
+    var title = _isClosed ? "Receipt Posted" : "Edit Receipt";
 
     return Scaffold(
         appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
+          leading: BackButton(
             onPressed: () {
-              List<JournalDetail> journalDetail =
-                  ref.watch(selectedProductProvider);
-              journalDetail.clear();
-              Navigator.of(context).pop(false);
+              selectedJournal.journal = Journal();
+              Navigator.of(context).pop();
             },
           ),
           title: Text(title),
@@ -55,8 +59,8 @@ class _SalesManagementScreenState extends ConsumerState<SalesManagementScreen> {
         body: ListView(
           children: [
             Column(
-              children: journalDetails.isNotEmpty
-                  ? journalDetails
+              children: selectedJournal.journal.details.isNotEmpty
+                  ? selectedJournal.journal.details
                       .map(
                         (e) => ListTile(
                           title: Text(e.product.value?.name ?? "-"),
@@ -78,22 +82,27 @@ class _SalesManagementScreenState extends ConsumerState<SalesManagementScreen> {
                       ),
                     ],
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextButton(
-                  onPressed: () async {
-                    await Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => const SearchAndAddProduct(),
-                      ),
-                    );
-                    setState(() {});
-                  },
-                  child: const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text("Add items in stock"),
-                  )),
-            ),
+            _isClosed
+                ? const SizedBox()
+                : Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextButton(
+                        onPressed: () async {
+                          await Navigator.of(context)
+                              .push(
+                            MaterialPageRoute(
+                              builder: (_) => const SearchAndAddProduct(),
+                            ),
+                          )
+                              .then((value) {
+                            setState(() {});
+                          });
+                        },
+                        child: const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text("Add items from stock"),
+                        )),
+                  ),
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 8.0),
               child: Divider(thickness: 0.5),
@@ -160,10 +169,13 @@ class _SalesManagementScreenState extends ConsumerState<SalesManagementScreen> {
               padding: EdgeInsets.symmetric(horizontal: 8.0),
               child: Divider(thickness: 0.5),
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextButton(onPressed: () {}, child: const Text("Proceed")),
-            ),
+            _isClosed
+                ? const SizedBox()
+                : Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextButton(
+                        onPressed: () {}, child: const Text("Proceed")),
+                  ),
           ],
         ));
   }
@@ -171,7 +183,7 @@ class _SalesManagementScreenState extends ConsumerState<SalesManagementScreen> {
   void calculateTransactionValue() {
     setState(() {
       _totalSales = 0;
-      for (var jd in journalDetails) {
+      for (var jd in selectedJournal.journal.details) {
         _totalSales += jd.price * jd.amount;
       }
     });

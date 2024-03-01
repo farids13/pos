@@ -2,6 +2,7 @@ import 'package:cashier_app/collections/journal/journal.dart';
 import 'package:cashier_app/main.dart';
 import 'package:cashier_app/modules/transactions/incoming_goods/incoming_goods_list_screen.dart';
 import 'package:cashier_app/modules/transactions/sales/sales_management_screen.dart';
+import 'package:cashier_app/states/selected_journal_provider.dart';
 import 'package:cashier_app/utils/helpers/prepare_journal_list_tiles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -381,6 +382,19 @@ class _CashierHomePage extends ConsumerState<CashierHomePage> {
   }
 
   void _createNewReceipt(BuildContext context) {
+    Isar isar = ref.watch(isarProvider);
+    SelectedJournal s = ref.watch(selectedJournalProvider);
+    Journal j = Journal()
+      ..created = DateTime.now()
+      ..code =
+          "SLS${DateTime.now().year}${DateTime.now().month}${DateTime.now().day}${DateTime.now().hour}${DateTime.now().minute}${DateTime.now().second}"
+      ..journalType = JournalType.sale;
+
+    isar.writeTxnSync(() => isar.journals.putSync(j));
+
+    setState(() {
+      s.journal = j;
+    });
     Navigator.of(context)
         .push(
           MaterialPageRoute(builder: (_) => const SalesManagementScreen()),

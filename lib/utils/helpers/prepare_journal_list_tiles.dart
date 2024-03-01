@@ -1,4 +1,3 @@
-import 'package:cashier_app/collections/journal/journal_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -6,7 +5,7 @@ import 'package:intl/intl.dart';
 import '../../collections/journal/journal.dart';
 import '../../collections/product/product.dart';
 import '../../modules/transactions/sales/sales_management_screen.dart';
-import '../../widgets/products/search_and_add_product.dart';
+import '../../states/selected_journal_provider.dart';
 
 List<Widget> prepareJournalListTiles(
     BuildContext context, List<Journal> journals) {
@@ -15,6 +14,7 @@ List<Widget> prepareJournalListTiles(
   for (var item in journals) {
     var value = 0.0;
     List<Product> productInReceipt = [];
+    item.details.loadSync();
     for (var detail in item.details) {
       if (detail.product.value != null &&
           !productInReceipt
@@ -47,17 +47,12 @@ class ReceiptTile extends ConsumerWidget {
     return Card(
       child: ListTile(
         onTap: () {
-          if (item.journalStatus == JournalStatus.opened) {
-            List<JournalDetail> journalDetail =
-                ref.watch(selectedProductProvider);
-            journalDetail.clear();
-            journalDetail.addAll(item.details);
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const SalesManagementScreen()),
-            );
-          } else {
-            popUpDisplay(context);
-          }
+          SelectedJournal selectedJournal = ref.watch(selectedJournalProvider);
+          selectedJournal.journal = item;
+          Navigator.of(context)
+              .push(
+            MaterialPageRoute(builder: (_) => const SalesManagementScreen()),
+          );
         },
         title: Text(item.code),
         subtitle: Row(
