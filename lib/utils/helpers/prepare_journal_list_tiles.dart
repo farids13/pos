@@ -9,8 +9,7 @@ import '../../modules/transactions/sales/sales_management_screen.dart';
 import '../../states/selected_journal_provider.dart';
 
 List<Widget> prepareJournalListTiles(
-    BuildContext context, List<Journal> journals,
-    [ConsumerState<ConsumerStatefulWidget>? state]) {
+    BuildContext context, List<Journal> journals) {
   List<Widget> result = [];
 
   for (var journal in journals) {
@@ -29,8 +28,7 @@ List<Widget> prepareJournalListTiles(
     result.add(ReceiptTile(
         journal: journal,
         productInReceipt: productInReceipt,
-        value: value,
-        state: state));
+        value: value));
   }
 
   return result;
@@ -42,14 +40,11 @@ class ReceiptTile extends ConsumerWidget {
     required this.journal,
     required this.productInReceipt,
     required this.value,
-    this.state,
   });
 
   final Journal journal;
   final List<Product> productInReceipt;
   final double value;
-
-  final ConsumerState<ConsumerStatefulWidget>? state;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

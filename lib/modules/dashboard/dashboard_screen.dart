@@ -195,8 +195,7 @@ class _CashierHomePage extends ConsumerState<CashierHomePage> {
                   ),
                 )
               : Column(
-                  children:
-                      prepareJournalListTiles(context, salesPostedToday, this),
+                  children: prepareJournalListTiles(context, salesPostedToday),
                 ),
         ),
       );
