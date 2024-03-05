@@ -220,6 +220,7 @@ class _SearchAndAddProduct extends ConsumerState<SearchAndAddProduct> {
                 isar?.writeTxnSync(() => j.details.saveSync());
                 selectedJournal.journal = j;
               });
+              ref.invalidate(isarProvider);
               Navigator.of(context).pop();
             }
           },

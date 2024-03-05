@@ -27,124 +27,7 @@ class _CashierHomePage extends ConsumerState<CashierHomePage> {
   Widget build(BuildContext context) {
     var primaryColor = Theme.of(context).colorScheme.primary;
     List<Widget> menus = [];
-    menus = [
-      Expanded(
-        child: Padding(
-          padding: const EdgeInsets.all(2.0),
-          child: TextButton(
-            style: TextButton.styleFrom(
-              side: BorderSide(width: 1, color: primaryColor),
-            ),
-            onPressed: () {
-              Navigator.of(context)
-                  .push(
-                    MaterialPageRoute(
-                        builder: (_) => const IncomingGoodsListScreen()),
-                  )
-                  .then((val) =>
-                      val != null ? (val ? _getRequests() : null) : null);
-            },
-            child: const Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: 4,
-                vertical: 2,
-              ),
-              child: Text(
-                textAlign: TextAlign.center,
-                "In",
-              ),
-            ),
-          ),
-        ),
-      ),
-      Expanded(
-        child: Padding(
-          padding: const EdgeInsets.all(2.0),
-          child: TextButton(
-            style: TextButton.styleFrom(
-              side: BorderSide(width: 1, color: primaryColor),
-            ),
-            onPressed: () {
-              Navigator.of(context)
-                  .push(
-                    MaterialPageRoute(
-                        builder: (_) => const OutgoingGoodsListScreen()),
-                  )
-                  .then((val) =>
-                      val != null ? (val ? _getRequests() : null) : null);
-            },
-            child: const Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: 4,
-                vertical: 2,
-              ),
-              child: Text(
-                textAlign: TextAlign.center,
-                "Out",
-              ),
-            ),
-          ),
-        ),
-      ),
-      Expanded(
-        child: Padding(
-          padding: const EdgeInsets.all(2.0),
-          child: TextButton(
-            style: TextButton.styleFrom(
-              side: BorderSide(width: 1, color: primaryColor),
-            ),
-            onPressed: () {
-              Navigator.of(context)
-                  .push(
-                    MaterialPageRoute(
-                        builder: (_) => const MovingGoodsListScreen()),
-                  )
-                  .then((val) =>
-                      val != null ? (val ? _getRequests() : null) : null);
-            },
-            child: const Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: 4,
-                vertical: 2,
-              ),
-              child: Text(
-                textAlign: TextAlign.center,
-                "Move",
-              ),
-            ),
-          ),
-        ),
-      ),
-      Expanded(
-        child: Padding(
-          padding: const EdgeInsets.all(2.0),
-          child: TextButton(
-            style: TextButton.styleFrom(
-              side: BorderSide(width: 1, color: primaryColor),
-            ),
-            onPressed: () {
-              Navigator.of(context)
-                  .push(
-                    MaterialPageRoute(
-                        builder: (_) => const ProductListScreen()),
-                  )
-                  .then((val) =>
-                      val != null ? (val ? _getRequests() : null) : null);
-            },
-            child: const Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: 4,
-                vertical: 2,
-              ),
-              child: Text(
-                textAlign: TextAlign.center,
-                "Product",
-              ),
-            ),
-          ),
-        ),
-      ),
-    ];
+    menus = _buildMenu(primaryColor, context);
 
     List<Widget> data = [];
 
@@ -284,7 +167,6 @@ class _CashierHomePage extends ConsumerState<CashierHomePage> {
                 ),
         ),
       );
-
       data.add(
         Padding(
           padding: const EdgeInsets.only(top: 8.0),
@@ -313,7 +195,8 @@ class _CashierHomePage extends ConsumerState<CashierHomePage> {
                   ),
                 )
               : Column(
-                  children: prepareJournalListTiles(context, salesPostedToday),
+                  children:
+                      prepareJournalListTiles(context, salesPostedToday, this),
                 ),
         ),
       );
@@ -379,6 +262,127 @@ class _CashierHomePage extends ConsumerState<CashierHomePage> {
         child: const Icon(Icons.point_of_sale),
       ),
     );
+  }
+
+  List<Widget> _buildMenu(Color primaryColor, BuildContext context) {
+    return [
+      Expanded(
+        child: Padding(
+          padding: const EdgeInsets.all(2.0),
+          child: TextButton(
+            style: TextButton.styleFrom(
+              side: BorderSide(width: 1, color: primaryColor),
+            ),
+            onPressed: () {
+              Navigator.of(context)
+                  .push(
+                    MaterialPageRoute(
+                        builder: (_) => const IncomingGoodsListScreen()),
+                  )
+                  .then((val) =>
+                      val != null ? (val ? _getRequests() : null) : null);
+            },
+            child: const Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: 4,
+                vertical: 2,
+              ),
+              child: Text(
+                textAlign: TextAlign.center,
+                "In",
+              ),
+            ),
+          ),
+        ),
+      ),
+      Expanded(
+        child: Padding(
+          padding: const EdgeInsets.all(2.0),
+          child: TextButton(
+            style: TextButton.styleFrom(
+              side: BorderSide(width: 1, color: primaryColor),
+            ),
+            onPressed: () {
+              Navigator.of(context)
+                  .push(
+                    MaterialPageRoute(
+                        builder: (_) => const OutgoingGoodsListScreen()),
+                  )
+                  .then((val) =>
+                      val != null ? (val ? _getRequests() : null) : null);
+            },
+            child: const Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: 4,
+                vertical: 2,
+              ),
+              child: Text(
+                textAlign: TextAlign.center,
+                "Out",
+              ),
+            ),
+          ),
+        ),
+      ),
+      Expanded(
+        child: Padding(
+          padding: const EdgeInsets.all(2.0),
+          child: TextButton(
+            style: TextButton.styleFrom(
+              side: BorderSide(width: 1, color: primaryColor),
+            ),
+            onPressed: () {
+              Navigator.of(context)
+                  .push(
+                    MaterialPageRoute(
+                        builder: (_) => const MovingGoodsListScreen()),
+                  )
+                  .then((val) =>
+                      val != null ? (val ? _getRequests() : null) : null);
+            },
+            child: const Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: 4,
+                vertical: 2,
+              ),
+              child: Text(
+                textAlign: TextAlign.center,
+                "Move",
+              ),
+            ),
+          ),
+        ),
+      ),
+      Expanded(
+        child: Padding(
+          padding: const EdgeInsets.all(2.0),
+          child: TextButton(
+            style: TextButton.styleFrom(
+              side: BorderSide(width: 1, color: primaryColor),
+            ),
+            onPressed: () {
+              Navigator.of(context)
+                  .push(
+                    MaterialPageRoute(
+                        builder: (_) => const ProductListScreen()),
+                  )
+                  .then((val) =>
+                      val != null ? (val ? _getRequests() : null) : null);
+            },
+            child: const Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: 4,
+                vertical: 2,
+              ),
+              child: Text(
+                textAlign: TextAlign.center,
+                "Product",
+              ),
+            ),
+          ),
+        ),
+      ),
+    ];
   }
 
   void _createNewReceipt(BuildContext context) {

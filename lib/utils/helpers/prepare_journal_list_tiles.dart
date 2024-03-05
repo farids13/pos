@@ -1,3 +1,4 @@
+import 'package:cashier_app/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -8,14 +9,15 @@ import '../../modules/transactions/sales/sales_management_screen.dart';
 import '../../states/selected_journal_provider.dart';
 
 List<Widget> prepareJournalListTiles(
-    BuildContext context, List<Journal> journals) {
+    BuildContext context, List<Journal> journals,
+    [ConsumerState<ConsumerStatefulWidget>? state]) {
   List<Widget> result = [];
 
-  for (var item in journals) {
+  for (var journal in journals) {
     var value = 0.0;
     List<Product> productInReceipt = [];
-    item.details.loadSync();
-    for (var detail in item.details) {
+    journal.details.loadSync();
+    for (var detail in journal.details) {
       if (detail.product.value != null &&
           !productInReceipt
               .any((item) => item.id == detail.product.value?.id)) {
@@ -25,22 +27,29 @@ List<Widget> prepareJournalListTiles(
     }
     productInReceipt = productInReceipt.toSet().toList();
     result.add(ReceiptTile(
-        item: item, productInReceipt: productInReceipt, value: value));
+        journal: journal,
+        productInReceipt: productInReceipt,
+        value: value,
+        state: state));
   }
+
   return result;
 }
 
 class ReceiptTile extends ConsumerWidget {
   const ReceiptTile({
     super.key,
-    required this.item,
+    required this.journal,
     required this.productInReceipt,
     required this.value,
+    this.state,
   });
 
-  final Journal item;
+  final Journal journal;
   final List<Product> productInReceipt;
   final double value;
+
+  final ConsumerState<ConsumerStatefulWidget>? state;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -48,18 +57,20 @@ class ReceiptTile extends ConsumerWidget {
       child: ListTile(
         onTap: () {
           SelectedJournal selectedJournal = ref.watch(selectedJournalProvider);
-          selectedJournal.journal = item;
+          selectedJournal.journal = journal;
           Navigator.of(context)
               .push(
-            MaterialPageRoute(builder: (_) => const SalesManagementScreen()),
-          );
+                MaterialPageRoute(
+                    builder: (_) => const SalesManagementScreen()),
+              )
+              .then((value) => ref.invalidate(isarProvider));
         },
-        title: Text(item.code),
+        title: Text(journal.code),
         subtitle: Row(
           children: [
             Flexible(
               child: Text(
-                  "${DateFormat('yyyy/MM/dd kk:mm').format(item.created)} | ${productInReceipt.length} product in receipt"),
+                  "${DateFormat('yyyy/MM/dd kk:mm').format(journal.created)} | ${productInReceipt.length} product in receipt"),
             ),
           ],
         ),
@@ -73,7 +84,7 @@ class ReceiptTile extends ConsumerWidget {
 
   void popUpDisplay(BuildContext context) {
     List<TableRow> tableData = [];
-    for (var detail in item.details) {
+    for (var detail in journal.details) {
       tableData.add(
         TableRow(
           children: [
@@ -132,7 +143,7 @@ class ReceiptTile extends ConsumerWidget {
         context: context,
         builder: (context) => AlertDialog(
               title: Text(
-                item.code,
+                journal.code,
                 textAlign: TextAlign.end,
               ),
               content: t,

@@ -16,7 +16,6 @@ class SalesManagementScreen extends ConsumerStatefulWidget {
 }
 
 class _SalesManagementScreenState extends ConsumerState<SalesManagementScreen> {
-  double _totalSales = 0;
   final double _discount = 0;
 
   bool _isClosed = false;
@@ -26,7 +25,6 @@ class _SalesManagementScreenState extends ConsumerState<SalesManagementScreen> {
   @override
   void initState() {
     super.initState();
-    // calculateTransactionValue();
   }
 
   @override
@@ -34,17 +32,44 @@ class _SalesManagementScreenState extends ConsumerState<SalesManagementScreen> {
     NumberFormat numberFormat = NumberFormat("#,##0.00", "en_US");
     selectedJournal = ref.watch(selectedJournalProvider);
 
+    String journalType = "";
+
     if (selectedJournal.journal.journalStatus == JournalStatus.posted) {
       setState(() {
         _isClosed = true;
       });
     }
 
-    calculateTransactionValue();
+    switch (selectedJournal.journal.journalType) {
+      case JournalType.incoming:
+        journalType = "Incoming Goods";
+        break;
+      case JournalType.outgoing:
+        journalType = "Outgoing Goods";
+        break;
+      case JournalType.purchase:
+        journalType = "Purchasing";
+        break;
+      case JournalType.sale:
+        journalType = "Sales";
+        break;
+      case JournalType.startingStock:
+        journalType = "Starting Stock";
+        break;
+      case JournalType.stockAdjustment:
+        journalType = "Stock Adjustment";
+        break;
+      default:
+        journalType = "";
+        break;
+    }
+
+    totalSales();
 
     selectedJournal.journal.details.loadSync();
 
-    var title = _isClosed ? "Receipt Posted" : "Edit Receipt";
+    var title =
+        _isClosed ? "$journalType Receipt Posted" : "Edit $journalType Receipt";
 
     return Scaffold(
         appBar: AppBar(
@@ -124,7 +149,7 @@ class _SalesManagementScreenState extends ConsumerState<SalesManagementScreen> {
                         textAlign: TextAlign.end,
                       ),
                       Text(
-                        "Rp.${numberFormat.format(_totalSales)}",
+                        "Rp.${numberFormat.format(totalSales())}",
                         textAlign: TextAlign.end,
                       ),
                     ],
@@ -157,7 +182,7 @@ class _SalesManagementScreenState extends ConsumerState<SalesManagementScreen> {
                         textAlign: TextAlign.end,
                       ),
                       Text(
-                        "Rp.${numberFormat.format(_totalSales - _discount)}",
+                        "Rp.${numberFormat.format(totalSales() - _discount)}",
                         textAlign: TextAlign.end,
                       ),
                     ],
@@ -180,12 +205,12 @@ class _SalesManagementScreenState extends ConsumerState<SalesManagementScreen> {
         ));
   }
 
-  void calculateTransactionValue() {
-    setState(() {
-      _totalSales = 0;
-      for (var jd in selectedJournal.journal.details) {
-        _totalSales += jd.price * jd.amount;
-      }
-    });
+  double totalSales() {
+    var tmp = 0.0;
+    for (var jd in selectedJournal.journal.details) {
+      tmp += jd.price * jd.amount;
+    }
+
+    return tmp;
   }
 }
