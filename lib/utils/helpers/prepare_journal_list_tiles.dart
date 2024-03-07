@@ -48,6 +48,7 @@ class ReceiptTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    NumberFormat numberFormat = NumberFormat("#,##0.00", "en_US");
     return Card(
       child: ListTile(
         onTap: () {
@@ -70,78 +71,14 @@ class ReceiptTile extends ConsumerWidget {
           ],
         ),
         trailing: Text(
-          "${value.toStringAsFixed(0)},-",
+          numberFormat.format(value),
           style: const TextStyle(fontSize: 14),
+        ),
+        leading: Icon(
+          journal.journalStatus == JournalStatus.posted ? Icons.receipt_long_rounded : Icons.edit_outlined,
+          color: journal.journalStatus == JournalStatus.posted ? Colors.grey : Colors.black,
         ),
       ),
     );
-  }
-
-  void popUpDisplay(BuildContext context) {
-    List<TableRow> tableData = [];
-    for (var detail in journal.details) {
-      tableData.add(
-        TableRow(
-          children: [
-            TableCell(
-              child: Text(
-                detail.product.value?.name ?? "",
-              ),
-            ),
-          ],
-        ),
-      );
-      tableData.add(
-        TableRow(
-          children: [
-            TableCell(
-                child: Table(
-              columnWidths: const {
-                0: FlexColumnWidth(6),
-                1: FlexColumnWidth(1),
-                2: FlexColumnWidth(2),
-                3: FlexColumnWidth(3),
-              },
-              children: [
-                TableRow(
-                  children: [
-                    Text(
-                      "@${detail.price.toStringAsFixed(0)},-",
-                      textAlign: TextAlign.end,
-                    ),
-                    const TableCell(
-                      child: Text(
-                        "x",
-                        textAlign: TextAlign.end,
-                      ),
-                    ),
-                    Text(
-                      "${detail.amount}",
-                      textAlign: TextAlign.end,
-                    ),
-                    Text(
-                      "${(detail.price * detail.amount).toStringAsFixed(0)},-",
-                      textAlign: TextAlign.end,
-                    ),
-                  ],
-                ),
-              ],
-            )),
-          ],
-        ),
-      );
-    }
-    Table t = Table(
-      children: tableData,
-    );
-    showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-              title: Text(
-                journal.code,
-                textAlign: TextAlign.end,
-              ),
-              content: t,
-            ));
   }
 }

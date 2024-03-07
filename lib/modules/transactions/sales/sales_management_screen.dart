@@ -1,4 +1,5 @@
 import 'package:cashier_app/collections/journal/journal.dart';
+import 'package:cashier_app/main.dart';
 import 'package:cashier_app/states/selected_journal_provider.dart';
 import 'package:cashier_app/widgets/products/search_and_add_product.dart';
 import 'package:flutter/material.dart';
@@ -113,8 +114,7 @@ class _SalesManagementScreenState extends ConsumerState<SalesManagementScreen> {
                     padding: const EdgeInsets.all(8.0),
                     child: TextButton(
                         onPressed: () async {
-                          await Navigator.of(context)
-                              .push(
+                          await Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (_) => const SearchAndAddProduct(),
                             ),
@@ -199,7 +199,44 @@ class _SalesManagementScreenState extends ConsumerState<SalesManagementScreen> {
                 : Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: TextButton(
-                        onPressed: () {}, child: const Text("Proceed")),
+                      child: const Text("Proceed"),
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              content: const Text(
+                                  "Are you sure? Finalized receipt cannot be edited."),
+                              actions: [
+                                TextButton(
+                                  child: const Text("Cancel"),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                                TextButton(
+                                  child: const Text("OK"),
+                                  onPressed: () {
+                                    var isar = ref.watch(isarProvider);
+                                    setState(() {
+                                      selectedJournal.journal.journalStatus =
+                                          JournalStatus.posted;
+                                    });
+                                    isar.writeTxnSync(() {
+                                      isar.journals
+                                          .putSync(selectedJournal.journal);
+                                    });
+                                    ref.invalidate(isarProvider);
+                                    Navigator.of(context).pop();
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                    ),
                   ),
           ],
         ));

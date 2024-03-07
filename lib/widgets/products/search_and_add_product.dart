@@ -86,9 +86,160 @@ class _SearchAndAddProduct extends ConsumerState<SearchAndAddProduct> {
   Widget productDetailInputForm(Product product, BuildContext context) {
     final formKey = GlobalKey<FormState>();
 
+    var selectedJournal = ref.watch(selectedJournalProvider);
+
+    var productPrice = isar?.productPrices
+        .filter()
+        .product((q) => q.codeEqualTo(product.code))
+        .sortByCreatedDesc()
+        .findFirstSync();
+
+    var itemPrice = productPrice?.price ?? 0;
+
     final priceController = TextEditingController();
     final quantityController = TextEditingController();
     final totalController = TextEditingController();
+    final sellPriceController = TextEditingController();
+
+    priceController.text = "$itemPrice";
+
+    bool priceReadOnly = false;
+    bool totalReadOnly = false;
+
+    bool withPrice = false;
+    bool withTotal = false;
+    bool withSellingPrice = false;
+
+    List<Widget> fields = [];
+
+    switch (selectedJournal.journal.journalType) {
+      case JournalType.incoming:
+      case JournalType.outgoing:
+      case JournalType.stockAdjustment:
+      case JournalType.sale:
+        withPrice = withTotal = false;
+        break;
+      case JournalType.startingStock:
+      case JournalType.purchase:
+        withPrice = withTotal = true;
+        priceReadOnly = totalReadOnly = false;
+        withSellingPrice = true;
+        break;
+      default:
+        break;
+    }
+
+    // Quantity
+    fields.add(TextFormField(
+      autofocus: true,
+      controller: quantityController,
+      keyboardType: TextInputType.number,
+      decoration: const InputDecoration(
+        labelText: "Quantity",
+      ),
+      onChanged: (event) {
+        var price = priceController.text;
+        var quantity = quantityController.text;
+        if (![double.infinity, double.nan, null]
+                .contains(double.tryParse(price)) &&
+            ![double.infinity, double.nan, null]
+                .contains(double.tryParse(quantity))) {
+          var total = double.parse(price) * double.parse(quantity);
+          totalController.text = total.toString();
+        }
+      },
+      validator: (value) {
+        if (value == null ||
+            value.isEmpty ||
+            [double.infinity, double.nan, null]
+                .contains(double.tryParse(value))) {
+          return "Please enter quantity";
+        }
+        return null;
+      },
+    ));
+
+    // Item Price
+    fields.add(TextFormField(
+      controller: priceController,
+      readOnly: priceReadOnly,
+      enabled: withPrice,
+      keyboardType: TextInputType.number,
+      decoration: const InputDecoration(
+        labelText: "Price",
+      ),
+      onChanged: (event) {
+        var price = priceController.text;
+        var quantity = quantityController.text;
+        if (![double.infinity, double.nan, null]
+                .contains(double.tryParse(price)) &&
+            ![double.infinity, double.nan, null]
+                .contains(double.tryParse(quantity))) {
+          var total = double.parse(price) * double.parse(quantity);
+          totalController.text = total.toString();
+        }
+      },
+      validator: (value) {
+        if (value == null ||
+            value.isEmpty ||
+            [double.infinity, double.nan, null]
+                .contains(double.tryParse(value))) {
+          return "Please enter item price";
+        }
+        return null;
+      },
+    ));
+
+    // Total Price
+    fields.add(TextFormField(
+      controller: totalController,
+      readOnly: totalReadOnly,
+      enabled: withTotal,
+      keyboardType: TextInputType.number,
+      decoration: const InputDecoration(
+        labelText: "Total",
+      ),
+      onChanged: (event) {
+        var total = totalController.text;
+        var quantity = quantityController.text;
+        if (![double.infinity, double.nan, null]
+                .contains(double.tryParse(total)) &&
+            ![double.infinity, double.nan, null]
+                .contains(double.tryParse(quantity))) {
+          var price = double.parse(total) / double.parse(quantity);
+          priceController.text = price.toString();
+        }
+      },
+      validator: (value) {
+        if (value == null ||
+            value.isEmpty ||
+            [double.infinity, double.nan, null]
+                .contains(double.tryParse(value))) {
+          return "Please enter total amount for this item";
+        }
+        return null;
+      },
+    ));
+
+    // Selling Price
+    if (withSellingPrice) {
+      fields.add(TextFormField(
+        controller: sellPriceController,
+        keyboardType: TextInputType.number,
+        decoration: const InputDecoration(
+          labelText: "Selling Price",
+        ),
+        validator: (value) {
+          if (value == null ||
+              value.isEmpty ||
+              [double.infinity, double.nan, null]
+                  .contains(double.tryParse(value))) {
+            return "Please enter selling price for this item";
+          }
+          return null;
+        },
+      ));
+    }
 
     return AlertDialog(
       title: Column(
@@ -105,90 +256,7 @@ class _SearchAndAddProduct extends ConsumerState<SearchAndAddProduct> {
         key: formKey,
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: [
-            TextFormField(
-              autofocus: true,
-              controller: quantityController,
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                labelText: "Quantity",
-              ),
-              onChanged: (event) {
-                var price = priceController.text;
-                var quantity = quantityController.text;
-                if (![double.infinity, double.nan, null]
-                        .contains(double.tryParse(price)) &&
-                    ![double.infinity, double.nan, null]
-                        .contains(double.tryParse(quantity))) {
-                  var total = double.parse(price) * double.parse(quantity);
-                  totalController.text = total.toString();
-                }
-              },
-              validator: (value) {
-                if (value == null ||
-                    value.isEmpty ||
-                    [double.infinity, double.nan, null]
-                        .contains(double.tryParse(value))) {
-                  return "Please enter quantity";
-                }
-                return null;
-              },
-            ),
-            TextFormField(
-              controller: priceController,
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                labelText: "Price",
-              ),
-              onChanged: (event) {
-                var price = priceController.text;
-                var quantity = quantityController.text;
-                if (![double.infinity, double.nan, null]
-                        .contains(double.tryParse(price)) &&
-                    ![double.infinity, double.nan, null]
-                        .contains(double.tryParse(quantity))) {
-                  var total = double.parse(price) * double.parse(quantity);
-                  totalController.text = total.toString();
-                }
-              },
-              validator: (value) {
-                if (value == null ||
-                    value.isEmpty ||
-                    [double.infinity, double.nan, null]
-                        .contains(double.tryParse(value))) {
-                  return "Please enter item price";
-                }
-                return null;
-              },
-            ),
-            TextFormField(
-              controller: totalController,
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                labelText: "Total",
-              ),
-              onChanged: (event) {
-                var total = totalController.text;
-                var quantity = quantityController.text;
-                if (![double.infinity, double.nan, null]
-                        .contains(double.tryParse(total)) &&
-                    ![double.infinity, double.nan, null]
-                        .contains(double.tryParse(quantity))) {
-                  var price = double.parse(total) / double.parse(quantity);
-                  priceController.text = price.toString();
-                }
-              },
-              validator: (value) {
-                if (value == null ||
-                    value.isEmpty ||
-                    [double.infinity, double.nan, null]
-                        .contains(double.tryParse(value))) {
-                  return "Please enter total amount for this item";
-                }
-                return null;
-              },
-            ),
-          ],
+          children: fields,
         ),
       ),
       actions: [
@@ -199,6 +267,7 @@ class _SearchAndAddProduct extends ConsumerState<SearchAndAddProduct> {
           },
         ),
         TextButton(
+          child: const Text("OK"),
           onPressed: () {
             if (formKey.currentState!.validate()) {
               var amount = double.parse(quantityController.text);
@@ -224,7 +293,6 @@ class _SearchAndAddProduct extends ConsumerState<SearchAndAddProduct> {
               Navigator.of(context).pop();
             }
           },
-          child: const Text("OK"),
         ),
       ],
     );
