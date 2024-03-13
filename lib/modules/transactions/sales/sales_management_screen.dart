@@ -85,6 +85,26 @@ class _SalesManagementScreenState extends ConsumerState<SalesManagementScreen> {
         ),
         body: ListView(
           children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical:8.0,horizontal:24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    selectedJournal.journal.code,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        fontStyle: FontStyle.italic),
+                  ),
+                  Text(DateFormat('yyyy-MM-dd kk:mm:ss').format(selectedJournal.journal.created)),
+                ],
+              ),
+            ),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 8.0),
+              child: Divider(thickness: 0.5),
+            ),
             Column(
               children: selectedJournal.journal.details.isNotEmpty
                   ? selectedJournal.journal.details
@@ -127,24 +147,29 @@ class _SalesManagementScreenState extends ConsumerState<SalesManagementScreen> {
                                                   "Rp.${numberFormat.format(e.amount * e.price)}"),
                                               Row(
                                                 children: [
-                                                  IconButton(
-                                                    icon: const Icon(
-                                                        Icons.remove),
-                                                    onPressed: () =>
-                                                        updateJournalDetailAmount(
-                                                            e, -1.0),
-                                                  ),
+                                                  _isClosed
+                                                      ? Container()
+                                                      : IconButton(
+                                                          icon: const Icon(
+                                                              Icons.remove),
+                                                          onPressed: () =>
+                                                              updateJournalDetailAmount(
+                                                                  e, -1.0),
+                                                        ),
                                                   Container(
                                                     width: 48,
                                                     alignment: Alignment.center,
                                                     child: Text("${e.amount}"),
                                                   ),
-                                                  IconButton(
-                                                    icon: const Icon(Icons.add),
-                                                    onPressed: () =>
-                                                        updateJournalDetailAmount(
-                                                            e, 1.0),
-                                                  ),
+                                                  _isClosed
+                                                      ? Container()
+                                                      : IconButton(
+                                                          icon: const Icon(
+                                                              Icons.add),
+                                                          onPressed: () =>
+                                                              updateJournalDetailAmount(
+                                                                  e, 1.0),
+                                                        ),
                                                 ],
                                               ),
                                             ],
