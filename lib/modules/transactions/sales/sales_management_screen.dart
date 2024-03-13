@@ -1,4 +1,5 @@
 import 'package:cashier_app/collections/journal/journal.dart';
+import 'package:cashier_app/collections/journal/journal_detail.dart';
 import 'package:cashier_app/main.dart';
 import 'package:cashier_app/states/selected_journal_provider.dart';
 import 'package:cashier_app/widgets/products/search_and_add_product.dart';
@@ -88,11 +89,74 @@ class _SalesManagementScreenState extends ConsumerState<SalesManagementScreen> {
               children: selectedJournal.journal.details.isNotEmpty
                   ? selectedJournal.journal.details
                       .map(
-                        (e) => ListTile(
-                          title: Text(e.product.value?.name ?? "-"),
-                          subtitle: Text("@${numberFormat.format(e.price)}"),
-                          trailing: Text(
-                              "x${e.amount} = Rp.${numberFormat.format(e.amount * e.price)}"),
+                        (e) => Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16.0, vertical: 8.0),
+                          child: Table(
+                            children: [
+                              TableRow(
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text(
+                                        e.product.value?.name ?? "-",
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                      Text(
+                                        " @${numberFormat.format(e.price)}",
+                                        style: const TextStyle(
+                                            fontStyle: FontStyle.italic,
+                                            fontWeight: FontWeight.w300),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              TableRow(
+                                children: [
+                                  Table(
+                                    children: [
+                                      TableRow(
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                  "Rp.${numberFormat.format(e.amount * e.price)}"),
+                                              Row(
+                                                children: [
+                                                  IconButton(
+                                                    icon: const Icon(
+                                                        Icons.remove),
+                                                    onPressed: () =>
+                                                        updateJournalDetailAmount(
+                                                            e, -1.0),
+                                                  ),
+                                                  Container(
+                                                    width: 48,
+                                                    alignment: Alignment.center,
+                                                    child: Text("${e.amount}"),
+                                                  ),
+                                                  IconButton(
+                                                    icon: const Icon(Icons.add),
+                                                    onPressed: () =>
+                                                        updateJournalDetailAmount(
+                                                            e, 1.0),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                       )
                       .toList()
@@ -114,7 +178,8 @@ class _SalesManagementScreenState extends ConsumerState<SalesManagementScreen> {
                     padding: const EdgeInsets.all(8.0),
                     child: TextButton(
                         onPressed: () async {
-                          await Navigator.of(context).push(
+                          await Navigator.of(context)
+                              .push(
                             MaterialPageRoute(
                               builder: (_) => const SearchAndAddProduct(),
                             ),
@@ -205,6 +270,7 @@ class _SalesManagementScreenState extends ConsumerState<SalesManagementScreen> {
                           context: context,
                           builder: (BuildContext context) {
                             return AlertDialog(
+                              title: const Text("Confirmation"),
                               content: const Text(
                                   "Are you sure? Finalized receipt cannot be edited."),
                               actions: [
@@ -249,5 +315,17 @@ class _SalesManagementScreenState extends ConsumerState<SalesManagementScreen> {
     }
 
     return tmp;
+  }
+
+  updateJournalDetailAmount(JournalDetail journalDetail, double amount) {
+    var isar = ref.watch(isarProvider);
+    if (amount > 0 || journalDetail.amount > 0) {
+      setState(() {
+        journalDetail.amount += amount;
+      });
+      isar.writeTxnSync(() {
+        isar.journalDetails.putSync(journalDetail);
+      });
+    }
   }
 }
