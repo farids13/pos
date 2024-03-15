@@ -241,16 +241,54 @@ class _SearchAndAddProduct extends ConsumerState<SearchAndAddProduct> {
       ));
     }
 
+    List<Widget> dialogTitle = [
+      Text(product.name),
+      Text(
+        product.code,
+        style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 12),
+      ),
+    ];
+
+    if (selectedJournal.journal.journalType == JournalType.incoming) {
+      dialogTitle.add(
+        TextButton(
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  content: const Column(
+                    children: [
+                      Text(
+                        "Product Details",
+                        style: TextStyle(
+                          fontSize: 20,
+                        ),
+                      ),
+                      Text("Rp. 2500"),
+                    ],
+                  ),
+                  actions: [
+                    TextButton(
+                      child: const Text("OK"),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+          child: const Center(
+            child: Text("View Prices"),
+          ),
+        ),
+      );
+    }
+
     return AlertDialog(
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(product.name),
-          Text(
-            product.code,
-            style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 12),
-          ),
-        ],
+        children: dialogTitle,
       ),
       content: Form(
         key: formKey,
