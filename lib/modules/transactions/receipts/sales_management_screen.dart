@@ -1,13 +1,16 @@
 import 'package:cashier_app/collections/journal/journal.dart';
 import 'package:cashier_app/collections/journal/journal_detail.dart';
 import 'package:cashier_app/main.dart';
+import 'package:cashier_app/modules/transactions/receipts/quantity_and_value_popup.dart';
 import 'package:cashier_app/states/selected_journal_provider.dart';
+import 'package:cashier_app/states/selected_product_provider.dart';
 import 'package:cashier_app/widgets/products/search_and_add_product.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:isar/isar.dart';
 
-final temporaryJournalProvider = Provider<List<Journal>>((_) => []);
+import '../../../states/selected_journal_detail_provider.dart';
 
 class SalesManagementScreen extends ConsumerStatefulWidget {
   const SalesManagementScreen({super.key});
@@ -23,6 +26,9 @@ class _SalesManagementScreenState extends ConsumerState<SalesManagementScreen> {
   bool _isClosed = false;
 
   late SelectedJournal selectedJournal;
+  late SelectedJournalDetail selectedJournalDetail;
+  late SelectedProduct selectedProduct;
+  Isar? isar;
 
   @override
   void initState() {
@@ -33,16 +39,18 @@ class _SalesManagementScreenState extends ConsumerState<SalesManagementScreen> {
   Widget build(BuildContext context) {
     NumberFormat numberFormat = NumberFormat("#,##0.00", "en_US");
     selectedJournal = ref.watch(selectedJournalProvider);
+    selectedJournalDetail = ref.watch(selectedJournalDetailProvider);
+    selectedProduct = ref.watch(selectedProductProvider);
+    isar = ref.watch(isarProvider);
 
     String journalType = "";
 
-    if (selectedJournal.journal.journalStatus == JournalStatus.posted) {
+    if (selectedJournal.data.journalStatus == JournalStatus.posted) {
       setState(() {
         _isClosed = true;
       });
     }
-
-    switch (selectedJournal.journal.journalType) {
+    switch (selectedJournal.data.journalType) {
       case JournalType.incoming:
         journalType = "Incoming Goods";
         break;
@@ -68,36 +76,33 @@ class _SalesManagementScreenState extends ConsumerState<SalesManagementScreen> {
 
     totalSales();
 
-    selectedJournal.journal.details.loadSync();
+    selectedJournal.data.details.loadSync();
 
     var title =
         _isClosed ? "$journalType Receipt Posted" : "Edit $journalType Receipt";
 
     return Scaffold(
         appBar: AppBar(
-          leading: BackButton(
-            onPressed: () {
-              selectedJournal.journal = Journal();
-              Navigator.of(context).pop();
-            },
-          ),
+          leading: const BackButton(),
           title: Text(title),
         ),
         body: ListView(
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(vertical:8.0,horizontal:24),
+              padding:
+                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 24),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    selectedJournal.journal.code,
+                    selectedJournal.data.code,
                     style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
                         fontStyle: FontStyle.italic),
                   ),
-                  Text(DateFormat('yyyy-MM-dd kk:mm:ss').format(selectedJournal.journal.created)),
+                  Text(DateFormat('yyyy-MM-dd kk:mm:ss')
+                      .format(selectedJournal.data.created)),
                 ],
               ),
             ),
@@ -106,81 +111,105 @@ class _SalesManagementScreenState extends ConsumerState<SalesManagementScreen> {
               child: Divider(thickness: 0.5),
             ),
             Column(
-              children: selectedJournal.journal.details.isNotEmpty
-                  ? selectedJournal.journal.details
+              children: selectedJournal.data.details.isNotEmpty
+                  ? selectedJournal.data.details
                       .map(
-                        (e) => Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16.0, vertical: 8.0),
-                          child: Table(
-                            children: [
-                              TableRow(
-                                children: [
-                                  Row(
-                                    children: [
-                                      Text(
-                                        e.product.value?.name ?? "-",
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                                      Text(
-                                        " @${numberFormat.format(e.price)}",
-                                        style: const TextStyle(
-                                            fontStyle: FontStyle.italic,
-                                            fontWeight: FontWeight.w300),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              TableRow(
-                                children: [
-                                  Table(
-                                    children: [
-                                      TableRow(
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text(
-                                                  "Rp.${numberFormat.format(e.amount * e.price)}"),
-                                              Row(
-                                                children: [
-                                                  _isClosed
-                                                      ? Container()
-                                                      : IconButton(
-                                                          icon: const Icon(
-                                                              Icons.remove),
-                                                          onPressed: () =>
-                                                              updateJournalDetailAmount(
-                                                                  e, -1.0),
-                                                        ),
-                                                  Container(
-                                                    width: 48,
-                                                    alignment: Alignment.center,
-                                                    child: Text("${e.amount}"),
-                                                  ),
-                                                  _isClosed
-                                                      ? Container()
-                                                      : IconButton(
-                                                          icon: const Icon(
-                                                              Icons.add),
-                                                          onPressed: () =>
-                                                              updateJournalDetailAmount(
-                                                                  e, 1.0),
-                                                        ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ],
+                        (journalDetail) => InkWell(
+                          onTap: () {
+                            if (selectedJournal.data.journalStatus !=
+                                JournalStatus.posted) {
+                              setState(() {
+                                selectedProduct.data =
+                                    journalDetail.product.value!;
+                                selectedJournalDetail.data =
+                                    journalDetail;
+                              });
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return const QuantityAndValuePopup();
+                                  });
+                            }
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16.0, vertical: 8.0),
+                            child: Table(
+                              children: [
+                                TableRow(
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Text(
+                                          journalDetail.product.value?.name ??
+                                              "-",
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.w500),
+                                        ),
+                                        Text(
+                                          " @${numberFormat.format(journalDetail.price)}",
+                                          style: const TextStyle(
+                                              fontStyle: FontStyle.italic,
+                                              fontWeight: FontWeight.w300),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                                TableRow(
+                                  children: [
+                                    Table(
+                                      children: [
+                                        TableRow(
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                    "Rp.${numberFormat.format(journalDetail.amount * journalDetail.price)}"),
+                                                Row(
+                                                  children: [
+                                                    _isClosed
+                                                        ? Container()
+                                                        : IconButton(
+                                                            icon: const Icon(
+                                                                Icons.remove),
+                                                            onPressed: () =>
+                                                                updateJournalDetailAmount(
+                                                                    journalDetail,
+                                                                    -1.0),
+                                                          ),
+                                                    Container(
+                                                      width: 48,
+                                                      alignment:
+                                                          Alignment.center,
+                                                      child: Text(
+                                                          "${journalDetail.amount}"),
+                                                    ),
+                                                    _isClosed
+                                                        ? Container()
+                                                        : IconButton(
+                                                            icon: const Icon(
+                                                                Icons.add),
+                                                            onPressed: () =>
+                                                                updateJournalDetailAmount(
+                                                                    journalDetail,
+                                                                    1.0),
+                                                          ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       )
@@ -310,12 +339,12 @@ class _SalesManagementScreenState extends ConsumerState<SalesManagementScreen> {
                                   onPressed: () {
                                     var isar = ref.watch(isarProvider);
                                     setState(() {
-                                      selectedJournal.journal.journalStatus =
+                                      selectedJournal.data.journalStatus =
                                           JournalStatus.posted;
                                     });
                                     isar.writeTxnSync(() {
                                       isar.journals
-                                          .putSync(selectedJournal.journal);
+                                          .putSync(selectedJournal.data);
                                     });
                                     ref.invalidate(isarProvider);
                                     Navigator.of(context).pop();
@@ -335,7 +364,7 @@ class _SalesManagementScreenState extends ConsumerState<SalesManagementScreen> {
 
   double totalSales() {
     var tmp = 0.0;
-    for (var jd in selectedJournal.journal.details) {
+    for (var jd in selectedJournal.data.details) {
       tmp += jd.price * jd.amount;
     }
 

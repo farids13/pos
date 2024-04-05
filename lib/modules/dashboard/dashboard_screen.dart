@@ -1,7 +1,7 @@
 import 'package:cashier_app/collections/journal/journal.dart';
 import 'package:cashier_app/main.dart';
 import 'package:cashier_app/modules/transactions/incoming_goods/incoming_goods_list_screen.dart';
-import 'package:cashier_app/modules/transactions/sales/sales_management_screen.dart';
+import 'package:cashier_app/modules/transactions/receipts/sales_management_screen.dart';
 import 'package:cashier_app/states/selected_journal_provider.dart';
 import 'package:cashier_app/utils/helpers/prepare_journal_list_tiles.dart';
 import 'package:flutter/material.dart';
@@ -396,7 +396,7 @@ class _CashierHomePage extends ConsumerState<CashierHomePage> {
     isar.writeTxnSync(() => isar.journals.putSync(j));
 
     setState(() {
-      s.journal = j;
+      s.data = j;
     });
     Navigator.of(context)
         .push(

@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 
 import '../../collections/journal/journal.dart';
 import '../../collections/product/product.dart';
-import '../../modules/transactions/sales/sales_management_screen.dart';
+import '../../modules/transactions/receipts/sales_management_screen.dart';
 import '../../states/selected_journal_provider.dart';
 
 List<Widget> prepareJournalListTiles(
@@ -53,7 +53,7 @@ class ReceiptTile extends ConsumerWidget {
       child: ListTile(
         onTap: () {
           SelectedJournal selectedJournal = ref.watch(selectedJournalProvider);
-          selectedJournal.journal = journal;
+          selectedJournal.data = journal;
           Navigator.of(context)
               .push(
                 MaterialPageRoute(

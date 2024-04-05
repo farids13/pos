@@ -1,98 +1,54 @@
-import 'dart:async';
-
-import 'package:cashier_app/collections/journal/journal.dart';
-import 'package:cashier_app/collections/journal/journal_detail.dart';
-import 'package:cashier_app/collections/product/product.dart';
 import 'package:cashier_app/collections/product/product_price.dart';
-import 'package:cashier_app/states/selected_journal_provider.dart';
+import 'package:cashier_app/states/selected_product_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:isar/isar.dart';
 
-import '../../main.dart';
+import '../../../collections/journal/journal.dart';
+import '../../../collections/journal/journal_detail.dart';
+import '../../../collections/product/product.dart';
+import '../../../main.dart';
+import '../../../states/selected_journal_detail_provider.dart';
+import '../../../states/selected_journal_provider.dart';
 
-class SearchAndAddProduct extends ConsumerStatefulWidget {
-  const SearchAndAddProduct({super.key});
+class QuantityAndValuePopup extends ConsumerStatefulWidget {
+  const QuantityAndValuePopup({super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _SearchAndAddProduct();
+  ConsumerState createState() => _QuantityAndValuePopupState();
 }
 
-class _SearchAndAddProduct extends ConsumerState<SearchAndAddProduct> {
-  Timer? _debounceTimer;
-  final int _debounceTime = 500;
-
-  Isar? isar;
-
-  final TextEditingController _searchQueryController = TextEditingController();
-  List<Product> products = [];
-
-  NumberFormat numberFormat = NumberFormat("#,##0.00", "en_US");
+class _QuantityAndValuePopupState extends ConsumerState<QuantityAndValuePopup> {
+  late Product product;
   late SelectedJournal selectedJournal;
+  late SelectedJournalDetail selectedJournalDetail;
+  late SelectedProduct selectedProduct;
+  late Isar isar;
 
   @override
   Widget build(BuildContext context) {
     selectedJournal = ref.watch(selectedJournalProvider);
+    selectedJournalDetail = ref.watch(selectedJournalDetailProvider);
+    selectedProduct = ref.watch(selectedProductProvider);
+
     isar = ref.watch(isarProvider);
-    updateSearchQuery(_searchQueryController.text);
-    return Scaffold(
-      appBar: AppBar(
-        leading: const BackButton(),
-        title: _buildSearchField(),
-        actions: _buildActions(),
-      ),
-      body: Center(child: ListView(children: _buildList())),
-    );
+
+    product = selectedProduct.data;
+
+    JournalDetail? journalDetail = selectedJournalDetail.data;
+
+    return productDetailInputForm(
+        context: context, product: product, journalDetail: journalDetail);
   }
 
-  List<Widget> _buildList() {
-    List<Widget> items = [];
-    for (var product in products) {
-      var price = isar?.productPrices
-              .filter()
-              .product((q) => q.codeEqualTo(product.code))
-              .findFirstSync()
-              ?.price ??
-          0;
-      items.add(
-        ListTile(
-          title: Text(product.name),
-          subtitle: Text(product.code),
-          trailing: Text("@Rp.${numberFormat.format(price)}"),
-          onTap: () {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return productDetailInputForm(
-                  context: context,
-                  product: product,
-                );
-              },
-            );
-          },
-        ),
-      );
-    }
-    if (items.isEmpty) {
-      items.add(
-        const ListTile(
-          title: Center(
-            child: Text("No product found"),
-          ),
-        ),
-      );
-    }
-    return items;
-  }
-
-  Widget productDetailInputForm(
-      {required BuildContext context, required Product product, JournalDetail? journalDetail}) {
+  Widget productDetailInputForm({
+    required BuildContext context,
+    required Product product,
+    JournalDetail? journalDetail,
+  }) {
     final formKey = GlobalKey<FormState>();
 
-    var selectedJournal = ref.watch(selectedJournalProvider);
-
-    var productPrice = isar?.productPrices
+    var productPrice = isar.productPrices
         .filter()
         .product((q) => q.codeEqualTo(product.code))
         .sortByCreatedDesc()
@@ -142,15 +98,7 @@ class _SearchAndAddProduct extends ConsumerState<SearchAndAddProduct> {
         labelText: "Quantity",
       ),
       onChanged: (event) {
-        var price = priceController.text;
-        var quantity = quantityController.text;
-        if (![double.infinity, double.nan, null]
-                .contains(double.tryParse(price)) &&
-            ![double.infinity, double.nan, null]
-                .contains(double.tryParse(quantity))) {
-          var total = double.parse(price) * double.parse(quantity);
-          totalController.text = total.toString();
-        }
+        onQuantityChange(priceController, quantityController, totalController);
       },
       validator: (value) {
         if (value == null ||
@@ -173,15 +121,7 @@ class _SearchAndAddProduct extends ConsumerState<SearchAndAddProduct> {
         labelText: "Price",
       ),
       onChanged: (event) {
-        var price = priceController.text;
-        var quantity = quantityController.text;
-        if (![double.infinity, double.nan, null]
-                .contains(double.tryParse(price)) &&
-            ![double.infinity, double.nan, null]
-                .contains(double.tryParse(quantity))) {
-          var total = double.parse(price) * double.parse(quantity);
-          totalController.text = total.toString();
-        }
+        onQuantityChange(priceController, quantityController, totalController);
       },
       validator: (value) {
         if (value == null ||
@@ -289,6 +229,11 @@ class _SearchAndAddProduct extends ConsumerState<SearchAndAddProduct> {
       );
     }
 
+    if (journalDetail != null) {
+      quantityController.text = journalDetail.amount.toString();
+      onQuantityChange(priceController, quantityController, totalController);
+    }
+
     return AlertDialog(
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -313,7 +258,7 @@ class _SearchAndAddProduct extends ConsumerState<SearchAndAddProduct> {
           onPressed: () {
             if (formKey.currentState!.validate()) {
               var amount = double.parse(quantityController.text);
-              var price = isar?.productPrices
+              var price = isar.productPrices
                       .filter()
                       .product((p) => p.idEqualTo(product.id))
                       .sortByCreatedDesc()
@@ -322,19 +267,19 @@ class _SearchAndAddProduct extends ConsumerState<SearchAndAddProduct> {
                   0;
               Journal j = selectedJournal.data;
               setState(() {
-                if(journalDetail == null) {
+                if (journalDetail == null) {
                   JournalDetail jd = JournalDetail()
                     ..journal.value = selectedJournal.data
                     ..product.value = product
                     ..amount = amount
                     ..price = price;
                   j.details.add(jd);
-                  isar?.writeTxnSync(() => j.details.saveSync());
-                }
-                else{
+                  isar.writeTxnSync(() => j.details.saveSync());
+                } else {
                   journalDetail.amount = amount;
                   journalDetail.price = price;
-                  isar?.writeTxnSync(() => isar?.journalDetails.putSync(journalDetail));
+                  isar.writeTxnSync(
+                      () => isar.journalDetails.putSync(journalDetail));
                 }
                 selectedJournal.data = j;
               });
@@ -347,61 +292,17 @@ class _SearchAndAddProduct extends ConsumerState<SearchAndAddProduct> {
     );
   }
 
-  Widget _buildSearchField() {
-    return TextField(
-      controller: _searchQueryController,
-      autofocus: true,
-      decoration: const InputDecoration(
-        hintText: "Product Name...",
-        border: InputBorder.none,
-      ),
-      onChanged: (query) => _onSearchChanged(query),
-    );
-  }
-
-  _onSearchChanged(String query) {
-    if (_debounceTimer?.isActive ?? false) _debounceTimer?.cancel();
-    _debounceTimer = Timer(Duration(milliseconds: _debounceTime), () {
-      updateSearchQuery(query);
-    });
-  }
-
-  @override
-  void dispose() {
-    _debounceTimer?.cancel();
-    super.dispose();
-  }
-
-  List<Widget> _buildActions() {
-    return <Widget>[
-      IconButton(
-        icon: const Icon(Icons.clear),
-        onPressed: () {
-          if (_searchQueryController.text.isEmpty) {
-            Navigator.pop(context);
-            return;
-          }
-          _clearSearchQuery();
-        },
-      ),
-    ];
-  }
-
-  void updateSearchQuery(String query) {
-    setState(() {
-      products = isar?.products
-              .filter()
-              .nameContains(query, caseSensitive: false)
-              .sortByCode()
-              .findAllSync() ??
-          [];
-    });
-  }
-
-  void _clearSearchQuery() {
-    setState(() {
-      _searchQueryController.clear();
-      updateSearchQuery("");
-    });
+  void onQuantityChange(
+      TextEditingController priceController,
+      TextEditingController quantityController,
+      TextEditingController totalController) {
+    var price = priceController.text;
+    var quantity = quantityController.text;
+    if (![double.infinity, double.nan, null].contains(double.tryParse(price)) &&
+        ![double.infinity, double.nan, null]
+            .contains(double.tryParse(quantity))) {
+      var total = double.parse(price) * double.parse(quantity);
+      totalController.text = total.toString();
+    }
   }
 }

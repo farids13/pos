@@ -5,7 +5,9 @@ part 'journal.g.dart';
 
 @collection
 class Journal {
-  Journal({this.journalStatus = JournalStatus.opened}) {
+  Journal({
+    this.journalStatus = JournalStatus.opened,
+  }) {
     created = DateTime.now();
   }
 
@@ -39,6 +41,7 @@ enum JournalType {
   outgoing,
   stockAdjustment,
   startingStock,
+  other,
 }
 
 enum JournalStatus {

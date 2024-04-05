@@ -160,6 +160,7 @@ const _JournaljournalTypeEnumValueMap = {
   'outgoing': 3,
   'stockAdjustment': 4,
   'startingStock': 5,
+  'other': 6,
 };
 const _JournaljournalTypeValueEnumMap = {
   0: JournalType.purchase,
@@ -168,6 +169,7 @@ const _JournaljournalTypeValueEnumMap = {
   3: JournalType.outgoing,
   4: JournalType.stockAdjustment,
   5: JournalType.startingStock,
+  6: JournalType.other,
 };
 
 Id _journalGetId(Journal object) {
