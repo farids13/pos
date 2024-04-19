@@ -23,6 +23,8 @@ class OutgoingGoodsListScreen extends ConsumerWidget {
         .sortByCreatedDesc()
         .findAll();
 
+    var primaryColor = Theme.of(context).colorScheme.primary;
+
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
@@ -33,24 +35,62 @@ class OutgoingGoodsListScreen extends ConsumerWidget {
           ),
         ],
       ),
-      body: FutureBuilder(
-          future: outgoingGoods,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              List<Journal> outgoingGoods = snapshot.data!;
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextButton(
+                      style: TextButton.styleFrom(
+                        side: BorderSide(width: 1, color: primaryColor),
+                      ),
+                      onPressed: () {},
+                      child: const Text("Product Return"),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextButton(
+                      style: TextButton.styleFrom(
+                        side: BorderSide(width: 1, color: primaryColor),
+                      ),
+                      onPressed: () {},
+                      child: const Text("Broken Product"),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: FutureBuilder(
+                future: outgoingGoods,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    List<Journal> outgoingGoods = snapshot.data!;
 
-              List<Widget> data =
-                  prepareJournalListTiles(context, outgoingGoods);
-              return outgoingGoods.isEmpty
-                  ? const Center(child: Text('Empty'))
-                  : ListView(
-                      children: data,
-                    );
-            }
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }),
+                    List<Widget> data =
+                        prepareJournalListTiles(context, outgoingGoods);
+                    return outgoingGoods.isEmpty
+                        ? const Center(child: Text('Empty'))
+                        : ListView(
+                            children: data,
+                          );
+                  }
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }),
+          ),
+        ],
+      ),
     );
   }
 }

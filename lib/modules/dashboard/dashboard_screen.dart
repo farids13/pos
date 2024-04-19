@@ -256,7 +256,8 @@ class _CashierHomePage extends ConsumerState<CashierHomePage> {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _createNewReceipt(context),
+        onPressed: () =>
+            _createNewReceipt(ref, context, "SLS", JournalType.sale),
         tooltip: 'Create New Receipt',
         child: const Icon(Icons.point_of_sale),
       ),
@@ -384,14 +385,15 @@ class _CashierHomePage extends ConsumerState<CashierHomePage> {
     ];
   }
 
-  void _createNewReceipt(BuildContext context) {
+  void _createNewReceipt(WidgetRef ref, BuildContext context,
+      String receiptCode, JournalType journalType) {
     Isar isar = ref.watch(isarProvider);
     SelectedJournal s = ref.watch(selectedJournalProvider);
     Journal j = Journal()
       ..created = DateTime.now()
       ..code =
-          "SLS${DateTime.now().year}${DateTime.now().month}${DateTime.now().day}${DateTime.now().hour}${DateTime.now().minute}${DateTime.now().second}"
-      ..journalType = JournalType.sale;
+          "$receiptCode-${DateTime.now().year}${DateTime.now().month}${DateTime.now().day}${DateTime.now().hour}${DateTime.now().minute}${DateTime.now().second}"
+      ..journalType = journalType;
 
     isar.writeTxnSync(() => isar.journals.putSync(j));
 
