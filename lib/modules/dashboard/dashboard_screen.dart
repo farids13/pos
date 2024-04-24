@@ -1,6 +1,7 @@
 import 'package:cashier_app/collections/journal/journal.dart';
 import 'package:cashier_app/main.dart';
 import 'package:cashier_app/modules/transactions/incoming_goods/incoming_goods_list_screen.dart';
+import 'package:cashier_app/modules/transactions/receipts/sales_list_screen.dart';
 import 'package:cashier_app/modules/transactions/receipts/sales_management_screen.dart';
 import 'package:cashier_app/states/selected_journal_provider.dart';
 import 'package:cashier_app/utils/helpers/prepare_journal_list_tiles.dart';
@@ -236,7 +237,15 @@ class _CashierHomePage extends ConsumerState<CashierHomePage> {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: TextButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context)
+                  .push(
+                    MaterialPageRoute(
+                        builder: (_) => const SalesListScreen()),
+                  )
+                  .then((val) =>
+                      val != null ? (val ? _getRequests() : null) : null);
+            },
             child: const Padding(
               padding: EdgeInsets.all(8.0),
               child: Text("more..."),
