@@ -156,18 +156,22 @@ const _JournaljournalTypeEnumValueMap = {
   'sale': 1,
   'incoming': 2,
   'outgoing': 3,
-  'stockAdjustment': 4,
-  'startingStock': 5,
-  'other': 6,
+  'returning': 4,
+  'stockAdjustment': 5,
+  'startingStock': 6,
+  'brokenProducts': 7,
+  'other': 8,
 };
 const _JournaljournalTypeValueEnumMap = {
   0: JournalType.purchase,
   1: JournalType.sale,
   2: JournalType.incoming,
   3: JournalType.outgoing,
-  4: JournalType.stockAdjustment,
-  5: JournalType.startingStock,
-  6: JournalType.other,
+  4: JournalType.returning,
+  5: JournalType.stockAdjustment,
+  6: JournalType.startingStock,
+  7: JournalType.brokenProducts,
+  8: JournalType.other,
 };
 
 Id _journalGetId(Journal object) {

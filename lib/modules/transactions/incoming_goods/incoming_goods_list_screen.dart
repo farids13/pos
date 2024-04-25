@@ -4,13 +4,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
 
 import '../../../main.dart';
+import '../../../states/selected_journal_provider.dart';
 import '../../../utils/helpers/prepare_journal_list_tiles.dart';
+import '../receipts/sales_management_screen.dart';
 
-class IncomingGoodsListScreen extends ConsumerWidget {
+class IncomingGoodsListScreen extends ConsumerStatefulWidget {
   const IncomingGoodsListScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ConsumerStatefulWidget> createState() => _IncomingGoodsListScreen();
+}
+
+class _IncomingGoodsListScreen extends ConsumerState<IncomingGoodsListScreen> {
+  @override
+  Widget build(BuildContext context) {
     final isar = ref.watch(isarProvider);
     final incomingGoods = isar.journals
         .filter()
@@ -21,7 +28,9 @@ class IncomingGoodsListScreen extends ConsumerWidget {
           (q) => q
               .journalTypeEqualTo(JournalType.startingStock)
               .or()
-              .journalTypeEqualTo(JournalType.incoming),
+              .journalTypeEqualTo(JournalType.incoming)
+              .or()
+              .journalTypeEqualTo(JournalType.purchase),
         )
         .sortByCreatedDesc()
         .findAll();
@@ -52,7 +61,8 @@ class IncomingGoodsListScreen extends ConsumerWidget {
                       style: TextButton.styleFrom(
                         side: BorderSide(width: 1, color: primaryColor),
                       ),
-                      onPressed: () {},
+                      onPressed: () => _createNewReceipt(
+                          ref, context, "PRC", JournalType.purchase),
                       child: const Text("New Purchase"),
                     ),
                   ),
@@ -64,7 +74,8 @@ class IncomingGoodsListScreen extends ConsumerWidget {
                       style: TextButton.styleFrom(
                         side: BorderSide(width: 1, color: primaryColor),
                       ),
-                      onPressed: () {},
+                      onPressed: () => _createNewReceipt(
+                          ref, context, "STR", JournalType.startingStock),
                       child: const Text("Starting Stock"),
                     ),
                   ),
@@ -96,4 +107,28 @@ class IncomingGoodsListScreen extends ConsumerWidget {
       ),
     );
   }
+
+  void _createNewReceipt(WidgetRef ref, BuildContext context,
+      String receiptCode, JournalType journalType) {
+    Isar isar = ref.watch(isarProvider);
+    SelectedJournal s = ref.watch(selectedJournalProvider);
+    Journal j = Journal()
+      ..created = DateTime.now()
+      ..code =
+          "$receiptCode-${DateTime.now().year}${DateTime.now().month}${DateTime.now().day}${DateTime.now().hour}${DateTime.now().minute}${DateTime.now().second}"
+      ..journalType = journalType;
+
+    isar.writeTxnSync(() => isar.journals.putSync(j));
+
+    setState(() {
+      s.data = j;
+    });
+    Navigator.of(context)
+        .push(
+      MaterialPageRoute(builder: (_) => const SalesManagementScreen()),
+    )
+        .then((val) => val != null ? (val ? _getRequests() : null) : null);
+  }
+
+  _getRequests() async {}
 }

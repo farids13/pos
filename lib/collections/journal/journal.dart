@@ -39,8 +39,10 @@ enum JournalType {
   sale,
   incoming,
   outgoing,
+  returning,
   stockAdjustment,
   startingStock,
+  brokenProducts,
   other,
 }
 

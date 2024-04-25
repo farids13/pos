@@ -5,12 +5,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
 
 import '../../../collections/journal/journal.dart';
+import '../../../states/selected_journal_provider.dart';
+import '../receipts/sales_management_screen.dart';
 
-class OutgoingGoodsListScreen extends ConsumerWidget {
+class OutgoingGoodsListScreen extends ConsumerStatefulWidget {
   const OutgoingGoodsListScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      _OutgoingGoodsListScreen();
+}
+
+class _OutgoingGoodsListScreen extends ConsumerState<OutgoingGoodsListScreen> {
+  @override
+  Widget build(BuildContext context) {
     final isar = ref.watch(isarProvider);
     final outgoingGoods = isar.journals
         .filter()
@@ -18,7 +26,12 @@ class OutgoingGoodsListScreen extends ConsumerWidget {
         .journalStatusEqualTo(JournalStatus.cancelled)
         .and()
         .group(
-          (q) => q.journalTypeEqualTo(JournalType.outgoing),
+          (q) => q
+              .journalTypeEqualTo(JournalType.outgoing)
+              .or()
+              .journalTypeEqualTo(JournalType.returning)
+              .or()
+              .journalTypeEqualTo(JournalType.brokenProducts),
         )
         .sortByCreatedDesc()
         .findAll();
@@ -49,7 +62,8 @@ class OutgoingGoodsListScreen extends ConsumerWidget {
                       style: TextButton.styleFrom(
                         side: BorderSide(width: 1, color: primaryColor),
                       ),
-                      onPressed: () {},
+                      onPressed: () => _createNewReceipt(
+                          ref, context, "RTN", JournalType.returning),
                       child: const Text("Product Return"),
                     ),
                   ),
@@ -61,7 +75,8 @@ class OutgoingGoodsListScreen extends ConsumerWidget {
                       style: TextButton.styleFrom(
                         side: BorderSide(width: 1, color: primaryColor),
                       ),
-                      onPressed: () {},
+                      onPressed: () => _createNewReceipt(
+                          ref, context, "BRK", JournalType.brokenProducts),
                       child: const Text("Broken Product"),
                     ),
                   ),
@@ -93,4 +108,28 @@ class OutgoingGoodsListScreen extends ConsumerWidget {
       ),
     );
   }
+
+  void _createNewReceipt(WidgetRef ref, BuildContext context,
+      String receiptCode, JournalType journalType) {
+    Isar isar = ref.watch(isarProvider);
+    SelectedJournal s = ref.watch(selectedJournalProvider);
+    Journal j = Journal()
+      ..created = DateTime.now()
+      ..code =
+          "$receiptCode-${DateTime.now().year}${DateTime.now().month}${DateTime.now().day}${DateTime.now().hour}${DateTime.now().minute}${DateTime.now().second}"
+      ..journalType = journalType;
+
+    isar.writeTxnSync(() => isar.journals.putSync(j));
+
+    setState(() {
+      s.data = j;
+    });
+    Navigator.of(context)
+        .push(
+          MaterialPageRoute(builder: (_) => const SalesManagementScreen()),
+        )
+        .then((val) => val != null ? (val ? _getRequests() : null) : null);
+  }
+
+  _getRequests() async {}
 }
