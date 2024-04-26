@@ -121,8 +121,7 @@ class _SalesManagementScreenState extends ConsumerState<SalesManagementScreen> {
                               setState(() {
                                 selectedProduct.data =
                                     journalDetail.product.value!;
-                                selectedJournalDetail.data =
-                                    journalDetail;
+                                selectedJournalDetail.data = journalDetail;
                               });
                               showDialog(
                                   context: context,
@@ -162,42 +161,57 @@ class _SalesManagementScreenState extends ConsumerState<SalesManagementScreen> {
                                       children: [
                                         TableRow(
                                           children: [
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
+                                            Table(
+                                              defaultVerticalAlignment:
+                                                  TableCellVerticalAlignment
+                                                      .middle,
+                                              columnWidths: const {
+                                                0: FlexColumnWidth(8),
+                                                1: FlexColumnWidth(4),
+                                              },
                                               children: [
-                                                Text(
-                                                    "Rp.${numberFormat.format(journalDetail.amount * journalDetail.price)}"),
-                                                Row(
+                                                TableRow(
                                                   children: [
-                                                    _isClosed
-                                                        ? Container()
-                                                        : IconButton(
-                                                            icon: const Icon(
-                                                                Icons.remove),
-                                                            onPressed: () =>
-                                                                updateJournalDetailAmount(
-                                                                    journalDetail,
-                                                                    -1.0),
+                                                    Row(
+                                                      children: [
+                                                        _isClosed
+                                                            ? Container()
+                                                            : IconButton(
+                                                                icon: const Icon(
+                                                                    Icons
+                                                                        .remove),
+                                                                onPressed: () =>
+                                                                    updateJournalDetailAmount(
+                                                                        journalDetail,
+                                                                        -1.0),
+                                                              ),
+                                                        Expanded(
+                                                          child: Container(
+                                                            alignment: Alignment
+                                                                .center,
+                                                            child: Text(
+                                                                "${journalDetail.amount}"),
                                                           ),
-                                                    Container(
-                                                      width: 48,
-                                                      alignment:
-                                                          Alignment.center,
-                                                      child: Text(
-                                                          "${journalDetail.amount}"),
+                                                        ),
+                                                        _isClosed
+                                                            ? Container()
+                                                            : IconButton(
+                                                                icon: const Icon(
+                                                                    Icons.add),
+                                                                onPressed: () =>
+                                                                    updateJournalDetailAmount(
+                                                                        journalDetail,
+                                                                        1.0),
+                                                              ),
+                                                      ],
                                                     ),
-                                                    _isClosed
-                                                        ? Container()
-                                                        : IconButton(
-                                                            icon: const Icon(
-                                                                Icons.add),
-                                                            onPressed: () =>
-                                                                updateJournalDetailAmount(
-                                                                    journalDetail,
-                                                                    1.0),
-                                                          ),
+                                                    Align(
+                                                      alignment:
+                                                          Alignment.centerRight,
+                                                      child: Text(
+                                                        "Rp.${numberFormat.format(journalDetail.amount * journalDetail.price)}",
+                                                      ),
+                                                    ),
                                                   ],
                                                 ),
                                               ],
