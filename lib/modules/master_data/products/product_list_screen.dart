@@ -1,6 +1,7 @@
 import 'package:cashier_app/collections/journal/journal_detail.dart';
 import 'package:cashier_app/collections/product/product.dart';
 import 'package:cashier_app/main.dart';
+import 'package:cashier_app/modules/master_data/products/product_detail_screen.dart';
 import 'package:cashier_app/modules/master_data/products/product_management_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -24,15 +25,9 @@ class ProductListScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Product List"),
-        actions: [
-          CloseButton(
-            onPressed: () => Navigator.of(context).pop(true),
-          ),
-        ],
       ),
       body: Column(
         children: [
-
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Row(
@@ -45,7 +40,11 @@ class ProductListScreen extends ConsumerWidget {
                       style: TextButton.styleFrom(
                         side: BorderSide(width: 1, color: primaryColor),
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (_) => const ProductManagementScreen(),
+                        ));
+                      },
                       child: const Text("Add New Product"),
                     ),
                   ),
@@ -65,7 +64,8 @@ class ProductListScreen extends ConsumerWidget {
                           itemCount: products.length,
                           itemBuilder: (context, index) {
                             Product product = products[index];
-                            List<JournalDetail> journalDetails = isar.journalDetails
+                            List<JournalDetail> journalDetails = isar
+                                .journalDetails
                                 .filter()
                                 .product((q) => q.codeEqualTo(product.code))
                                 .findAllSync();
@@ -90,10 +90,11 @@ class ProductListScreen extends ConsumerWidget {
                                         : Colors.black),
                               ),
                               onTap: () async {
-                                ref.watch(productProvider.notifier).state = product;
+                                ref.watch(productProvider.notifier).state =
+                                    product;
                                 await Navigator.of(context).push(
                                   MaterialPageRoute(
-                                    builder: (_) => const ProductManagementScreen(),
+                                    builder: (_) => const ProductDetailScreen(),
                                   ),
                                 );
                               },

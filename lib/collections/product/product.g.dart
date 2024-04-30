@@ -48,7 +48,15 @@ const ProductSchema = CollectionSchema(
       ],
     )
   },
-  links: {},
+  links: {
+    r'prices': LinkSchema(
+      id: 6560971130029785486,
+      name: r'prices',
+      target: r'ProductPrice',
+      single: false,
+      linkName: r'product',
+    )
+  },
   embeddedSchemas: {},
   getId: _productGetId,
   getLinks: _productGetLinks,
@@ -112,11 +120,12 @@ Id _productGetId(Product object) {
 }
 
 List<IsarLinkBase<dynamic>> _productGetLinks(Product object) {
-  return [];
+  return [object.prices];
 }
 
 void _productAttach(IsarCollection<dynamic> col, Id id, Product object) {
   object.id = id;
+  object.prices.attach(col, col.isar.collection<ProductPrice>(), r'prices', id);
 }
 
 extension ProductByIndex on IsarCollection<Product> {
@@ -611,7 +620,63 @@ extension ProductQueryObject
     on QueryBuilder<Product, Product, QFilterCondition> {}
 
 extension ProductQueryLinks
-    on QueryBuilder<Product, Product, QFilterCondition> {}
+    on QueryBuilder<Product, Product, QFilterCondition> {
+  QueryBuilder<Product, Product, QAfterFilterCondition> prices(
+      FilterQuery<ProductPrice> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.link(q, r'prices');
+    });
+  }
+
+  QueryBuilder<Product, Product, QAfterFilterCondition> pricesLengthEqualTo(
+      int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'prices', length, true, length, true);
+    });
+  }
+
+  QueryBuilder<Product, Product, QAfterFilterCondition> pricesIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'prices', 0, true, 0, true);
+    });
+  }
+
+  QueryBuilder<Product, Product, QAfterFilterCondition> pricesIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'prices', 0, false, 999999, true);
+    });
+  }
+
+  QueryBuilder<Product, Product, QAfterFilterCondition> pricesLengthLessThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'prices', 0, true, length, include);
+    });
+  }
+
+  QueryBuilder<Product, Product, QAfterFilterCondition> pricesLengthGreaterThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'prices', length, include, 999999, true);
+    });
+  }
+
+  QueryBuilder<Product, Product, QAfterFilterCondition> pricesLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(
+          r'prices', lower, includeLower, upper, includeUpper);
+    });
+  }
+}
 
 extension ProductQuerySortBy on QueryBuilder<Product, Product, QSortBy> {
   QueryBuilder<Product, Product, QAfterSortBy> sortByCode() {

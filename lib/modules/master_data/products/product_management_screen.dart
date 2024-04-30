@@ -1,104 +1,56 @@
-import 'package:cashier_app/collections/journal/journal.dart';
-import 'package:cashier_app/collections/journal/journal_detail.dart';
-import 'package:cashier_app/collections/product/product.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
-import 'package:isar/isar.dart';
-
-import '../../../main.dart';
 
 class ProductManagementScreen extends ConsumerStatefulWidget {
   const ProductManagementScreen({super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() =>
-      _ProductManagementScreen();
+  ConsumerState createState() => _ProductManagementScreenState();
 }
 
-class _ProductManagementScreen extends ConsumerState<ProductManagementScreen> {
+class _ProductManagementScreenState
+    extends ConsumerState<ProductManagementScreen> {
   @override
   Widget build(BuildContext context) {
-    var product = ref.watch(productProvider);
-
-    var isar = ref.read(isarProvider);
-
-    var journalDetails = isar.journalDetails
-        .where()
-        .filter()
-        .product((q) => q.codeEqualTo(product.code))
-        .findAllSync();
-
-    journalDetails.sort(
-      (a, b) {
-        var now = DateTime.now();
-        var ja = b.journal.value?.created ?? now;
-        var jb = a.journal.value?.created ?? now;
-        return ja.compareTo(jb);
-      },
-    );
-
-    var journals = journalDetails.map(
-      (journalDetail) => ListTile(
-        tileColor: incomingGoodsCollection
-                .contains(journalDetail.journal.value?.journalType)
-            ? Theme.of(context).colorScheme.secondary.withOpacity(0.1)
-            : Theme.of(context).colorScheme.inversePrimary.withOpacity(0.25),
-        title: Text("${journalDetail.journal.value?.code}"),
-        subtitle: Text(
-            DateFormat('yyyy-MM-dd kk:mm').format(journalDetail.journal.value!.created)),
-        trailing: Text(
-          "${(journalDetail.amount).toStringAsFixed(0)} item(s)",
-          style: TextStyle(
-            fontSize: 14,
-            color: incomingGoodsCollection
-                    .contains(journalDetail.journal.value?.journalType)
-                ? Colors.black
-                : Colors.red,
-          ),
-        ),
-      ),
-    );
-
-    var journalAmount = 0.0;
-    for (var journalDetail in journalDetails) {
-      if (incomingGoodsCollection
-          .contains(journalDetail.journal.value?.journalType)) {
-        journalAmount += journalDetail.amount;
-      } else {
-        journalAmount -= journalDetail.amount;
-      }
-    }
-
+    var primaryColor = Theme.of(context).colorScheme.primary;
     return Scaffold(
       appBar: AppBar(
-        title: Text(product.code),
-        actions: [
-          CloseButton(
-            onPressed: () => Navigator.of(context).pop(true),
-          ),
-        ],
+        title: const Text("Create / Edit Product"),
       ),
-      body: ListView(
-        children: [
-          ListTile(
-            title: Text(
-              product.name,
-              style: const TextStyle(
-                fontSize: 24,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              TextFormField(
+                decoration: const InputDecoration(labelText: 'Product Code'),
               ),
-            ),
-            trailing: Text(
-              "${journalAmount.toStringAsFixed(0)} item(s)",
-              style: TextStyle(
-                fontWeight: FontWeight.normal,
-                color: journalAmount < 0.0 ? Colors.red : Colors.black,
-                fontSize: 24,
+              const SizedBox(height: 16.0),
+              TextFormField(
+                decoration: const InputDecoration(labelText: 'Name'),
               ),
-            ),
+              const SizedBox(height: 24.0),
+              TextFormField(
+                decoration: const InputDecoration(labelText: 'Unit'),
+              ),
+              const SizedBox(height: 16.0),
+              TextFormField(
+                decoration: const InputDecoration(labelText: 'Barcode'),
+              ),
+              const SizedBox(height: 32.0),
+              TextButton(
+                style: TextButton.styleFrom(
+                  side: BorderSide(width: 1, color: primaryColor),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Submit'),
+              ),
+            ],
           ),
-          const Divider(),
-        ].followedBy(journals).toList(),
+        ),
       ),
     );
   }

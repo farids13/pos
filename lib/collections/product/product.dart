@@ -1,3 +1,4 @@
+import 'package:cashier_app/collections/product/product_price.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
 
@@ -15,4 +16,7 @@ class Product {
   @Index(unique: true)
   late String code;
   late String name;
+
+  @Backlink(to: 'product')
+  final prices = IsarLinks<ProductPrice>();
 }
