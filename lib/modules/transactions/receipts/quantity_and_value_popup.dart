@@ -267,7 +267,7 @@ class _QuantityAndValuePopupState extends ConsumerState<QuantityAndValuePopup> {
                   0;
               Journal j = selectedJournal.data;
               setState(() {
-                if (journalDetail == null) {
+                if (journalDetail == null ||journalDetail.journal.value == null) {
                   JournalDetail jd = JournalDetail()
                     ..journal.value = selectedJournal.data
                     ..product.value = product
