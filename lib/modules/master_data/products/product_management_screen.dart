@@ -1,5 +1,6 @@
 import 'package:barcode_widget/barcode_widget.dart';
 import 'package:cashier_app/collections/product/product.dart';
+import 'package:cashier_app/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -155,7 +156,23 @@ class _ProductManagementScreenState
                     side: BorderSide(width: 1, color: primaryColor),
                   ),
                   onPressed: () {
+                    var isar = ref.watch(isarProvider);
                     if (formKey.currentState!.validate()) {
+                      product.name = productNameController.text;
+                      product.code = productCodeController.text;
+                      product.unit = productUnitController.text;
+                      product.category = productCategoryController.text;
+                      product.barcode = productBarcodeController.text;
+                      product.description = productDescriptionController.text;
+
+                      isar.writeTxnSync(() async {
+                        isar.products.putSync(product);
+                      });
+
+                      ref.invalidate(productProvider);
+                      ref.watch(productProvider.notifier).state = product;
+                      ref.invalidate(isarProvider);
+
                       Navigator.of(context).pop();
                     }
                   },

@@ -18,6 +18,16 @@ class ProductDetailScreen extends ConsumerStatefulWidget {
 
 class _ProductDetailScreen extends ConsumerState<ProductDetailScreen> {
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
+  @override
   Widget build(BuildContext context) {
     var product = ref.watch(productProvider);
     var price = product.prices.isNotEmpty ? product.prices.last.price : 0.0;
@@ -26,6 +36,7 @@ class _ProductDetailScreen extends ConsumerState<ProductDetailScreen> {
     var journalDetails = isar.journalDetails
         .where()
         .filter()
+        .journal((q) => q.journalStatusEqualTo(JournalStatus.posted))
         .product((q) => q.codeEqualTo(product.code))
         .findAllSync();
 
@@ -77,7 +88,6 @@ class _ProductDetailScreen extends ConsumerState<ProductDetailScreen> {
           IconButton(
               icon: const Icon(Icons.edit_outlined),
               onPressed: () {
-
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (_) => const ProductManagementScreen(),

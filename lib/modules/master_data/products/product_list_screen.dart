@@ -68,6 +68,7 @@ class ProductListScreen extends ConsumerWidget {
                             List<JournalDetail> journalDetails = isar
                                 .journalDetails
                                 .filter()
+                            .journal((q) => q.journalStatusEqualTo(JournalStatus.posted))
                                 .product((q) => q.codeEqualTo(product.code))
                                 .findAllSync();
                             var journalAmount = 0.0;
