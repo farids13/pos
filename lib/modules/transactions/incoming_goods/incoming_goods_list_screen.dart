@@ -41,11 +41,6 @@ class _IncomingGoodsListScreen extends ConsumerState<IncomingGoodsListScreen> {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text("Incoming Goods"),
-        actions: [
-          CloseButton(
-            onPressed: () => Navigator.of(context).pop(true),
-          ),
-        ],
       ),
       body: Column(
         children: [

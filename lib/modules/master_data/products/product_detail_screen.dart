@@ -75,13 +75,15 @@ class _ProductDetailScreen extends ConsumerState<ProductDetailScreen> {
         title: Text(product.code),
         actions: [
           IconButton(
-            icon: const Icon(Icons.edit_outlined),
-            onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (_) => const ProductManagementScreen(),
-              ),
-            ),
-          ),
+              icon: const Icon(Icons.edit_outlined),
+              onPressed: () {
+
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => const ProductManagementScreen(),
+                  ),
+                );
+              }),
         ],
       ),
       body: ListView(

@@ -41,6 +41,7 @@ class ProductListScreen extends ConsumerWidget {
                         side: BorderSide(width: 1, color: primaryColor),
                       ),
                       onPressed: () {
+                        ref.watch(productProvider.notifier).state = Product();
                         Navigator.of(context).push(MaterialPageRoute(
                           builder: (_) => const ProductManagementScreen(),
                         ));

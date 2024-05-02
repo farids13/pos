@@ -105,7 +105,7 @@ class _QuantityAndValuePopupState extends ConsumerState<QuantityAndValuePopup> {
             value.isEmpty ||
             [double.infinity, double.nan, null]
                 .contains(double.tryParse(value))) {
-          return "Please enter quantity";
+          return "Please enter quantity with decimal value";
         }
         return null;
       },
@@ -128,7 +128,7 @@ class _QuantityAndValuePopupState extends ConsumerState<QuantityAndValuePopup> {
             value.isEmpty ||
             [double.infinity, double.nan, null]
                 .contains(double.tryParse(value))) {
-          return "Please enter item price";
+          return "Please enter item price with decimal value";
         }
         return null;
       },
@@ -159,7 +159,7 @@ class _QuantityAndValuePopupState extends ConsumerState<QuantityAndValuePopup> {
             value.isEmpty ||
             [double.infinity, double.nan, null]
                 .contains(double.tryParse(value))) {
-          return "Please enter total amount for this item";
+          return "Please enter total amount for this item with decimal value";
         }
         return null;
       },
@@ -178,7 +178,7 @@ class _QuantityAndValuePopupState extends ConsumerState<QuantityAndValuePopup> {
               value.isEmpty ||
               [double.infinity, double.nan, null]
                   .contains(double.tryParse(value))) {
-            return "Please enter selling price for this item";
+            return "Please enter selling price for this item with decimal value";
           }
           return null;
         },
