@@ -74,7 +74,7 @@ class _CashierHomePage extends ConsumerState<CashierHomePage> {
       List<Journal> lastFourWeeks = sales
           .where((element) =>
               element.created.compareTo(
-                      DateTime.now().subtract(const Duration(days: 28))) >=
+                      DateTime.now().copyWith(hour:23, minute:59, second:59).subtract(const Duration(days: 28))) >=
                   0 &&
               element.journalStatus != JournalStatus.cancelled &&
               element.journalStatus != JournalStatus.opened)
@@ -121,9 +121,37 @@ class _CashierHomePage extends ConsumerState<CashierHomePage> {
         }
       }
       List<ListTile> summary = [];
+      DateTime today = DateTime.now();
+      today = today.copyWith(hour: 0, minute: 0, second: 0);
       for (var element in thisMonthSet) {
+        DateTime dayFrom = DateTime(0);
+        DateTime dayTo = DateTime(0);
+        int index = thisMonthSet.indexOf(element);
+        if (index < 7) {
+          dayFrom = today.add(Duration(days: -index));
+          dayTo =
+              dayFrom.add(const Duration(hours: 23, minutes: 59, seconds: 59));
+        }
+        else{
+          var weeksBefore = index - 5;
+          dayFrom = today.add(Duration(days: -weeksBefore * 7));
+          dayTo = dayFrom.add(const Duration(days: 6, hours: 23, minutes: 59, seconds: 59));
+
+        }
+
         summary.add(
           ListTile(
+            onTap: () => Navigator.of(context)
+                .push(
+                  MaterialPageRoute(
+                    builder: (_) => SalesListScreen(
+                      from: dayFrom,
+                      to: dayTo,
+                    ),
+                  ),
+                )
+                .then((val) =>
+                    val != null ? (val ? _getRequests() : null) : null),
             title: Text(element['title']),
             trailing: Text(
               ("${element['quantity'].toStringAsFixed(0)} item(s) sold"),
@@ -240,8 +268,7 @@ class _CashierHomePage extends ConsumerState<CashierHomePage> {
             onPressed: () {
               Navigator.of(context)
                   .push(
-                    MaterialPageRoute(
-                        builder: (_) => const SalesListScreen()),
+                    MaterialPageRoute(builder: (_) => const SalesListScreen()),
                   )
                   .then((val) =>
                       val != null ? (val ? _getRequests() : null) : null);

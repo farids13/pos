@@ -7,21 +7,28 @@ import 'package:isar/isar.dart';
 import '../../../collections/journal/journal.dart';
 
 class SalesListScreen extends ConsumerWidget {
-  const SalesListScreen({super.key});
+  const SalesListScreen({super.key, this.from, this.to});
+
+  final DateTime? from;
+  final DateTime? to;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isar = ref.watch(isarProvider);
-    final sales = isar.journals
+    var salesBuilder = isar.journals
         .filter()
         .not()
         .journalStatusEqualTo(JournalStatus.cancelled)
         .and()
         .group(
           (q) => q.journalTypeEqualTo(JournalType.sale),
-        )
-        .sortByCreatedDesc()
-        .findAll();
+        );
+
+    if (from != null && to != null) {
+      salesBuilder = salesBuilder.createdBetween(from!, to!);
+    }
+
+    var sales = salesBuilder.sortByCreatedDesc().findAll();
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -42,10 +49,21 @@ class SalesListScreen extends ConsumerWidget {
                   if (snapshot.hasData) {
                     List<Journal> sales = snapshot.data!;
 
-                    List<Widget> data =
-                        prepareJournalListTiles(context, sales);
+                    List<Widget> data = [];
+                    data.add(
+                      ListTile(
+                        title: Center(
+                            child: Text(
+                                "${from?.year}/${from?.month}/${from?.day} : ${to?.year}/${to?.month}/${to?.day}")),
+                      ),
+                    );
+
+                    data.addAll(prepareJournalListTiles(context, sales));
+
                     return sales.isEmpty
-                        ? const Center(child: Text('Empty'))
+                        ? Center(
+                            child: Text(
+                                '${from?.year}/${from?.month}/${from?.day} : ${to?.year}/${to?.month}/${to?.day} is Empty'))
                         : ListView(
                             children: data,
                           );
