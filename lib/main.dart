@@ -3,7 +3,6 @@ import 'package:cashier_app/collections/journal/journal_detail.dart';
 import 'package:cashier_app/collections/location/location.dart';
 import 'package:cashier_app/collections/product/product.dart';
 import 'package:cashier_app/collections/product/product_price.dart';
-import 'package:cashier_app/modules/authentication/screens/onboarding/onboarding.dart';
 import 'package:cashier_app/utils/helpers/random_data.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -54,7 +53,7 @@ class CashierApp extends ConsumerWidget {
         colorScheme: const ColorScheme.light(),
         useMaterial3: true,
       ),
-      home: const OnboardingScreen(),
+      home: const CashierHomePage(title: "POS_IT"),
     );
   }
 }
