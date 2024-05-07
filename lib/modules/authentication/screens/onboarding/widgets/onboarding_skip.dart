@@ -1,3 +1,4 @@
+import 'package:cashier_app/modules/authentication/controllers/onboarding_controller.dart';
 import 'package:cashier_app/utils/constants/sizes.dart';
 import 'package:cashier_app/utils/device/device_utility.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +13,7 @@ class OnBoardingSkipButton extends StatelessWidget {
     return Positioned(
       top: QDeviceUtils.getAppBarHeight(),
       right: QSizes.defaultSpace,
-      child: TextButton(onPressed: () {}, child: const Text('Skip')),
+      child: TextButton(onPressed: () => OnboardingController.instance.skipPage(), child: const Text('Skip')),
     );
   }
 }
