@@ -7,6 +7,7 @@ import 'package:cashier_app/states/selected_journal_provider.dart';
 import 'package:cashier_app/utils/helpers/prepare_journal_list_tiles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get/route_manager.dart';
 import 'package:isar/isar.dart';
 
 import '../../utils/helpers/random_data.dart';
@@ -73,8 +74,9 @@ class _CashierHomePage extends ConsumerState<CashierHomePage> {
 
       List<Journal> lastFourWeeks = sales
           .where((element) =>
-              element.created.compareTo(
-                      DateTime.now().copyWith(hour:23, minute:59, second:59).subtract(const Duration(days: 28))) >=
+              element.created.compareTo(DateTime.now()
+                      .copyWith(hour: 23, minute: 59, second: 59)
+                      .subtract(const Duration(days: 28))) >=
                   0 &&
               element.journalStatus != JournalStatus.cancelled &&
               element.journalStatus != JournalStatus.opened)
@@ -131,12 +133,11 @@ class _CashierHomePage extends ConsumerState<CashierHomePage> {
           dayFrom = today.add(Duration(days: -index));
           dayTo =
               dayFrom.add(const Duration(hours: 23, minutes: 59, seconds: 59));
-        }
-        else{
+        } else {
           var weeksBefore = index - 5;
           dayFrom = today.add(Duration(days: -weeksBefore * 7));
-          dayTo = dayFrom.add(const Duration(days: 6, hours: 23, minutes: 59, seconds: 59));
-
+          dayTo = dayFrom.add(
+              const Duration(days: 6, hours: 23, minutes: 59, seconds: 59));
         }
 
         summary.add(
@@ -301,6 +302,7 @@ class _CashierHomePage extends ConsumerState<CashierHomePage> {
   }
 
   List<Widget> _buildMenu(Color primaryColor, BuildContext context) {
+    final username = Get.parameters['username'] ?? '';
     return [
       Expanded(
         child: Padding(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class OnboardingController extends GetxController{
+class OnboardingController extends GetxController {
   static OnboardingController get instance => Get.find();
 
   //Variable
@@ -10,24 +10,22 @@ class OnboardingController extends GetxController{
 
   void updatePageIndicator(index) => currentPageIndex.value = index;
 
-  void dotNavigationClick(index){
+  void dotNavigationClick(index) {
     currentPageIndex.value = index;
     pageController.jumpTo(index);
   }
 
-  void nextPage(){
-    if(currentPageIndex.value >= 2){
-      // Get.offAllNamed("/login");
-    }else{
+  void nextPage() {
+    if (currentPageIndex.value == 2) {
+      Get.offAllNamed("/login");
+    } else {
       currentPageIndex.value++;
       pageController.jumpToPage(currentPageIndex.value);
     }
-
   }
 
-  void skipPage(){
+  void skipPage() {
     currentPageIndex.value = 2;
     pageController.jumpToPage(2);
   }
-
 }
