@@ -5,7 +5,6 @@ import 'package:cashier_app/modules/authentication/screens/onboarding/widgets/on
 import 'package:cashier_app/modules/authentication/screens/onboarding/widgets/onboarding_skip.dart';
 import 'package:cashier_app/utils/constants/image_strings.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 import '../../../../utils/constants/text_strings.dart';
 
@@ -14,7 +13,7 @@ class OnboardingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ctrl = Get.put(OnboardingController());
+    final ctrl = OnboardingController();
 
     return Scaffold(
       body: Stack(
@@ -44,12 +43,15 @@ class OnboardingScreen extends StatelessWidget {
           // Skip Button
           const OnBoardingSkipButton(),
           // Dot Navigation
-          const OnBoardingDot(),
+          OnBoardingDot(
+            controller: ctrl,
+          ),
           //Circular Button
-          const OnboardingNextButton()
+          OnboardingNextButton(
+            ctrl: ctrl,
+          ),
         ],
       ),
     );
-
   }
 }

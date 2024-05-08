@@ -5,22 +5,26 @@ import 'package:cashier_app/utils/device/device_utility.dart';
 import 'package:cashier_app/utils/helpers/helper_function.dart';
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+
 class OnBoardingDot extends StatelessWidget {
+  final OnboardingController controller;
+
   const OnBoardingDot({
     super.key,
+    required this.controller,
   });
 
   @override
   Widget build(BuildContext context) {
-    final ctrl = OnboardingController.instance;
     final dark = QHelperFunction.isDarkMode(context);
 
     return Positioned(
       bottom: QDeviceUtils.getBottomNavigationBarHeight() + 20,
       left: QSizes.defaultSpace,
       child: SmoothPageIndicator(
-        controller: ctrl.pageController,
-        onDotClicked: ctrl.dotNavigationClick,
+        controller: controller
+            .pageController, // Gunakan controller yang diteruskan dari atas
+        onDotClicked: controller.dotNavigationClick,
         effect: ExpandingDotsEffect(
           activeDotColor: dark ? QColors.light : QColors.dark,
           dotHeight: 6,
