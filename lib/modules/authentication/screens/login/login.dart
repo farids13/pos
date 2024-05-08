@@ -7,7 +7,7 @@ import 'package:cashier_app/utils/constants/sizes.dart';
 import 'package:cashier_app/utils/constants/text_strings.dart';
 import 'package:cashier_app/utils/helpers/helper_function.dart';
 import 'package:flutter/material.dart';
-import 'package:get/route_manager.dart';
+import 'package:go_router/go_router.dart';
 import 'package:iconsax/iconsax.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -81,7 +81,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                            onPressed: () => Get.offAllNamed("/home/farid"),
+                            onPressed: () =>
+                                context.pushReplacement("/home/123"),
                             child: const Text(QTexts.login))),
                     const SizedBox(height: QSizes.defaultSpace),
                     SizedBox(

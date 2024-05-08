@@ -1,31 +1,40 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 
-class OnboardingController extends GetxController {
-  static OnboardingController get instance => Get.find();
+class OnboardingController extends ChangeNotifier {
+  // Variable
+  final PageController pageController = PageController();
+  int _currentPageIndex = 0;
 
-  //Variable
-  final pageController = PageController();
-  Rx<int> currentPageIndex = 0.toInt().obs;
+  int get currentPageIndex => _currentPageIndex;
 
-  void updatePageIndicator(index) => currentPageIndex.value = index;
-
-  void dotNavigationClick(index) {
-    currentPageIndex.value = index;
-    pageController.jumpTo(index);
+  void updatePageIndicator(int index) {
+    _currentPageIndex = index;
+    notifyListeners();
   }
 
-  void nextPage() {
-    if (currentPageIndex.value == 2) {
-      Get.offAllNamed("/login");
+  void dotNavigationClick(int index) {
+    _currentPageIndex = index;
+    pageController.jumpToPage(index);
+    notifyListeners();
+  }
+
+  void nextPage(BuildContext context) {
+    if (_currentPageIndex == 2) {
+      // Jika sudah di halaman terakhir, pindah ke halaman login
+      // Ganti '/login' dengan nama rute login Anda
+      // Misalnya, Navigator.pushNamed(context, '/login');
+      context.pushReplacement("/login");
     } else {
-      currentPageIndex.value++;
-      pageController.jumpToPage(currentPageIndex.value);
+      _currentPageIndex++;
+      pageController.jumpToPage(_currentPageIndex);
+      notifyListeners();
     }
   }
 
   void skipPage() {
-    currentPageIndex.value = 2;
+    _currentPageIndex = 2;
     pageController.jumpToPage(2);
+    notifyListeners();
   }
 }

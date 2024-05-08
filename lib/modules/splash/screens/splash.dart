@@ -45,7 +45,7 @@ class _SplashPageState extends State<SplashScreen> {
         username != null && username.isNotEmpty) {
       context.pushReplacement('/home/${prefs.getString('username')}');
     } else {
-      context.go('/login');
+      context.go('/onboarding');
     }
   }
 

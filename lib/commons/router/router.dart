@@ -1,4 +1,5 @@
 import 'package:cashier_app/modules/authentication/screens/login/login.dart';
+import 'package:cashier_app/modules/authentication/screens/onboarding/onboarding.dart';
 import 'package:cashier_app/modules/dashboard/dashboard_screen.dart';
 import 'package:cashier_app/modules/splash/screens/splash.dart';
 import 'package:go_router/go_router.dart';
@@ -14,6 +15,9 @@ final appRouter = GoRouter(
       path: '/login',
       builder: (context, state) => const LoginScreen(),
     ),
+    GoRoute(
+        path: "/onboarding",
+        builder: (context, state) => const OnboardingScreen()),
     GoRoute(
       path: '/home/:username',
       builder: (context, state) {

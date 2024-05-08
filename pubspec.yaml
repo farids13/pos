@@ -27,7 +27,6 @@ dependencies:
   device_info_plus: ^10.1.0
   shared_preferences: ^2.2.3
   go_router: ^14.0.2
-  get: ^4.6.6
   iconsax: ^0.0.8
   smooth_page_indicator: ^1.1.0
   logger: ^2.2.0
