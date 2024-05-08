@@ -1,6 +1,5 @@
-import 'dart:ffi';
-
 import 'package:cashier_app/commons/styles/spacing_styles.dart';
+import 'package:cashier_app/modules/authentication/controllers/login_controller.dart';
 import 'package:cashier_app/utils/constants/constant.dart';
 import 'package:cashier_app/utils/constants/image_strings.dart';
 import 'package:cashier_app/utils/constants/sizes.dart';
@@ -21,6 +20,8 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = QHelperFunction.isDarkMode(context);
+    final LoginController loginCtrl = LoginController();
+    final _formKey = GlobalKey<FormState>();
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -31,8 +32,8 @@ class _LoginScreenState extends State<LoginScreen> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Image(
-                    image: const AssetImage(QImages.logoLoginImages),
+                  const Image(
+                    image: AssetImage(QImages.logoLoginImages),
                     height: QSizes.iconXl * 5,
                   ),
                   Text(QTexts.homeAppBarTitle,
@@ -43,15 +44,32 @@ class _LoginScreenState extends State<LoginScreen> {
                 ],
               ),
               Form(
+                autovalidateMode: AutovalidateMode.always,
+                key: _formKey,
                 child: Column(
                   children: [
                     TextFormField(
+                      controller: loginCtrl.emailController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Email harus diisi';
+                        }
+                        // Lakukan validasi format email
+                        final emailRegex =
+                            RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+                        if (!emailRegex.hasMatch(value)) {
+                          return 'Format email tidak valid';
+                        }
+                        // Kembalikan null jika validasi berhasil
+                        return null;
+                      },
                       decoration: const InputDecoration(
                           prefixIcon: Icon(Iconsax.direct_right),
                           labelText: QTexts.emailHint),
                     ),
                     const SizedBox(height: QSizes.defaultSpace),
                     TextFormField(
+                      controller: loginCtrl.passwordController,
                       decoration: const InputDecoration(
                         prefixIcon: Icon(Iconsax.password_check),
                         labelText: QTexts.passwordHint,
@@ -81,8 +99,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                            onPressed: () =>
-                                context.pushReplacement("/home/123"),
+                            onPressed: () {
+                              if (_formKey.currentState!.validate()) {
+                                loginCtrl.login(context);
+                              }
+                            },
                             child: const Text(QTexts.login))),
                     const SizedBox(height: QSizes.defaultSpace),
                     SizedBox(
@@ -120,7 +141,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           borderRadius: const BorderRadius.all(
                               Radius.circular(QSizes.borderRadiusLg))),
                       child: const Image(image: AssetImage(QImages.logoGoogle)),
-                    )
+                    ),
                   ],
                 ),
               )
