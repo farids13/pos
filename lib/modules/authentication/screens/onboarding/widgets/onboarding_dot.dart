@@ -1,3 +1,4 @@
+import 'package:cashier_app/modules/authentication/controllers/onboarding_controller.dart';
 import 'package:cashier_app/utils/constants/constant.dart';
 import 'package:cashier_app/utils/constants/sizes.dart';
 import 'package:cashier_app/utils/device/device_utility.dart';
@@ -11,13 +12,15 @@ class OnBoardingDot extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ctrl = OnboardingController.instance;
     final dark = QHelperFunction.isDarkMode(context);
 
     return Positioned(
       bottom: QDeviceUtils.getBottomNavigationBarHeight() + 20,
       left: QSizes.defaultSpace,
       child: SmoothPageIndicator(
-        controller: PageController(),
+        controller: ctrl.pageController,
+        onDotClicked: ctrl.dotNavigationClick,
         effect: ExpandingDotsEffect(
           activeDotColor: dark ? QColors.light : QColors.dark,
           dotHeight: 6,
