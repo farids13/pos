@@ -19,7 +19,7 @@ class LoginController {
 
     http.Response response = await _loginApi();
 
-    if (response.statusCode == 200 || true) {
+    if (response.statusCode == 200) {
       context.pushReplacement("/home/farid");
     } else {
       showDialog(
