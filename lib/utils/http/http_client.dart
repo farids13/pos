@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
-class FHttpHelper {
+class QHttpHelper {
   static const String _baseUrl = 'https://pos.saranaintegrasi.co.id/api';
 
   static Future<Map<String, dynamic>> get(String endpoint) async {

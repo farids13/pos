@@ -20,7 +20,7 @@ class QSizes {
   static const double fontSizeLg = 18.0;
 
 // Button Sizes
-  static const double buttonHeight = 18.0;
+  static const double buttonHeight = 60.0;
   static const double buttonRadius = 12.0;
   static const double buttonWidth = 120.0;
   static const double buttonElevation = 4.0;

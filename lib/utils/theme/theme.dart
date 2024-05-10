@@ -3,6 +3,7 @@ import 'package:cashier_app/utils/theme/custom_theme/bottom_sheet_theme.dart';
 import 'package:cashier_app/utils/theme/custom_theme/checkbox_theme.dart';
 import 'package:cashier_app/utils/theme/custom_theme/chip_theme.dart';
 import 'package:cashier_app/utils/theme/custom_theme/elevated_button_theme.dart';
+import 'package:cashier_app/utils/theme/custom_theme/icon_button_theme.dart';
 import 'package:cashier_app/utils/theme/custom_theme/outlined_button_theme.dart';
 import 'package:cashier_app/utils/theme/custom_theme/text_field_theme.dart';
 import 'package:cashier_app/utils/theme/custom_theme/text_theme.dart';
@@ -15,6 +16,7 @@ class QAppTheme {
     useMaterial3: true,
     fontFamily: 'Poppins',
     brightness: Brightness.light,
+    iconButtonTheme: QIconButtonTheme.ligthIconButtonTheme,
     primaryColor: Colors.blue,
     textTheme: QTextTheme.lightTextTheme,
     chipTheme: QChipTheme.lightChipTheme,
@@ -30,7 +32,8 @@ class QAppTheme {
   static ThemeData darkTheme = ThemeData(
     useMaterial3: true,
     fontFamily: 'Poppins',
-    brightness: Brightness.light,
+    brightness: Brightness.dark,
+    iconButtonTheme: QIconButtonTheme.darkIconButtonTheme,
     primaryColor: Colors.blue,
     textTheme: QTextTheme.darkTextTheme,
     chipTheme: QChipTheme.darkChipTheme,
