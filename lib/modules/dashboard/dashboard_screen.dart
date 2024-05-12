@@ -1,18 +1,24 @@
 import 'package:cashier_app/collections/journal/journal.dart';
+import 'package:cashier_app/commons/widgets/navigation_menu.dart';
 import 'package:cashier_app/main.dart';
+import 'package:cashier_app/modules/dashboard/controller/bottom_navigation_controller.dart';
 import 'package:cashier_app/modules/transactions/incoming_goods/incoming_goods_list_screen.dart';
 import 'package:cashier_app/modules/transactions/receipts/sales_list_screen.dart';
 import 'package:cashier_app/modules/transactions/receipts/sales_management_screen.dart';
 import 'package:cashier_app/states/selected_journal_provider.dart';
+import 'package:cashier_app/utils/constants/constant.dart';
 import 'package:cashier_app/utils/helpers/prepare_journal_list_tiles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:isar/isar.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 import '../../utils/helpers/random_data.dart';
 import '../master_data/products/product_list_screen.dart';
 import '../transactions/moving_goods/moving_goods_list_screen.dart';
 import '../transactions/outgoing_goods/outgoing_goods_list_screen.dart';
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 
 class CashierHomePage extends ConsumerStatefulWidget {
   final String title;
@@ -27,6 +33,7 @@ class _CashierHomePage extends ConsumerState<CashierHomePage> {
   @override
   Widget build(BuildContext context) {
     var primaryColor = Theme.of(context).colorScheme.primary;
+
     List<Widget> menus = [];
     menus = _buildMenu(primaryColor, context);
 
@@ -282,7 +289,48 @@ class _CashierHomePage extends ConsumerState<CashierHomePage> {
       );
     }
 
+    final indexPosition = ref.watch(selectIndexStateProvider);
+    void onTap(int index) {
+      ref.watch(selectIndexStateProvider.notifier).setIndexPosition(index);
+      switch (index) {
+        case 0:
+          context.go("/productList");
+          break;
+        case 1:
+          context.go("/favorite");
+          break;
+        case 2:
+          context.go("/notification");
+          break;
+        case 3:
+          context.go("/login");
+          break;
+        default:
+      }
+    }
+
     return Scaffold(
+      bottomNavigationBar: Material(
+        elevation: 2,
+        child: CustomCurvedNavigationWidget(
+          items: [
+            CurvedNavigationBarItem(
+                iconData: MdiIcons.homeOutline,
+                selectedIconData: MdiIcons.home),
+            CurvedNavigationBarItem(
+                iconData: MdiIcons.heartOutline,
+                selectedIconData: MdiIcons.heart),
+            CurvedNavigationBarItem(
+                iconData: MdiIcons.bellOutline,
+                selectedIconData: MdiIcons.bellAlert),
+            CurvedNavigationBarItem(
+                iconData: MdiIcons.accountOutline,
+                selectedIconData: MdiIcons.account),
+          ],
+          currentIndex: indexPosition,
+          onTap: (indexPosition) => onTap(indexPosition),
+        ),
+      ),
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {

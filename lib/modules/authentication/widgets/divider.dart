@@ -1,4 +1,3 @@
-import 'package:cashier_app/utils/helpers/helper_function.dart';
 import 'package:flutter/material.dart';
 
 class DividerWidget extends StatelessWidget {
@@ -7,7 +6,6 @@ class DividerWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = QHelperFunction.isDarkMode(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
