@@ -1,5 +1,6 @@
 import 'package:cashier_app/collections/journal/journal.dart';
 import 'package:cashier_app/commons/widgets/navigation_menu.dart';
+import 'package:cashier_app/data/api/google/google_sign_in_api.dart';
 import 'package:cashier_app/main.dart';
 import 'package:cashier_app/modules/dashboard/controller/bottom_navigation_controller.dart';
 import 'package:cashier_app/modules/transactions/incoming_goods/incoming_goods_list_screen.dart';
@@ -303,6 +304,7 @@ class _CashierHomePage extends ConsumerState<CashierHomePage> {
           context.go("/notification");
           break;
         case 3:
+          GoogleSignInAPI.handleSignOut();
           context.go("/login");
           break;
         default:

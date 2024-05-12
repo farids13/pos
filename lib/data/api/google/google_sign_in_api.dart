@@ -23,15 +23,17 @@ class GoogleSignInAPI {
     scopes: scopes,
   );
 
-  Future<void> handleSignOut() async {
+  static Future<void> handleSignOut() async {
     await _googleSignIn.signOut();
+    SharedPreferences.getInstance().then((prefs) {
+      prefs.clear();
+    });
   }
 
   Future<void> handleSignIn(BuildContext context) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String deviceId = prefs.getString("deviceId") ?? "";
-      String username = prefs.getString("username") ?? "";
 
       await _googleSignIn.signIn().then((result) {
         result?.authentication.then((googleKey) async {
@@ -59,8 +61,6 @@ class GoogleSignInAPI {
             } else {
               QLoggerHelper.error(userMeRes.body);
             }
-            // ignore: use_build_context_synchronously
-            context.pushReplacement("/home/$username");
           } else {
             QLoggerHelper.error(res.body);
             // ignore: use_build_context_synchronously
