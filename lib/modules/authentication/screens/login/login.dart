@@ -1,10 +1,13 @@
+// ignore_for_file: no_leading_underscores_for_local_identifiers
+
 import 'package:cashier_app/commons/styles/spacing_styles.dart';
 import 'package:cashier_app/modules/authentication/controllers/login_controller.dart';
-import 'package:cashier_app/utils/constants/constant.dart';
+import 'package:cashier_app/modules/authentication/validator/auth_validator.dart';
+import 'package:cashier_app/modules/authentication/widgets/divider.dart';
+import 'package:cashier_app/modules/authentication/widgets/social_auth.dart';
 import 'package:cashier_app/utils/constants/image_strings.dart';
 import 'package:cashier_app/utils/constants/sizes.dart';
 import 'package:cashier_app/utils/constants/text_strings.dart';
-import 'package:cashier_app/utils/helpers/helper_function.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax/iconsax.dart';
@@ -19,9 +22,15 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
-    final isDark = QHelperFunction.isDarkMode(context);
     final LoginController loginCtrl = LoginController();
-    final _formKey = GlobalKey<FormState>();
+    final formKey = GlobalKey<FormState>();
+
+    Future<void> _submitForm() async {
+      if (formKey.currentState!.validate()) {
+        formKey.currentState!.save();
+        await loginCtrl.login(context);
+      }
+    }
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -45,36 +54,30 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               Form(
                 autovalidateMode: AutovalidateMode.always,
-                key: _formKey,
+                key: formKey,
                 child: Column(
-                  children: [
+                  children: <Widget>[
+                    const SizedBox(height: QSizes.spaceBetweenSections),
+                    //email
                     TextFormField(
-                      controller: loginCtrl.emailController,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Email harus diisi';
-                        }
-                        // Lakukan validasi format email
-                        final emailRegex =
-                            RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-                        if (!emailRegex.hasMatch(value)) {
-                          return 'Format email tidak valid';
-                        }
-                        // Kembalikan null jika validasi berhasil
-                        return null;
-                      },
+                      onSaved: (newValue) => loginCtrl.oas.email = newValue,
+                      validator: (value) => AuthValidator.validateEmail(value),
                       decoration: const InputDecoration(
                           prefixIcon: Icon(Iconsax.direct_right),
                           labelText: QTexts.emailHint),
                     ),
                     const SizedBox(height: QSizes.defaultSpace),
+
+                    //password
                     TextFormField(
-                      controller: loginCtrl.passwordController,
+                      onFieldSubmitted: (value) => _submitForm(),
+                      onSaved: (newValue) => loginCtrl.oas.password = newValue,
                       decoration: const InputDecoration(
                         prefixIcon: Icon(Iconsax.password_check),
                         labelText: QTexts.passwordHint,
                         suffixIcon: Icon(Iconsax.eye),
                       ),
+                      // validator: (value) => AuthValidator.validatePassword(value)
                     ),
                     const SizedBox(
                       height: QSizes.spaceBetweenInputFields,
@@ -96,52 +99,30 @@ class _LoginScreenState extends State<LoginScreen> {
                               child: const Text(QTexts.forgotPassword)),
                         ]),
                     const SizedBox(height: QSizes.spaceBetweenSections),
+
+                    // button Login
                     SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                            onPressed: () {
-                              if (_formKey.currentState!.validate()) {
-                                loginCtrl.login(context);
-                              }
-                            },
+                            onPressed: () => _submitForm(),
                             child: const Text(QTexts.login))),
                     const SizedBox(height: QSizes.defaultSpace),
+
+                    //button register
                     SizedBox(
                       width: double.infinity,
                       child: OutlinedButton(
-                          onPressed: () {}, child: const Text(QTexts.register)),
+                          onPressed: () => context.push("/register"),
+                          child: const Text(QTexts.register)),
+                    ),
+
+                    // social sign in
+                    const SizedBox(height: QSizes.defaultSpace),
+                    const DividerWidget(
+                      text: QTexts.orSignIn,
                     ),
                     const SizedBox(height: QSizes.defaultSpace),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Flexible(
-                            child: Divider(
-                          color: isDark ? QColors.light : QColors.dark,
-                          thickness: 1,
-                          indent: 60,
-                          endIndent: 5,
-                        )),
-                        Text(QTexts.or,
-                            style: Theme.of(context).textTheme.labelMedium),
-                        Flexible(
-                            child: Divider(
-                          color: isDark ? QColors.light : QColors.dark,
-                          thickness: 1,
-                          indent: 5,
-                          endIndent: 60,
-                        )),
-                      ],
-                    ),
-                    const SizedBox(height: QSizes.defaultSpace),
-                    Container(
-                      width: QSizes.iconXl,
-                      decoration: BoxDecoration(
-                          color: !isDark ? QColors.light : QColors.dark,
-                          borderRadius: const BorderRadius.all(
-                              Radius.circular(QSizes.borderRadiusLg))),
-                      child: const Image(image: AssetImage(QImages.logoGoogle)),
-                    ),
+                    const SocialAuthWidget(),
                   ],
                 ),
               )

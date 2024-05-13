@@ -1,8 +1,8 @@
 import 'package:cashier_app/modules/authentication/controllers/onboarding_controller.dart';
-import 'package:cashier_app/modules/authentication/screens/onboarding/widgets/onboarding_dot.dart';
-import 'package:cashier_app/modules/authentication/screens/onboarding/widgets/onboarding_next.dart';
-import 'package:cashier_app/modules/authentication/screens/onboarding/widgets/onboarding_page.dart';
-import 'package:cashier_app/modules/authentication/screens/onboarding/widgets/onboarding_skip.dart';
+import 'package:cashier_app/modules/authentication/widgets/onboarding_dot.dart';
+import 'package:cashier_app/modules/authentication/widgets/onboarding_next.dart';
+import 'package:cashier_app/modules/authentication/widgets/onboarding_page.dart';
+import 'package:cashier_app/modules/authentication/widgets/onboarding_skip.dart';
 import 'package:cashier_app/utils/constants/image_strings.dart';
 import 'package:flutter/material.dart';
 

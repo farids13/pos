@@ -2,54 +2,55 @@
 
 import 'dart:convert';
 
-import 'package:cashier_app/utils/config/config.dart';
+import 'package:cashier_app/data/api/pos_service_api.dart';
+import 'package:cashier_app/data/dto/auth/login_dto.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginController {
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
-
-  final baseUrl = AppConfig.baseUrl;
+  LoginDTO oas = LoginDTO();
+  String username = "";
 
   Future<void> login(BuildContext context) async {
-    String email = emailController.text.trim();
-    String password = passwordController.text.trim();
+    http.Response response = await PosServiceAPI.loginApi(oas);
 
-    http.Response response = await _loginApi();
+    if (response.statusCode == 200) {
+      var resData = json.decode(response.body);
+      var token = resData['access_token'];
 
-    if (response.statusCode == 200 || true) {
-      context.pushReplacement("/home/farid");
+      http.Response userMe = await PosServiceAPI.userMe(token);
+      if (userMe.statusCode == 200) {
+        SharedPreferences.getInstance().then((prefs) {
+          prefs.setString('token', token);
+        });
+        SharedPreferences.getInstance().then((prefs) {
+          prefs.setString('username', username);
+        });
+
+        var resBody = json.decode(userMe.body);
+        username = resBody['name'];
+        context.pushReplacement("/home/$username");
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.red,
+            content: Text(json.decode(userMe.body)["message"]),
+            elevation: 10,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
     } else {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text("Error"),
-          content: const Text("Email atau password salah"),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("OK"),
-            ),
-          ],
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.red,
+          content: Text(json.decode(response.body)["message"]),
+          elevation: 10,
+          behavior: SnackBarBehavior.floating,
         ),
       );
     }
-  }
-
-  Future<http.Response> _loginApi() async {
-    // var prefs = await SharedPreferences.getInstance();
-    Uri uri = Uri.https(baseUrl, "/api/v1/auth/signin");
-    var body = {
-      "email": emailController.text.trim(),
-      "password": passwordController.text.trim(),
-      "deviceId": "e0d1a340-4031-4b7f-8d72-cd0ce05a22ef",
-    };
-
-    var response = await http.post(uri,
-        body: json.encode(body), headers: AppConfig.headers);
-
-    return response;
   }
 }
