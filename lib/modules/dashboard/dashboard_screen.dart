@@ -295,17 +295,17 @@ class _CashierHomePage extends ConsumerState<CashierHomePage> {
       ref.watch(selectIndexStateProvider.notifier).setIndexPosition(index);
       switch (index) {
         case 0:
-          context.go("/productList");
+          context.push("/productList");
           break;
         case 1:
-          context.go("/favorite");
+          context.push("/favorite");
           break;
         case 2:
-          context.go("/notification");
+          context.push("/notification");
           break;
         case 3:
           GoogleSignInAPI.handleSignOut();
-          context.go("/login");
+          context.replace("/login");
           break;
         default:
       }
