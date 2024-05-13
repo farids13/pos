@@ -51,7 +51,7 @@ class CashierApp extends ConsumerWidget {
     return MaterialApp.router(
       title: 'Home',
       theme: QAppTheme.lightTheme,
-      // darkTheme: QAppTheme.darkTheme,
+      darkTheme: QAppTheme.darkTheme,
       routerConfig: appRouter,
     );
   }
