@@ -1,7 +1,7 @@
 import 'package:cashier_app/collections/journal/journal.dart';
 import 'package:cashier_app/collections/journal/journal_detail.dart';
 import 'package:cashier_app/main.dart';
-import 'package:cashier_app/modules/transactions/receipts/quantity_and_value_popup.dart';
+import 'package:cashier_app/widgets/general_widgets/quantity_and_value_popup.dart';
 import 'package:cashier_app/states/selected_journal_provider.dart';
 import 'package:cashier_app/states/selected_product_provider.dart';
 import 'package:cashier_app/widgets/products/search_and_add_product.dart';

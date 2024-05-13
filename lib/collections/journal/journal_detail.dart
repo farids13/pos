@@ -8,7 +8,7 @@ part 'journal_detail.g.dart';
 
 @collection
 class JournalDetail {
-  JournalDetail({this.amount = 0, this.price = 0}) {
+  JournalDetail({this.amount = 0, this.price = 0, this.additionalData=""}) {
     created = DateTime.now();
   }
 
@@ -21,6 +21,9 @@ class JournalDetail {
 
   late double amount;
   late double price;
+
+  late String additionalData;
+
   late DateTime created;
 
   @override

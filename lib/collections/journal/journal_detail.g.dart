@@ -17,18 +17,23 @@ const JournalDetailSchema = CollectionSchema(
   name: r'JournalDetail',
   id: -2120944175665488683,
   properties: {
-    r'amount': PropertySchema(
+    r'additionalData': PropertySchema(
       id: 0,
+      name: r'additionalData',
+      type: IsarType.string,
+    ),
+    r'amount': PropertySchema(
+      id: 1,
       name: r'amount',
       type: IsarType.double,
     ),
     r'created': PropertySchema(
-      id: 1,
+      id: 2,
       name: r'created',
       type: IsarType.dateTime,
     ),
     r'price': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'price',
       type: IsarType.double,
     )
@@ -72,6 +77,7 @@ int _journalDetailEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
+  bytesCount += 3 + object.additionalData.length * 3;
   return bytesCount;
 }
 
@@ -81,9 +87,10 @@ void _journalDetailSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeDouble(offsets[0], object.amount);
-  writer.writeDateTime(offsets[1], object.created);
-  writer.writeDouble(offsets[2], object.price);
+  writer.writeString(offsets[0], object.additionalData);
+  writer.writeDouble(offsets[1], object.amount);
+  writer.writeDateTime(offsets[2], object.created);
+  writer.writeDouble(offsets[3], object.price);
 }
 
 JournalDetail _journalDetailDeserialize(
@@ -93,10 +100,11 @@ JournalDetail _journalDetailDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = JournalDetail(
-    amount: reader.readDoubleOrNull(offsets[0]) ?? 0,
-    price: reader.readDoubleOrNull(offsets[2]) ?? 0,
+    amount: reader.readDoubleOrNull(offsets[1]) ?? 0,
+    price: reader.readDoubleOrNull(offsets[3]) ?? 0,
   );
-  object.created = reader.readDateTime(offsets[1]);
+  object.additionalData = reader.readString(offsets[0]);
+  object.created = reader.readDateTime(offsets[2]);
   object.id = id;
   return object;
 }
@@ -109,10 +117,12 @@ P _journalDetailDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readDoubleOrNull(offset) ?? 0) as P;
+      return (reader.readString(offset)) as P;
     case 1:
-      return (reader.readDateTime(offset)) as P;
+      return (reader.readDoubleOrNull(offset) ?? 0) as P;
     case 2:
+      return (reader.readDateTime(offset)) as P;
+    case 3:
       return (reader.readDoubleOrNull(offset) ?? 0) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -218,6 +228,142 @@ extension JournalDetailQueryWhere
 
 extension JournalDetailQueryFilter
     on QueryBuilder<JournalDetail, JournalDetail, QFilterCondition> {
+  QueryBuilder<JournalDetail, JournalDetail, QAfterFilterCondition>
+      additionalDataEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'additionalData',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<JournalDetail, JournalDetail, QAfterFilterCondition>
+      additionalDataGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'additionalData',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<JournalDetail, JournalDetail, QAfterFilterCondition>
+      additionalDataLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'additionalData',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<JournalDetail, JournalDetail, QAfterFilterCondition>
+      additionalDataBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'additionalData',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<JournalDetail, JournalDetail, QAfterFilterCondition>
+      additionalDataStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'additionalData',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<JournalDetail, JournalDetail, QAfterFilterCondition>
+      additionalDataEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'additionalData',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<JournalDetail, JournalDetail, QAfterFilterCondition>
+      additionalDataContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'additionalData',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<JournalDetail, JournalDetail, QAfterFilterCondition>
+      additionalDataMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'additionalData',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<JournalDetail, JournalDetail, QAfterFilterCondition>
+      additionalDataIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'additionalData',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<JournalDetail, JournalDetail, QAfterFilterCondition>
+      additionalDataIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'additionalData',
+        value: '',
+      ));
+    });
+  }
+
   QueryBuilder<JournalDetail, JournalDetail, QAfterFilterCondition>
       amountEqualTo(
     double value, {
@@ -511,6 +657,20 @@ extension JournalDetailQueryLinks
 
 extension JournalDetailQuerySortBy
     on QueryBuilder<JournalDetail, JournalDetail, QSortBy> {
+  QueryBuilder<JournalDetail, JournalDetail, QAfterSortBy>
+      sortByAdditionalData() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'additionalData', Sort.asc);
+    });
+  }
+
+  QueryBuilder<JournalDetail, JournalDetail, QAfterSortBy>
+      sortByAdditionalDataDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'additionalData', Sort.desc);
+    });
+  }
+
   QueryBuilder<JournalDetail, JournalDetail, QAfterSortBy> sortByAmount() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'amount', Sort.asc);
@@ -550,6 +710,20 @@ extension JournalDetailQuerySortBy
 
 extension JournalDetailQuerySortThenBy
     on QueryBuilder<JournalDetail, JournalDetail, QSortThenBy> {
+  QueryBuilder<JournalDetail, JournalDetail, QAfterSortBy>
+      thenByAdditionalData() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'additionalData', Sort.asc);
+    });
+  }
+
+  QueryBuilder<JournalDetail, JournalDetail, QAfterSortBy>
+      thenByAdditionalDataDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'additionalData', Sort.desc);
+    });
+  }
+
   QueryBuilder<JournalDetail, JournalDetail, QAfterSortBy> thenByAmount() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'amount', Sort.asc);
@@ -601,6 +775,14 @@ extension JournalDetailQuerySortThenBy
 
 extension JournalDetailQueryWhereDistinct
     on QueryBuilder<JournalDetail, JournalDetail, QDistinct> {
+  QueryBuilder<JournalDetail, JournalDetail, QDistinct>
+      distinctByAdditionalData({bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'additionalData',
+          caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<JournalDetail, JournalDetail, QDistinct> distinctByAmount() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'amount');
@@ -625,6 +807,13 @@ extension JournalDetailQueryProperty
   QueryBuilder<JournalDetail, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
+    });
+  }
+
+  QueryBuilder<JournalDetail, String, QQueryOperations>
+      additionalDataProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'additionalData');
     });
   }
 

@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
 
-import '../../../collections/journal/journal.dart';
-import '../../../collections/journal/journal_detail.dart';
-import '../../../collections/product/product.dart';
-import '../../../main.dart';
-import '../../../states/selected_journal_detail_provider.dart';
-import '../../../states/selected_journal_provider.dart';
+import '../../collections/journal/journal.dart';
+import '../../collections/journal/journal_detail.dart';
+import '../../collections/product/product.dart';
+import '../../main.dart';
+import '../../states/selected_journal_detail_provider.dart';
+import '../../states/selected_journal_provider.dart';
 
 class QuantityAndValuePopup extends ConsumerStatefulWidget {
   const QuantityAndValuePopup({super.key});
