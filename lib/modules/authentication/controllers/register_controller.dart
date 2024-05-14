@@ -5,13 +5,21 @@ import 'dart:convert';
 import 'package:cashier_app/data/dto/auth/register_dto.dart';
 import 'package:cashier_app/utils/config/config.dart';
 import 'package:cashier_app/utils/constants/constant.dart';
+import 'package:cashier_app/utils/logging/logger.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 
 class RegisterController {
   RegisterDTO dto = RegisterDTO();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController phoneNumberController = TextEditingController();
+  TextEditingController firstNameController = TextEditingController();
+  TextEditingController lastNameController = TextEditingController();
+  TextEditingController fullNameController = TextEditingController();
 
+  
   final baseUrl = AppConfig.baseUrl;
 
   Future<void> register(BuildContext context) async {
@@ -43,6 +51,7 @@ class RegisterController {
     // var prefs = await SharedPreferences.getInstance();
     Uri uri = Uri.https(baseUrl, "/api/v1/auth/signup");
     Map<String, dynamic> body = dto.toJson();
+    QLoggerHelper.info(body.toString());
     var response = await http.post(uri,
         body: json.encode(body), headers: AppConfig.headers);
 

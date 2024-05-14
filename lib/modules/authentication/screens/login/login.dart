@@ -122,7 +122,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       text: QTexts.orSignIn,
                     ),
                     const SizedBox(height: QSizes.defaultSpace),
-                    const SocialAuthWidget(),
+                    const SocialAuthWidget(isLogin: true),
                   ],
                 ),
               )

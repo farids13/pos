@@ -36,6 +36,8 @@ dependencies:
   material_design_icons_flutter: ^6.0.7096
   flutter_svg: ^2.0.10+1
   google_sign_in: 6.2.1
+  google_sign_in_ios: ^5.7.6
+  dartz: ^0.10.1
 
 dev_dependencies:
   flutter_test:
