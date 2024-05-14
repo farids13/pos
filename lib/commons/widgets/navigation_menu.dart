@@ -1,106 +1,25 @@
+import 'package:cashier_app/utils/constants/constant.dart';
+import 'package:cashier_app/utils/constants/sizes.dart';
+import 'package:cashier_app/utils/formatters/formatter.dart';
+import 'package:cashier_app/utils/helpers/helper_function.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-// import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:iconsax/iconsax.dart';
 
-class CustomCurvedNavigationBar extends StatelessWidget {
-  const CustomCurvedNavigationBar({super.key});
-  @override
-  Widget build(BuildContext context) {
-    final Size size = MediaQuery.of(context).size;
-    return SizedBox(
-      // color: Colors.red,
-      height: 80,
-      child: Stack(
-        children: [
-          Positioned(
-            bottom: 0,
-            left: 0,
-            child: SizedBox(
-              width: size.width,
-              height: 80,
-              child: Stack(
-                children: [
-                  CustomPaint(
-                    painter: _CurvedPainter(),
-                    size: Size(
-                      size.width,
-                      80,
-                    ),
-                  ),
+//? Function For Item In CurvedNavigationBar
+class CustomBottomBarItem {
+  final IconData iconData;
+  final IconData? selectedIconData;
+  final String? label;
 
-                  //? floating action button
-
-                  Center(
-                    heightFactor: .0,
-                    child: Container(
-                      padding: const EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(180)),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.blue.withOpacity(0.4),
-                            blurRadius: 3,
-                            spreadRadius: 1,
-                          ),
-                        ],
-                      ),
-                      child: FloatingActionButton(
-                        backgroundColor: const Color(0xff0D6EFD),
-                        elevation: 2.0,
-                        onPressed: () {},
-                        shape: const CircleBorder(),
-                        child: const Icon(
-                          MdiIcons.cartOutline,
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  //? icons
-
-                  SizedBox(
-                    height: 90,
-                    // width: size.width,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        IconButton(
-                          icon: const Icon(MdiIcons.homeOutline),
-                          onPressed: () {},
-                        ),
-                        IconButton(
-                          icon: const Icon(MdiIcons.heartOutline),
-                          onPressed: () {},
-                        ),
-                        SizedBox(
-                          width: size.width * 0.20,
-                        ),
-                        IconButton(
-                          icon: const Icon(MdiIcons.bellOutline),
-                          onPressed: () {},
-                        ),
-                        IconButton(
-                          icon: const Icon(MdiIcons.accountOutline),
-                          onPressed: () {},
-                        ),
-                      ],
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  CustomBottomBarItem(
+      {required this.iconData, this.selectedIconData, this.label});
 }
 
-class CustomCurvedNavigationWidget extends ConsumerWidget {
-  const CustomCurvedNavigationWidget(
+// Main Bottom Navigation
+class CustomBottomBar extends ConsumerWidget {
+  const CustomBottomBar(
       {super.key,
       required this.items,
       required this.onTap,
@@ -109,24 +28,24 @@ class CustomCurvedNavigationWidget extends ConsumerWidget {
       this.currentIndex = 0})
       : assert(
           items.length == 4,
-          'The correct functioning of this widgets '
+          'Please Use 4 widget Option Only. '
           'depends on its items being exactly 4',
         );
 
-  final List<CurvedNavigationBarItem> items;
+  final List<CustomBottomBarItem> items;
   final ValueChanged<int>? onTap;
-  // final int Function() onTap;
   final Color unselectedColor;
   final Color selectedColor;
   final int currentIndex;
-  // final
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final Size size = MediaQuery.of(context).size;
     // ignore: sized_box_for_whitespace
     return Container(
-      color: Colors.transparent,
+      color: QHelperFunction.isDarkMode(context)
+          ? QColors.dark
+          : QColors.lightGrey,
       height: 80,
       child: Stack(
         children: [
@@ -135,22 +54,13 @@ class CustomCurvedNavigationWidget extends ConsumerWidget {
             left: 0,
             child: SizedBox(
               width: size.width,
-              height: 70,
               child: Stack(
                 children: [
-                  CustomPaint(
-                    painter: _CurvedPainter(),
-                    size: Size(
-                      size.width,
-                      80,
-                    ),
-                  ),
-
-                  //? floating action button
-
                   Center(
                     heightFactor: .0,
                     child: Container(
+                      height: size.width * 0.15 < 90 ? size.width * 0.15 : 100,
+                      width: size.width * 0.15 < 90 ? size.width * 0.15 : 100,
                       padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
                         borderRadius:
@@ -163,15 +73,16 @@ class CustomCurvedNavigationWidget extends ConsumerWidget {
                           ),
                         ],
                       ),
-                      child: FloatingActionButton(
-                        backgroundColor: const Color(0xff0D6EFD),
-                        elevation: 2.0,
-                        onPressed: () {
-                          GoRouter.of(context).push("/cart");
-                        },
-                        shape: const CircleBorder(),
-                        child: const Icon(
-                          MdiIcons.cartOutline,
+                      child: SizedBox(
+                        child: FloatingActionButton(
+                          backgroundColor: QColors.primary,
+                          elevation: 4.0,
+                          onPressed: () {
+                            GoRouter.of(context).push("/scan");
+                          },
+                          shape: const CircleBorder(),
+                          child:
+                              const Icon(Iconsax.scanner, color: Colors.white),
                         ),
                       ),
                     ),
@@ -180,30 +91,50 @@ class CustomCurvedNavigationWidget extends ConsumerWidget {
                   //? icons
 
                   SizedBox(
-                    height: 90,
-                    // width: size.width,
+                    height: 80,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: List.generate(items.length, (index) {
-                        final item = items[index];
-                        return Padding(
-                          padding: EdgeInsets.only(
-                            bottom: (index == 0 || index == 3) ? 20.0 : 0,
-                          ),
-                          child: IconButton(
-                            onPressed: () => onTap?.call(index),
-                            color: index == currentIndex
-                                ? selectedColor
-                                : unselectedColor,
-                            icon: Icon(
-                              index == currentIndex
-                                  ? item.selectedIconData ?? item.iconData
-                                  : item.iconData,
+                      children: List.generate(
+                        items.length,
+                        (index) {
+                          final item = items[index];
+                          return Padding(
+                            padding: const EdgeInsets.only(
+                              top: QSizes.defaultSpace - 10,
+                              left: QSizes.defaultSpace - 10,
+                              right: QSizes.defaultSpace - 10,
                             ),
-                          ),
-                        );
-                      })
-                        ..insert(2, SizedBox(width: size.width * 0.20)),
+                            child: IconButton(
+                              onPressed: () => onTap?.call(index),
+                              color: index == currentIndex
+                                  ? selectedColor
+                                  : unselectedColor,
+                              icon: Column(
+                                children: [
+                                  Icon(
+                                    size: size.width * 0.05 < 30
+                                        ? size.width * 0.05
+                                        : 30,
+                                    index == currentIndex
+                                        ? item.selectedIconData ?? item.iconData
+                                        : item.iconData,
+                                  ),
+                                  Text(
+                                    item.label ?? '',
+                                    style: TextStyle(
+                                        fontSize: size.width * 0.025 < 12
+                                            ? size.width * 0.025
+                                            : 12,
+                                        color: index == currentIndex
+                                            ? selectedColor
+                                            : unselectedColor),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      )..insert(2, SizedBox(width: size.width * 0.08)),
                     ),
                   )
                 ],
@@ -216,17 +147,7 @@ class CustomCurvedNavigationWidget extends ConsumerWidget {
   }
 }
 
-//? Curved Navigation Bar Item
-
-class CurvedNavigationBarItem {
-  final IconData iconData;
-  final IconData? selectedIconData;
-
-  CurvedNavigationBarItem({required this.iconData, this.selectedIconData});
-}
-
-//? NavBar Clipper
-
+//? NavBar Clipper Function
 class _CurvedPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
