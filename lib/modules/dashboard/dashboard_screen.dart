@@ -1,8 +1,5 @@
 import 'package:cashier_app/collections/journal/journal.dart';
-import 'package:cashier_app/commons/widgets/navigation_menu.dart';
-import 'package:cashier_app/data/api/google/google_sign_in_api.dart';
 import 'package:cashier_app/main.dart';
-import 'package:cashier_app/modules/dashboard/controller/bottom_navigation_controller.dart';
 import 'package:cashier_app/modules/transactions/incoming_goods/incoming_goods_list_screen.dart';
 import 'package:cashier_app/modules/transactions/receipts/sales_list_screen.dart';
 import 'package:cashier_app/modules/transactions/receipts/sales_management_screen.dart';
@@ -10,8 +7,6 @@ import 'package:cashier_app/states/selected_journal_provider.dart';
 import 'package:cashier_app/utils/helpers/prepare_journal_list_tiles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:isar/isar.dart';
 
 import '../../utils/helpers/random_data.dart';
@@ -288,54 +283,9 @@ class _CashierHomePage extends ConsumerState<CashierHomePage> {
       );
     }
 
-    final indexPosition = ref.watch(selectIndexStateProvider);
-    void onTap(int index) {
-      ref.watch(selectIndexStateProvider.notifier).setIndexPosition(index);
-      switch (index) {
-        case 0:
-          context.push("/productList");
-          break;
-        case 1:
-          context.push("/favorite");
-          break;
-        case 2:
-          context.push("/notification");
-          break;
-        case 3:
-          GoogleSignInAPI.handleSignOut();
-          context.replace("/login");
-          break;
-        default:
-      }
-    }
-
     return Scaffold(
-      bottomNavigationBar: Material(
-        elevation: 2,
-        child: CustomBottomBar(
-          items: [
-            CustomBottomBarItem(
-                iconData: Iconsax.home,
-                selectedIconData: Iconsax.home,
-                label: "Home"),
-            CustomBottomBarItem(
-                iconData: Iconsax.heart,
-                selectedIconData: Iconsax.heart,
-                label: "Products"),
-            CustomBottomBarItem(
-              iconData: Iconsax.blend,
-              selectedIconData: Iconsax.blend,
-              label: "Transactions",
-            ),
-            CustomBottomBarItem(
-              iconData: Iconsax.user,
-              selectedIconData: Iconsax.user,
-              label: "Profile",
-            ),
-          ],
-          currentIndex: indexPosition,
-          onTap: (indexPosition) => onTap(indexPosition),
-        ),
+      appBar: AppBar(
+        title: Text("Hi ${widget.title}"),
       ),
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: LayoutBuilder(
@@ -344,12 +294,6 @@ class _CashierHomePage extends ConsumerState<CashierHomePage> {
               ? _singleColumn(context, menus, data)
               : _twoColumn(context, menus, data);
         },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () =>
-            _createNewReceipt(ref, context, "SLS", JournalType.sale),
-        tooltip: 'Create New Receipt',
-        child: const Icon(Icons.point_of_sale),
       ),
     );
   }
@@ -475,27 +419,29 @@ class _CashierHomePage extends ConsumerState<CashierHomePage> {
     ];
   }
 
-  void _createNewReceipt(WidgetRef ref, BuildContext context,
-      String receiptCode, JournalType journalType) {
-    Isar isar = ref.watch(isarProvider);
-    SelectedJournal s = ref.watch(selectedJournalProvider);
-    Journal j = Journal()
-      ..created = DateTime.now()
-      ..code =
-          "$receiptCode-${DateTime.now().year}${DateTime.now().month}${DateTime.now().day}${DateTime.now().hour}${DateTime.now().minute}${DateTime.now().second}"
-      ..journalType = journalType;
+  // -- deprecated move into dashboard util
 
-    isar.writeTxnSync(() => isar.journals.putSync(j));
+  // void _createNewReceipt(WidgetRef ref, BuildContext context,
+  //     String receiptCode, JournalType journalType) {
+  //   Isar isar = ref.watch(isarProvider);
+  //   SelectedJournal s = ref.watch(selectedJournalProvider);
+  //   Journal j = Journal()
+  //     ..created = DateTime.now()
+  //     ..code =
+  //         "$receiptCode-${DateTime.now().year}${DateTime.now().month}${DateTime.now().day}${DateTime.now().hour}${DateTime.now().minute}${DateTime.now().second}"
+  //     ..journalType = journalType;
 
-    setState(() {
-      s.data = j;
-    });
-    Navigator.of(context)
-        .push(
-          MaterialPageRoute(builder: (_) => const SalesManagementScreen()),
-        )
-        .then((val) => val != null ? (val ? _getRequests() : null) : null);
-  }
+  //   isar.writeTxnSync(() => isar.journals.putSync(j));
+
+  //   setState(() {
+  //     s.data = j;
+  //   });
+  //   Navigator.of(context)
+  //       .push(
+  //         MaterialPageRoute(builder: (_) => const SalesManagementScreen()),
+  //       )
+  //       .then((val) => val != null ? (val ? _getRequests() : null) : null);
+  // }
 
   _getRequests() async {}
 
