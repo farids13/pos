@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:cashier_app/collections/journal/journal_detail.dart';
 import 'package:cashier_app/collections/product/product.dart';
 import 'package:cashier_app/collections/product/product_price.dart';
-import 'package:cashier_app/widgets/general_widgets/quantity_and_value_popup.dart';
 import 'package:cashier_app/states/selected_journal_detail_provider.dart';
 import 'package:cashier_app/states/selected_journal_provider.dart';
+import 'package:cashier_app/widgets/general_widgets/quantity_and_value_popup.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -60,6 +60,7 @@ class _SearchAndAddProduct extends ConsumerState<SearchAndAddProduct> {
       var price = isar?.productPrices
               .filter()
               .product((q) => q.codeEqualTo(product.code))
+              .sortByCreatedDesc()
               .findFirstSync()
               ?.price ??
           0;

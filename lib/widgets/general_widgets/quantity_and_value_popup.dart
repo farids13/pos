@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cashier_app/collections/product/product_price.dart';
 import 'package:cashier_app/states/selected_product_provider.dart';
 import 'package:flutter/material.dart';
@@ -48,13 +50,19 @@ class _QuantityAndValuePopupState extends ConsumerState<QuantityAndValuePopup> {
   }) {
     final formKey = GlobalKey<FormState>();
 
+    var itemPrice = double.nan;
+
     var productPrice = isar.productPrices
         .filter()
         .product((q) => q.codeEqualTo(product.code))
         .sortByCreatedDesc()
         .findFirstSync();
 
-    var itemPrice = productPrice?.price ?? 0;
+    if (selectedJournal.data.journalType == JournalType.sale) {
+      itemPrice = productPrice?.price ?? 0;
+    } else {
+      itemPrice = journalDetail?.price ?? 0;
+    }
 
     final priceController = TextEditingController();
     final quantityController = TextEditingController();
@@ -62,6 +70,7 @@ class _QuantityAndValuePopupState extends ConsumerState<QuantityAndValuePopup> {
     final sellPriceController = TextEditingController();
 
     priceController.text = "$itemPrice";
+    sellPriceController.text = (productPrice?.price ?? 0).toString();
 
     bool priceReadOnly = false;
     bool totalReadOnly = false;
@@ -73,13 +82,13 @@ class _QuantityAndValuePopupState extends ConsumerState<QuantityAndValuePopup> {
     List<Widget> fields = [];
 
     switch (selectedJournal.data.journalType) {
-      case JournalType.incoming:
       case JournalType.outgoing:
       case JournalType.stockAdjustment:
       case JournalType.sale:
         withPrice = withTotal = false;
         break;
       case JournalType.startingStock:
+      case JournalType.incoming:
       case JournalType.purchase:
         withPrice = withTotal = true;
         priceReadOnly = totalReadOnly = false;
@@ -201,16 +210,18 @@ class _QuantityAndValuePopupState extends ConsumerState<QuantityAndValuePopup> {
               context: context,
               builder: (BuildContext context) {
                 return AlertDialog(
-                  content: const Column(
-                    children: [
-                      Text(
-                        "Product Details",
-                        style: TextStyle(
-                          fontSize: 20,
-                        ),
-                      ),
-                      Text("Rp. 2500"),
-                    ],
+                  title: const Text(
+                    "Product Details",
+                    style: TextStyle(
+                      fontSize: 20,
+                    ),
+                  ),
+                  content: const SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        Text("TODO: Display price history here"),
+                      ],
+                    ),
                   ),
                   actions: [
                     TextButton(
@@ -256,40 +267,95 @@ class _QuantityAndValuePopupState extends ConsumerState<QuantityAndValuePopup> {
         TextButton(
           child: const Text("OK"),
           onPressed: () {
-            if (formKey.currentState!.validate()) {
-              var amount = double.parse(quantityController.text);
-              var price = isar.productPrices
-                      .filter()
-                      .product((p) => p.idEqualTo(product.id))
-                      .sortByCreatedDesc()
-                      .findFirstSync()
-                      ?.price ??
-                  0;
-              Journal j = selectedJournal.data;
-              setState(() {
-                if (journalDetail == null ||journalDetail.journal.value == null) {
-                  JournalDetail jd = JournalDetail()
-                    ..journal.value = selectedJournal.data
-                    ..product.value = product
-                    ..amount = amount
-                    ..price = price;
-                  j.details.add(jd);
-                  isar.writeTxnSync(() => j.details.saveSync());
-                } else {
-                  journalDetail.amount = amount;
-                  journalDetail.price = price;
-                  isar.writeTxnSync(
-                      () => isar.journalDetails.putSync(journalDetail));
-                }
-                selectedJournal.data = j;
-              });
-              ref.invalidate(isarProvider);
-              Navigator.of(context).pop();
-            }
+            storeForm(
+              formKey,
+              quantityController,
+              priceController,
+              sellPriceController,
+              product,
+              journalDetail,
+              context,
+            );
           },
         ),
       ],
     );
+  }
+
+  void storeForm(
+      GlobalKey<FormState> formKey,
+      TextEditingController quantityController,
+      TextEditingController priceController,
+      TextEditingController sellPriceController,
+      Product product,
+      JournalDetail? journalDetail,
+      BuildContext context) {
+    if (formKey.currentState!.validate()) {
+      var amount = double.parse(quantityController.text);
+
+      var price = double.nan;
+
+      if (selectedJournal.data.journalType == JournalType.sale) {
+        price = isar.productPrices
+                .filter()
+                .product((p) => p.idEqualTo(product.id))
+                .sortByCreatedDesc()
+                .findFirstSync()
+                ?.price ??
+            0;
+      } else {
+        price = double.parse(priceController.text);
+      }
+
+      Journal j = selectedJournal.data;
+
+      setState(() {
+        double sellPrice = double.nan;
+        if (incomingGoodsCollection
+                .contains(selectedJournal.data.journalType) &&
+            sellPriceController.text.isNotEmpty) {
+          sellPrice = double.parse(sellPriceController.text);
+        }
+
+        if (journalDetail == null || journalDetail.journal.value == null) {
+          JournalDetail jd = JournalDetail()
+            ..journal.value = selectedJournal.data
+            ..product.value = product
+            ..amount = amount
+            ..price = price;
+          addJournalDetailAdditionalData(sellPrice, jd);
+          j.details.add(jd);
+          isar.writeTxnSync(() => j.details.saveSync());
+        } else {
+          journalDetail.amount = amount;
+          journalDetail.price = price;
+          addJournalDetailAdditionalData(sellPrice, journalDetail);
+          isar.writeTxnSync(() => isar.journalDetails.putSync(journalDetail));
+        }
+        selectedJournal.data = j;
+      });
+      ref.invalidate(isarProvider);
+      Navigator.of(context).pop();
+    }
+  }
+
+  void addJournalDetailAdditionalData(double sellPrice, JournalDetail jd) {
+    if (!sellPrice.isNaN) {
+      var additionalDataKey = "selling_price";
+      updateAdditionalData(jd, additionalDataKey, sellPrice);
+      Product p = jd.product.value!;
+      ProductPrice pp = ProductPrice()
+        ..product.value = p
+        ..price = sellPrice;
+      isar.writeTxnSync(() => isar.productPrices.putSync(pp));
+    }
+  }
+
+  void updateAdditionalData(
+      JournalDetail jd, String additionalDataKey, Object sellPrice) {
+    var additionalData = jsonDecode(jd.additionalData);
+    additionalData[additionalDataKey] = sellPrice;
+    jd.additionalData = jsonEncode(additionalData);
   }
 
   void onQuantityChange(
