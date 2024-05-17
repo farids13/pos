@@ -50,13 +50,19 @@ class _QuantityAndValuePopupState extends ConsumerState<QuantityAndValuePopup> {
   }) {
     final formKey = GlobalKey<FormState>();
 
+    var itemPrice = double.nan;
+
     var productPrice = isar.productPrices
         .filter()
         .product((q) => q.codeEqualTo(product.code))
         .sortByCreatedDesc()
         .findFirstSync();
 
-    var itemPrice = productPrice?.price ?? 0;
+    if (selectedJournal.data.journalType == JournalType.sale) {
+      itemPrice = productPrice?.price ?? 0;
+    } else {
+      itemPrice = journalDetail?.price ?? 0;
+    }
 
     final priceController = TextEditingController();
     final quantityController = TextEditingController();
@@ -64,6 +70,7 @@ class _QuantityAndValuePopupState extends ConsumerState<QuantityAndValuePopup> {
     final sellPriceController = TextEditingController();
 
     priceController.text = "$itemPrice";
+    sellPriceController.text = (productPrice?.price ?? 0).toString();
 
     bool priceReadOnly = false;
     bool totalReadOnly = false;
@@ -260,8 +267,15 @@ class _QuantityAndValuePopupState extends ConsumerState<QuantityAndValuePopup> {
         TextButton(
           child: const Text("OK"),
           onPressed: () {
-            storeForm(formKey, quantityController, sellPriceController, product,
-                journalDetail, context);
+            storeForm(
+              formKey,
+              quantityController,
+              priceController,
+              sellPriceController,
+              product,
+              journalDetail,
+              context,
+            );
           },
         ),
       ],
@@ -271,6 +285,7 @@ class _QuantityAndValuePopupState extends ConsumerState<QuantityAndValuePopup> {
   void storeForm(
       GlobalKey<FormState> formKey,
       TextEditingController quantityController,
+      TextEditingController priceController,
       TextEditingController sellPriceController,
       Product product,
       JournalDetail? journalDetail,
@@ -279,13 +294,18 @@ class _QuantityAndValuePopupState extends ConsumerState<QuantityAndValuePopup> {
       var amount = double.parse(quantityController.text);
 
       var price = double.nan;
-      price = isar.productPrices
-              .filter()
-              .product((p) => p.idEqualTo(product.id))
-              .sortByCreatedDesc()
-              .findFirstSync()
-              ?.price ??
-          0;
+
+      if (selectedJournal.data.journalType == JournalType.sale) {
+        price = isar.productPrices
+                .filter()
+                .product((p) => p.idEqualTo(product.id))
+                .sortByCreatedDesc()
+                .findFirstSync()
+                ?.price ??
+            0;
+      } else {
+        price = double.parse(priceController.text);
+      }
 
       Journal j = selectedJournal.data;
 

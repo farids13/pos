@@ -8,7 +8,7 @@ part 'journal_detail.g.dart';
 
 @collection
 class JournalDetail {
-  JournalDetail({this.amount = 0, this.price = 0, this.additionalData = ""}) {
+  JournalDetail({this.amount = 0, this.price = 0, this.additionalData = "{}"}) {
     created = DateTime.now();
   }
 
