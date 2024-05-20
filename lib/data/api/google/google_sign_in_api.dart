@@ -1,11 +1,12 @@
 import 'dart:convert';
-import 'dart:ffi';
 
 import 'package:cashier_app/data/api/pos_service_api.dart';
-import 'package:cashier_app/data/dto/auth/login_dto.dart';
 import 'package:cashier_app/data/dto/auth/login_google_dto.dart';
+import 'package:cashier_app/modules/authentication/error/auth_failure.dart';
+import 'package:cashier_app/modules/authentication/screens/register/register.dart';
 import 'package:cashier_app/utils/config/config.dart';
 import 'package:cashier_app/utils/logging/logger.dart';
+import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -14,8 +15,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class GoogleSignInAPI {
   static const List<String> scopes = <String>[
-    'https://www.googleapis.com/auth/userinfo.email',
+    'email',
     'https://www.googleapis.com/auth/userinfo.profile',
+    'https://www.googleapis.com/auth/user.phonenumbers.read',
   ];
 
   static final GoogleSignIn _googleSignIn = GoogleSignIn(
@@ -30,12 +32,48 @@ class GoogleSignInAPI {
     });
   }
 
+  Future<Either<AuthFailure, Unit>> handleSignUp(context, Function callback) async {
+    final signIn = await _googleSignIn.signIn();
+
+    if(signIn == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Colors.red,
+          content: Text('Google Sing In Failed'),
+          elevation: 10,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return left(const AuthFailure.error());
+    }
+
+    String email = signIn.email.toString();
+    String fullName = signIn.displayName.toString();
+
+    List<String> nameParts = signIn.displayName!.split(' ');
+    String? firstName = nameParts.isNotEmpty ? nameParts.first : null;
+    String? lastName = nameParts.length > 1 ? nameParts.last : null;
+
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('fullName', fullName);
+    prefs.setString('firstName', firstName!);
+    prefs.setString('lastName', lastName!);
+    prefs.setString('email', email);
+
+    callback();
+
+    handleSignOut();
+    return right(unit);
+  }
+
   Future<void> handleSignIn(BuildContext context) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String deviceId = prefs.getString("deviceId") ?? "";
 
       await _googleSignIn.signIn().then((result) {
+        QLoggerHelper.info("deviceId: $deviceId");
         result?.authentication.then((googleKey) async {
           LoginGoogleDto oas = LoginGoogleDto();
           oas.accessToken = googleKey.accessToken.toString();
@@ -60,9 +98,11 @@ class GoogleSignInAPI {
               context.pushReplacement("/home/$username");
             } else {
               QLoggerHelper.error(userMeRes.body);
+              handleSignOut();
             }
           } else {
             QLoggerHelper.error(res.body);
+            handleSignOut();
             // ignore: use_build_context_synchronously
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
@@ -78,7 +118,8 @@ class GoogleSignInAPI {
         QLoggerHelper.error(err);
       });
     } catch (error) {
-      QLoggerHelper.error(error.toString());
+      print("Google Sing In Failed $error");
+      handleSignOut();
     }
   }
 

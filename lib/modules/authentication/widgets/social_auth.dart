@@ -5,37 +5,25 @@ import 'package:cashier_app/utils/helpers/helper_function.dart';
 import 'package:flutter/material.dart';
 
 class SocialAuthWidget extends StatelessWidget {
-  const SocialAuthWidget({super.key});
+  final bool isLogin;
+  final Function()? onButtonPressed;
+  const SocialAuthWidget({super.key, required this.isLogin, this.onButtonPressed});
 
   @override
   Widget build(BuildContext context) {
     QHelperFunction.isDarkMode(context);
     return SizedBox(
-      child: ElevatedButton.icon(
-        onPressed: () => GoogleSignInAPI().handleSignIn(context),
+      child: IconButton(
+        onPressed: () => isLogin ? GoogleSignInAPI().handleSignIn(context) : {GoogleSignInAPI().handleSignUp(context, onButtonPressed!)},
         style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.all(5),
           backgroundColor: const Color(0xffF7F7F9),
           shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(14))),
+              borderRadius: BorderRadius.all(Radius.circular(50))),
         ),
-        icon: const Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image(
-              image: AssetImage(QImages.logoGoogle),
-              width: QSizes.iconXl,
-            ),
-            SizedBox(width: QSizes.defaultSpace),
-          ],
-        ),
-        label: const Text(
-          "Sign In with Google Test",
-          style: TextStyle(
-            color: Color(0xff2B2B2B),
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
-          ),
+        icon: const Image(
+          image: AssetImage(QImages.logoGoogle),
+          width: QSizes.iconXl,
         ),
       ),
     );

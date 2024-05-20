@@ -7,8 +7,11 @@ import 'package:cashier_app/utils/constants/constant.dart';
 import 'package:cashier_app/utils/constants/sizes.dart';
 import 'package:cashier_app/utils/constants/text_strings.dart';
 import 'package:cashier_app/utils/helpers/helper_function.dart';
+import 'package:cashier_app/utils/logging/logger.dart';
+import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -18,11 +21,21 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+  final ctrl = RegisterController();
+
+  Future<void> _handleSignUp() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    ctrl.firstNameController.text = prefs.getString("firstName") ?? "";
+    ctrl.lastNameController.text = prefs.getString("lastName") ?? "";
+    ctrl.emailController.text = prefs.getString("email") ?? "";
+    ctrl.fullNameController.text = prefs.getString("fullName") ?? "";
+    ctrl.phoneNumberController.text = prefs.getString("phoneNumber") ?? "";
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = QHelperFunction.isDarkMode(context);
     final formKey = GlobalKey<FormState>();
-    final ctrl = RegisterController();
 
     return Scaffold(
       appBar: AppBar(
@@ -52,6 +65,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       children: [
                         Expanded(
                           child: TextFormField(
+                            controller: ctrl.firstNameController,
                             onSaved: (newValue) =>
                                 ctrl.dto.firstName = newValue,
                             validator: (value) =>
@@ -65,6 +79,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         const SizedBox(width: QSizes.spaceBetweenInputFields),
                         Expanded(
                             child: TextFormField(
+                          controller: ctrl.lastNameController,
                           onSaved: (newValue) => ctrl.dto.lastName = newValue,
                           validator: (value) =>
                               AuthValidator.validateStandartInput(value),
@@ -77,6 +92,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                     const SizedBox(height: QSizes.spaceBetweenInputFields),
                     TextFormField(
+                      controller: ctrl.fullNameController,
                       onSaved: (newValue) => ctrl.dto.userName = newValue,
                       validator: (value) =>
                           AuthValidator.validateStandartInput(value),
@@ -88,6 +104,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                     const SizedBox(height: QSizes.spaceBetweenInputFields),
                     TextFormField(
+                      controller: ctrl.emailController,
                       onSaved: (newValue) => ctrl.dto.email = newValue,
                       validator: (value) => AuthValidator.validateEmail(value),
                       expands: false,
@@ -97,6 +114,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                     const SizedBox(height: QSizes.spaceBetweenInputFields),
                     TextFormField(
+                      controller: ctrl.phoneNumberController,
                       onSaved: (newValue) => ctrl.dto.phoneNumber = newValue,
                       validator: (value) => AuthValidator.validatePhone(value),
                       expands: false,
@@ -202,7 +220,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     const SizedBox(
                       height: QSizes.spaceBetweenInputFields,
                     ),
-                    const SocialAuthWidget(),
+                    SocialAuthWidget(
+                      isLogin: false,
+                      onButtonPressed: _handleSignUp,
+                    ),
                   ],
                 ),
               )

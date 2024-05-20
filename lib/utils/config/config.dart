@@ -7,5 +7,5 @@ class AppConfig {
   };
 
   static const String clientId =
-      '898862951743-qeidcpsdvhlkh33funoe64poob3glefh.apps.googleusercontent.com';
+      '851804376789-dbgrjn8vveic009s15borfi21gq6nam9.apps.googleusercontent.com';
 }
