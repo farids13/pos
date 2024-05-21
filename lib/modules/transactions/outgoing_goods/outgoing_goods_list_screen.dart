@@ -23,15 +23,15 @@ class _OutgoingGoodsListScreen extends ConsumerState<OutgoingGoodsListScreen> {
     final outgoingGoods = isar.journals
         .filter()
         .not()
-        .journalStatusEqualTo(JournalStatus.cancelled)
+        .statusEqualTo(JournalStatus.cancelled)
         .and()
         .group(
           (q) => q
-              .journalTypeEqualTo(JournalType.outgoing)
+              .typeEqualTo(JournalType.outgoing)
               .or()
-              .journalTypeEqualTo(JournalType.returning)
+              .typeEqualTo(JournalType.returning)
               .or()
-              .journalTypeEqualTo(JournalType.brokenProducts),
+              .typeEqualTo(JournalType.brokenProducts),
         )
         .sortByCreatedDesc()
         .findAll();
@@ -112,7 +112,7 @@ class _OutgoingGoodsListScreen extends ConsumerState<OutgoingGoodsListScreen> {
       ..created = DateTime.now()
       ..code =
           "$receiptCode-${DateTime.now().year}${DateTime.now().month}${DateTime.now().day}${DateTime.now().hour}${DateTime.now().minute}${DateTime.now().second}"
-      ..journalType = journalType;
+      ..type = journalType;
 
     isar.writeTxnSync(() => isar.journals.putSync(j));
 

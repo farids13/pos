@@ -1,9 +1,9 @@
 import 'package:cashier_app/collections/journal/journal.dart';
 import 'package:cashier_app/collections/journal/journal_detail.dart';
 import 'package:cashier_app/main.dart';
-import 'package:cashier_app/widgets/general_widgets/quantity_and_value_popup.dart';
 import 'package:cashier_app/states/selected_journal_provider.dart';
 import 'package:cashier_app/states/selected_product_provider.dart';
+import 'package:cashier_app/widgets/general_widgets/quantity_and_value_popup.dart';
 import 'package:cashier_app/widgets/products/search_and_add_product.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -45,12 +45,12 @@ class _SalesManagementScreenState extends ConsumerState<SalesManagementScreen> {
 
     String journalType = "";
 
-    if (selectedJournal.data.journalStatus == JournalStatus.posted) {
+    if (selectedJournal.data.status == JournalStatus.posted) {
       setState(() {
         _isClosed = true;
       });
     }
-    switch (selectedJournal.data.journalType) {
+    switch (selectedJournal.data.type) {
       case JournalType.incoming:
         journalType = "Incoming Goods";
         break;
@@ -85,6 +85,18 @@ class _SalesManagementScreenState extends ConsumerState<SalesManagementScreen> {
         appBar: AppBar(
           leading: const BackButton(),
           title: Text(title),
+          actions: [
+            selectedJournal.data.status == JournalStatus.opened
+                ? TextButton(
+                    onPressed: () {},
+                    style: ButtonStyle(
+                      foregroundColor:
+                          MaterialStateProperty.all<Color>(Colors.red),
+                    ),
+                    child: const Text("Delete"),
+                  )
+                : Container(),
+          ],
         ),
         body: ListView(
           children: [
@@ -116,7 +128,7 @@ class _SalesManagementScreenState extends ConsumerState<SalesManagementScreen> {
                       .map(
                         (journalDetail) => InkWell(
                           onTap: () {
-                            if (selectedJournal.data.journalStatus !=
+                            if (selectedJournal.data.status !=
                                 JournalStatus.posted) {
                               setState(() {
                                 selectedProduct.data =
@@ -330,7 +342,7 @@ class _SalesManagementScreenState extends ConsumerState<SalesManagementScreen> {
             _isClosed
                 ? const SizedBox()
                 : Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 32.0),
                     child: TextButton(
                       child: const Text("Proceed"),
                       onPressed: () {
@@ -353,7 +365,7 @@ class _SalesManagementScreenState extends ConsumerState<SalesManagementScreen> {
                                   onPressed: () {
                                     var isar = ref.watch(isarProvider);
                                     setState(() {
-                                      selectedJournal.data.journalStatus =
+                                      selectedJournal.data.status =
                                           JournalStatus.posted;
                                     });
                                     isar.writeTxnSync(() {

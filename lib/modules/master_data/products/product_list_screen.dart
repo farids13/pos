@@ -68,13 +68,13 @@ class ProductListScreen extends ConsumerWidget {
                             List<JournalDetail> journalDetails = isar
                                 .journalDetails
                                 .filter()
-                            .journal((q) => q.journalStatusEqualTo(JournalStatus.posted))
+                            .journal((q) => q.statusEqualTo(JournalStatus.posted))
                                 .product((q) => q.codeEqualTo(product.code))
                                 .findAllSync();
                             var journalAmount = 0.0;
                             for (var journalDetail in journalDetails) {
                               if (incomingGoodsCollection.contains(
-                                  journalDetail.journal.value?.journalType)) {
+                                  journalDetail.journal.value?.type)) {
                                 journalAmount += journalDetail.amount;
                               } else {
                                 journalAmount -= journalDetail.amount;

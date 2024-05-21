@@ -25,10 +25,10 @@ class SalesListScreen extends ConsumerWidget {
     var salesBuilder = isar.journals
         .filter()
         .not()
-        .journalStatusEqualTo(JournalStatus.cancelled)
+        .statusEqualTo(JournalStatus.cancelled)
         .and()
         .group(
-          (q) => q.journalTypeEqualTo(JournalType.sale),
+          (q) => q.typeEqualTo(JournalType.sale),
         );
 
     if (from != null && to != null) {

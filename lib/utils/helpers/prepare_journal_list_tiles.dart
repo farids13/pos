@@ -75,8 +75,8 @@ class ReceiptTile extends ConsumerWidget {
           style: const TextStyle(fontSize: 14),
         ),
         leading: Icon(
-          journal.journalStatus == JournalStatus.posted ? Icons.receipt_long_rounded : Icons.edit_outlined,
-          color: journal.journalStatus == JournalStatus.posted ? Colors.grey : Colors.black,
+          journal.status == JournalStatus.posted ? Icons.receipt_long_rounded : Icons.edit_outlined,
+          color: journal.status == JournalStatus.posted ? Colors.grey : Colors.black,
         ),
       ),
     );

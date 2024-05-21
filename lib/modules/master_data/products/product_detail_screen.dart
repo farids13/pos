@@ -36,7 +36,7 @@ class _ProductDetailScreen extends ConsumerState<ProductDetailScreen> {
     var journalDetails = isar.journalDetails
         .where()
         .filter()
-        .journal((q) => q.journalStatusEqualTo(JournalStatus.posted))
+        .journal((q) => q.statusEqualTo(JournalStatus.posted))
         .product((q) => q.codeEqualTo(product.code))
         .findAllSync();
 
@@ -52,7 +52,7 @@ class _ProductDetailScreen extends ConsumerState<ProductDetailScreen> {
     var journals = journalDetails.map(
       (journalDetail) => ListTile(
         tileColor: incomingGoodsCollection
-                .contains(journalDetail.journal.value?.journalType)
+                .contains(journalDetail.journal.value?.type)
             ? Theme.of(context).colorScheme.secondary.withOpacity(0.1)
             : Theme.of(context).colorScheme.inversePrimary.withOpacity(0.25),
         title: Text("${journalDetail.journal.value?.code}"),
@@ -63,7 +63,7 @@ class _ProductDetailScreen extends ConsumerState<ProductDetailScreen> {
           style: TextStyle(
             fontSize: 14,
             color: incomingGoodsCollection
-                    .contains(journalDetail.journal.value?.journalType)
+                    .contains(journalDetail.journal.value?.type)
                 ? Colors.black
                 : Colors.red,
           ),
@@ -74,7 +74,7 @@ class _ProductDetailScreen extends ConsumerState<ProductDetailScreen> {
     var journalAmount = 0.0;
     for (var journalDetail in journalDetails) {
       if (incomingGoodsCollection
-          .contains(journalDetail.journal.value?.journalType)) {
+          .contains(journalDetail.journal.value?.type)) {
         journalAmount += journalDetail.amount;
       } else {
         journalAmount -= journalDetail.amount;
