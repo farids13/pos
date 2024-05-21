@@ -1,18 +1,12 @@
 import 'package:cashier_app/collections/journal/journal.dart';
 import 'package:cashier_app/main.dart';
-import 'package:cashier_app/modules/transactions/incoming_goods/incoming_goods_list_screen.dart';
 import 'package:cashier_app/modules/transactions/receipts/sales_list_screen.dart';
-import 'package:cashier_app/modules/transactions/receipts/sales_management_screen.dart';
-import 'package:cashier_app/states/selected_journal_provider.dart';
 import 'package:cashier_app/utils/helpers/prepare_journal_list_tiles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
 
 import '../../utils/helpers/random_data.dart';
-import '../master_data/products/product_list_screen.dart';
-import '../transactions/moving_goods/moving_goods_list_screen.dart';
-import '../transactions/outgoing_goods/outgoing_goods_list_screen.dart';
 
 class CashierHomePage extends ConsumerStatefulWidget {
   final String title;
@@ -26,12 +20,8 @@ class CashierHomePage extends ConsumerStatefulWidget {
 class _CashierHomePage extends ConsumerState<CashierHomePage> {
   @override
   Widget build(BuildContext context) {
-    var primaryColor = Theme.of(context).colorScheme.primary;
-
-    List<Widget> menus = [];
-    menus = _buildMenu(primaryColor, context);
-
     List<Widget> data = [];
+    var primaryColor = Theme.of(context).colorScheme.primary;
 
     Isar isar = ref.watch(isarProvider);
     var sales = isar.journals
@@ -291,132 +281,11 @@ class _CashierHomePage extends ConsumerState<CashierHomePage> {
       body: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
           return constraints.maxWidth < 600
-              ? _singleColumn(context, menus, data)
-              : _twoColumn(context, menus, data);
+              ? _singleColumn(context, data)
+              : _twoColumn(context, data);
         },
       ),
     );
-  }
-
-  List<Widget> _buildMenu(Color primaryColor, BuildContext context) {
-    return [
-      Expanded(
-        child: Padding(
-          padding: const EdgeInsets.all(2.0),
-          child: TextButton(
-            style: TextButton.styleFrom(
-              side: BorderSide(width: 1, color: primaryColor),
-            ),
-            onPressed: () {
-              Navigator.of(context)
-                  .push(
-                    MaterialPageRoute(
-                        builder: (_) => const IncomingGoodsListScreen()),
-                  )
-                  .then((val) =>
-                      val != null ? (val ? _getRequests() : null) : null);
-            },
-            child: const Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: 4,
-                vertical: 2,
-              ),
-              child: Text(
-                textAlign: TextAlign.center,
-                "In",
-              ),
-            ),
-          ),
-        ),
-      ),
-      Expanded(
-        child: Padding(
-          padding: const EdgeInsets.all(2.0),
-          child: TextButton(
-            style: TextButton.styleFrom(
-              side: BorderSide(width: 1, color: primaryColor),
-            ),
-            onPressed: () {
-              Navigator.of(context)
-                  .push(
-                    MaterialPageRoute(
-                        builder: (_) => const OutgoingGoodsListScreen()),
-                  )
-                  .then((val) =>
-                      val != null ? (val ? _getRequests() : null) : null);
-            },
-            child: const Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: 4,
-                vertical: 2,
-              ),
-              child: Text(
-                textAlign: TextAlign.center,
-                "Out",
-              ),
-            ),
-          ),
-        ),
-      ),
-      Expanded(
-        child: Padding(
-          padding: const EdgeInsets.all(2.0),
-          child: TextButton(
-            style: TextButton.styleFrom(
-              side: BorderSide(width: 1, color: primaryColor),
-            ),
-            onPressed: () {
-              Navigator.of(context)
-                  .push(
-                    MaterialPageRoute(
-                        builder: (_) => const MovingGoodsListScreen()),
-                  )
-                  .then((val) =>
-                      val != null ? (val ? _getRequests() : null) : null);
-            },
-            child: const Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: 4,
-                vertical: 2,
-              ),
-              child: Text(
-                textAlign: TextAlign.center,
-                "Move",
-              ),
-            ),
-          ),
-        ),
-      ),
-      Expanded(
-        child: Padding(
-          padding: const EdgeInsets.all(2.0),
-          child: TextButton(
-            style: TextButton.styleFrom(
-              side: BorderSide(width: 1, color: primaryColor),
-            ),
-            onPressed: () {
-              Navigator.of(context)
-                  .push(
-                    MaterialPageRoute(
-                        builder: (_) => const ProductListScreen()),
-                  )
-                  .then((val) =>
-                      val != null ? (val ? _getRequests() : null) : null);
-            },
-            child: const Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: 4,
-                vertical: 2,
-              ),
-              child: Text(
-                textAlign: TextAlign.center,
-                "Product",
-              ),
-            ),
-          ),
-        ),
-      ),
-    ];
   }
 
   // -- deprecated move into dashboard util
@@ -445,19 +314,18 @@ class _CashierHomePage extends ConsumerState<CashierHomePage> {
 
   _getRequests() async {}
 
-  Widget _singleColumn(
-      BuildContext context, List<Widget> menus, List<Widget> data) {
+  Widget _singleColumn(BuildContext context, List<Widget> data) {
     List<Widget> menu = [
-      Padding(
-        padding: const EdgeInsets.all(4.0),
-        child: IntrinsicHeight(
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: menus,
-          ),
-        ),
-      ),
+      // Padding(
+      //   padding: const EdgeInsets.all(4.0),
+      //   child: IntrinsicHeight(
+      //     child: Row(
+      //       mainAxisSize: MainAxisSize.max,
+      //       crossAxisAlignment: CrossAxisAlignment.stretch,
+      //       children: menus,
+      //     ),
+      //   ),
+      // ),
     ];
     menu.addAll(data);
     return ListView(
@@ -465,8 +333,7 @@ class _CashierHomePage extends ConsumerState<CashierHomePage> {
     );
   }
 
-  Widget _twoColumn(
-      BuildContext context, List<Widget> menus, List<Widget> data) {
+  Widget _twoColumn(BuildContext context, List<Widget> data) {
     List<Widget> content = [];
 
     content.addAll(data);
@@ -485,7 +352,6 @@ class _CashierHomePage extends ConsumerState<CashierHomePage> {
         ),
       ),
     ];
-    sidebar.addAll(menus);
     return SizedBox(
       width: MediaQuery.of(context).size.width,
       child: Row(

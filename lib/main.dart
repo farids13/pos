@@ -11,7 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
-
 import 'collections/location/storage.dart';
 
 final isarProvider = Provider<Isar>((_) => throw UnimplementedError());

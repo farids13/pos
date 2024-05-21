@@ -21,6 +21,11 @@ def flutterVersionName = localProperties.getProperty('flutter.versionName')
 if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
 
 android {
     namespace "com.sisfo.app.inventory.cashier.pos.cashier_app"
@@ -54,8 +59,8 @@ android {
 
     signingConfigs {
         debug {
-            keyAlias 'upload'
-            storeFile file('mykey.jks')
+            keyAlias 'keyalias'
+            storeFile file('androidkey.jks')
             keyPassword 'admin123'
             storePassword 'admin123'
         }

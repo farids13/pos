@@ -1,4 +1,7 @@
 import 'package:cashier_app/main.dart';
+import 'package:cashier_app/modules/transactions/incoming_goods/incoming_goods_list_screen.dart';
+import 'package:cashier_app/modules/transactions/moving_goods/moving_goods_list_screen.dart';
+import 'package:cashier_app/modules/transactions/outgoing_goods/outgoing_goods_list_screen.dart';
 import 'package:cashier_app/utils/helpers/prepare_journal_list_tiles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,6 +17,10 @@ class SalesListScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    var primaryColor = Theme.of(context).colorScheme.primary;
+    List<Widget> menus = [];
+    menus = _buildMenu(primaryColor, context);
+
     final isar = ref.watch(isarProvider);
     var salesBuilder = isar.journals
         .filter()
@@ -42,6 +49,14 @@ class SalesListScreen extends ConsumerWidget {
       ),
       body: Column(
         children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: IntrinsicHeight(
+              child: Row(
+                children: menus,
+              ),
+            ),
+          ),
           Expanded(
             child: FutureBuilder(
                 future: sales,
@@ -78,3 +93,130 @@ class SalesListScreen extends ConsumerWidget {
     );
   }
 }
+
+// -- Functions
+
+List<Widget> _buildMenu(Color primaryColor, BuildContext context) {
+  return [
+    Expanded(
+      child: Padding(
+        padding: const EdgeInsets.all(2.0),
+        child: TextButton(
+          style: TextButton.styleFrom(
+            side: BorderSide(width: 1, color: primaryColor),
+          ),
+          onPressed: () {
+            Navigator.of(context)
+                .push(
+                  MaterialPageRoute(
+                      builder: (_) => const IncomingGoodsListScreen()),
+                )
+                .then((val) =>
+                    val != null ? (val ? _getRequests() : null) : null);
+          },
+          child: const Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: 4,
+              vertical: 2,
+            ),
+            child: Text(
+              textAlign: TextAlign.center,
+              "In",
+            ),
+          ),
+        ),
+      ),
+    ),
+    Expanded(
+      child: Padding(
+        padding: const EdgeInsets.all(2.0),
+        child: TextButton(
+          style: TextButton.styleFrom(
+            side: BorderSide(width: 1, color: primaryColor),
+          ),
+          onPressed: () {
+            Navigator.of(context)
+                .push(
+                  MaterialPageRoute(
+                      builder: (_) => const OutgoingGoodsListScreen()),
+                )
+                .then((val) =>
+                    val != null ? (val ? _getRequests() : null) : null);
+          },
+          child: const Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: 4,
+              vertical: 2,
+            ),
+            child: Text(
+              textAlign: TextAlign.center,
+              "Out",
+            ),
+          ),
+        ),
+      ),
+    ),
+    Expanded(
+      child: Padding(
+        padding: const EdgeInsets.all(2.0),
+        child: TextButton(
+          style: TextButton.styleFrom(
+            side: BorderSide(width: 1, color: primaryColor),
+          ),
+          onPressed: () {
+            Navigator.of(context)
+                .push(
+                  MaterialPageRoute(
+                      builder: (_) => const MovingGoodsListScreen()),
+                )
+                .then((val) =>
+                    val != null ? (val ? _getRequests() : null) : null);
+          },
+          child: const Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: 4,
+              vertical: 2,
+            ),
+            child: Text(
+              textAlign: TextAlign.center,
+              "Move",
+            ),
+          ),
+        ),
+      ),
+    ),
+
+    // -- deprecated
+    // Expanded(
+    //   child: Padding(
+    //     padding: const EdgeInsets.all(2.0),
+    //     child: TextButton(
+    //       style: TextButton.styleFrom(
+    //         side: BorderSide(width: 1, color: primaryColor),
+    //       ),
+    //       onPressed: () {
+    //         Navigator.of(context)
+    //             .push(
+    //               MaterialPageRoute(
+    //                   builder: (_) => const ProductListScreen()),
+    //             )
+    //             .then((val) =>
+    //                 val != null ? (val ? _getRequests() : null) : null);
+    //       },
+    //       child: const Padding(
+    //         padding: EdgeInsets.symmetric(
+    //           horizontal: 4,
+    //           vertical: 2,
+    //         ),
+    //         child: Text(
+    //           textAlign: TextAlign.center,
+    //           "Product",
+    //         ),
+    //       ),
+    //     ),
+    //   ),
+    // ),
+  ];
+}
+
+_getRequests() async {}
