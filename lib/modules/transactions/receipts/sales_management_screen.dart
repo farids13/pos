@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cashier_app/collections/journal/journal.dart';
 import 'package:cashier_app/collections/journal/journal_detail.dart';
 import 'package:cashier_app/main.dart';
@@ -88,7 +90,42 @@ class _SalesManagementScreenState extends ConsumerState<SalesManagementScreen> {
           actions: [
             selectedJournal.data.status == JournalStatus.opened
                 ? TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text("Confirmation"),
+                            content: const Text(
+                                "Are you sure? Deleted receipt cannot be reversed."),
+                            actions: [
+                              TextButton(
+                                child: const Text("Cancel"),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                              TextButton(
+                                child: const Text("OK"),
+                                onPressed: () {
+                                  var isar = ref.watch(isarProvider);
+                                  setState(() {
+                                    selectedJournal.data.status =
+                                        JournalStatus.cancelled;
+                                  });
+                                  isar.writeTxnSync(() {
+                                    isar.journals.putSync(selectedJournal.data);
+                                  });
+                                  ref.invalidate(isarProvider);
+                                  Navigator.of(context).pop();
+                                  log("${Navigator.of(context).canPop()}");
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
                     style: ButtonStyle(
                       foregroundColor:
                           MaterialStateProperty.all<Color>(Colors.red),
@@ -373,7 +410,6 @@ class _SalesManagementScreenState extends ConsumerState<SalesManagementScreen> {
                                           .putSync(selectedJournal.data);
                                     });
                                     ref.invalidate(isarProvider);
-                                    Navigator.of(context).pop();
                                     Navigator.of(context).pop();
                                   },
                                 ),

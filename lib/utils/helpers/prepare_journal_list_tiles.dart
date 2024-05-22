@@ -26,9 +26,7 @@ List<Widget> prepareJournalListTiles(
     }
     productInReceipt = productInReceipt.toSet().toList();
     result.add(ReceiptTile(
-        journal: journal,
-        productInReceipt: productInReceipt,
-        value: value));
+        journal: journal, productInReceipt: productInReceipt, value: value));
   }
 
   return result;
@@ -56,10 +54,13 @@ class ReceiptTile extends ConsumerWidget {
           selectedJournal.data = journal;
           Navigator.of(context)
               .push(
-                MaterialPageRoute(
-                    builder: (_) => const SalesManagementScreen()),
-              )
-              .then((value) => ref.invalidate(isarProvider));
+            MaterialPageRoute(builder: (_) => const SalesManagementScreen()),
+          )
+              .then((value) {
+            if (context.mounted) {
+              ref.invalidate(isarProvider);
+            }
+          });
         },
         title: Text(journal.code),
         subtitle: Row(
@@ -75,8 +76,12 @@ class ReceiptTile extends ConsumerWidget {
           style: const TextStyle(fontSize: 14),
         ),
         leading: Icon(
-          journal.status == JournalStatus.posted ? Icons.receipt_long_rounded : Icons.edit_outlined,
-          color: journal.status == JournalStatus.posted ? Colors.grey : Colors.black,
+          journal.status == JournalStatus.posted
+              ? Icons.receipt_long_rounded
+              : Icons.edit_outlined,
+          color: journal.status == JournalStatus.posted
+              ? Colors.grey
+              : Colors.black,
         ),
       ),
     );
