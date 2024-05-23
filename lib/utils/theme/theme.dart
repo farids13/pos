@@ -15,7 +15,7 @@ class QAppTheme {
   QAppTheme._();
 
   final Color errorColor = AppColors.red;
-  final Color scaffoldColor = AppColors.white;
+  static const Color scaffoldColor = AppColors.white;
   final Color textSolidColor = AppColors.black;
   final Color textDisabledColor = AppColors.black[400]!;
   static final Color borderColor = AppColors.white[500]!;
@@ -26,23 +26,35 @@ class QAppTheme {
   static DividerThemeData dividerTheme =
       DividerThemeData(color: dividerColor, space: Dimens.dp24);
 
+  static CardTheme get cardTheme {
+    return CardTheme(
+      elevation: 0,
+      color: scaffoldColor,
+      margin: EdgeInsets.zero,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(Dimens.dp8),
+        side: BorderSide(color: borderColor),
+      ),
+    );
+  }
+
   static ThemeData lightTheme = ThemeData(
-    useMaterial3: true,
-    fontFamily: 'Poppins',
-    brightness: Brightness.light,
-    iconButtonTheme: QIconButtonTheme.ligthIconButtonTheme,
-    primaryColor: Colors.blue,
-    textTheme: QTextTheme.lightTextTheme,
-    chipTheme: QChipTheme.lightChipTheme,
-    scaffoldBackgroundColor: Colors.white,
-    appBarTheme: QAppBarTheme.lightAppBarTheme,
-    elevatedButtonTheme: QElevatedButtonTheme.lightElevatedButtonTheme,
-    checkboxTheme: QCheckBoxTheme.lightCheckboxTheme,
-    bottomSheetTheme: QBottomSheetTheme.lightBottomSheetTheme,
-    outlinedButtonTheme: QOutlinedButtonTheme.lightOutlinedButtonTheme,
-    inputDecorationTheme: QTextFieldTheme.lightInputDecorationTheme,
-    dividerTheme: dividerTheme,
-  );
+      useMaterial3: true,
+      fontFamily: 'Poppins',
+      brightness: Brightness.light,
+      iconButtonTheme: QIconButtonTheme.ligthIconButtonTheme,
+      primaryColor: Colors.blue,
+      textTheme: QTextTheme.lightTextTheme,
+      chipTheme: QChipTheme.lightChipTheme,
+      scaffoldBackgroundColor: scaffoldColor,
+      appBarTheme: QAppBarTheme.lightAppBarTheme,
+      elevatedButtonTheme: QElevatedButtonTheme.lightElevatedButtonTheme,
+      checkboxTheme: QCheckBoxTheme.lightCheckboxTheme,
+      bottomSheetTheme: QBottomSheetTheme.lightBottomSheetTheme,
+      outlinedButtonTheme: QOutlinedButtonTheme.lightOutlinedButtonTheme,
+      inputDecorationTheme: QTextFieldTheme.lightInputDecorationTheme,
+      dividerTheme: dividerTheme,
+      cardTheme: cardTheme);
 
   static ThemeData darkTheme = ThemeData(
     useMaterial3: true,
