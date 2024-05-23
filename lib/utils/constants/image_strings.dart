@@ -8,4 +8,6 @@ class QImages {
 
   static const String logoLoginImages = "assets/images/login/login-logo.gif";
   static const String logoGoogle = "assets/icons/google-icon.png";
+
+  static const String emptyImage = "assets/images/empty.png";
 }

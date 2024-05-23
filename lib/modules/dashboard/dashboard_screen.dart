@@ -1,11 +1,14 @@
 import 'package:cashier_app/collections/journal/journal.dart';
 import 'package:cashier_app/main.dart';
 import 'package:cashier_app/modules/transactions/receipts/sales_list_screen.dart';
+import 'package:cashier_app/utils/constants/sizes.dart';
 import 'package:cashier_app/utils/helpers/prepare_journal_list_tiles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:isar/isar.dart';
-
+import 'package:badges/badges.dart' as badges;
 import '../../utils/helpers/random_data.dart';
 
 class CashierHomePage extends ConsumerStatefulWidget {
@@ -21,6 +24,7 @@ class _CashierHomePage extends ConsumerState<CashierHomePage> {
   @override
   Widget build(BuildContext context) {
     List<Widget> data = [];
+
     var primaryColor = Theme.of(context).colorScheme.primary;
 
     Isar isar = ref.watch(isarProvider);
@@ -29,6 +33,11 @@ class _CashierHomePage extends ConsumerState<CashierHomePage> {
         .journalTypeEqualTo(JournalType.sale)
         .sortByCreatedDesc()
         .findAllSync();
+
+    int openReceiptCount = sales
+        .where((element) => element.journalStatus == JournalStatus.opened)
+        .toList()
+        .length;
 
     TextButton randomButton = TextButton(
       style: TextButton.styleFrom(
@@ -112,9 +121,12 @@ class _CashierHomePage extends ConsumerState<CashierHomePage> {
           thisMonthSet[indexToAdd]["quantity"] += value;
         }
       }
+
       List<ListTile> summary = [];
+
       DateTime today = DateTime.now();
       today = today.copyWith(hour: 0, minute: 0, second: 0);
+
       for (var element in thisMonthSet) {
         DateTime dayFrom = DateTime(0);
         DateTime dayTo = DateTime(0);
@@ -155,38 +167,39 @@ class _CashierHomePage extends ConsumerState<CashierHomePage> {
         );
       }
 
-      data.add(
-        Padding(
-          padding: const EdgeInsets.only(top: 8.0),
-          child: Center(
-            child: Text(
-              "Open Receipt",
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.primary,
-              ),
-            ),
-          ),
-        ),
-      );
-      data.add(
-        Card(
-          elevation: 0,
-          child: salesPending.isEmpty
-              ? Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Center(
-                    child: Text(
-                      "Empty",
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.secondary),
-                    ),
-                  ),
-                )
-              : Column(
-                  children: prepareJournalListTiles(context, salesPending),
-                ),
-        ),
-      );
+      // -- Deprecated
+      // data.add(
+      //   Padding(
+      //     padding: const EdgeInsets.only(top: 8.0),
+      //     child: Center(
+      //       child: Text(
+      //         "Open Receipt",
+      //         style: TextStyle(
+      //           color: Theme.of(context).colorScheme.primary,
+      //         ),
+      //       ),
+      //     ),
+      //   ),
+      // );
+      // data.add(
+      //   Card(
+      //     elevation: 0,
+      //     child: salesPending.isEmpty
+      //         ? Padding(
+      //             padding: const EdgeInsets.all(8.0),
+      //             child: Center(
+      //               child: Text(
+      //                 "Empty",
+      //                 style: TextStyle(
+      //                     color: Theme.of(context).colorScheme.secondary),
+      //               ),
+      //             ),
+      //           )
+      //         : Column(
+      //             children: prepareJournalListTiles(context, salesPending),
+      //           ),
+      //   ),
+      // );
       data.add(
         Padding(
           padding: const EdgeInsets.only(top: 8.0),
@@ -275,7 +288,34 @@ class _CashierHomePage extends ConsumerState<CashierHomePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Hi ${widget.title}"),
+        title: Row(
+          children: [
+            Text("Hi ${widget.title}"),
+            const Spacer(),
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(Iconsax.notification),
+            ),
+            badges.Badge(
+              badgeContent: Text(openReceiptCount.toString(),
+                  style: const TextStyle(color: Colors.white, fontSize: 10)),
+              badgeStyle: const badges.BadgeStyle(
+                  badgeColor: Colors.red,
+                  padding: EdgeInsets.all(8),
+                  elevation: 20),
+              showBadge: openReceiptCount > 0 ? true : false,
+              position: badges.BadgePosition.custom(start: 25),
+              child: IconButton(
+                onPressed: () {
+                  context.push("/cart");
+                },
+                icon: const Icon(
+                  Iconsax.shopping_bag,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: LayoutBuilder(

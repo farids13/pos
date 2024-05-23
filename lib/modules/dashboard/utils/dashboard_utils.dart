@@ -1,6 +1,6 @@
 import 'package:cashier_app/collections/journal/journal.dart';
 import 'package:cashier_app/main.dart';
-import 'package:cashier_app/modules/transactions/receipts/sales_management_screen.dart';
+import 'package:cashier_app/modules/transactions/receipts/sales_edit_screen.dart';
 import 'package:cashier_app/states/selected_journal_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,7 +22,7 @@ class DashboardUtils {
     s.data = j; // Hapus setState karena ini bukan dalam StatefulWidget
 
     Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => const SalesManagementScreen()),
+      MaterialPageRoute(builder: (_) => const SalesEditScreen()),
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:cashier_app/data/api/google/google_sign_in_api.dart';
+import 'package:cashier_app/utils/constants/dimens.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -43,6 +44,9 @@ class ProfileScreen extends StatelessWidget {
                   Icon(Icons.arrow_forward_ios),
                 ],
               )),
+          const Divider(
+            thickness: Dimens.dp12,
+          ),
           const ListTile(
             title: Text('Akun'),
             trailing: Icon(Icons.arrow_forward_ios),

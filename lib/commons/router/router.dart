@@ -6,6 +6,7 @@ import 'package:cashier_app/modules/dashboard/dashboard_screen.dart';
 import 'package:cashier_app/modules/master_data/products/product_list_screen.dart';
 import 'package:cashier_app/modules/profile/screen/profile_screen.dart';
 import 'package:cashier_app/modules/splash/screens/splash.dart';
+import 'package:cashier_app/modules/transactions/cart/screen/cart_screen.dart';
 import 'package:cashier_app/modules/transactions/receipts/sales_list_screen.dart';
 import 'package:go_router/go_router.dart';
 
@@ -25,8 +26,15 @@ final appRouter = GoRouter(
       builder: (context, state) => const RegisterScreen(),
     ),
     GoRoute(
-        path: "/onboarding",
-        builder: (context, state) => const OnboardingScreen()),
+      path: "/onboarding",
+      builder: (context, state) => const OnboardingScreen(),
+    ),
+
+    // private
+    GoRoute(
+      path: "/cart",
+      builder: (context, state) => const CartScreen(),
+    ),
 
     // route with navbar bottom
     ShellRoute(

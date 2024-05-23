@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 
 import '../../collections/journal/journal.dart';
 import '../../collections/product/product.dart';
-import '../../modules/transactions/receipts/sales_management_screen.dart';
+import '../../modules/transactions/receipts/sales_edit_screen.dart';
 import '../../states/selected_journal_provider.dart';
 
 List<Widget> prepareJournalListTiles(
@@ -26,9 +26,7 @@ List<Widget> prepareJournalListTiles(
     }
     productInReceipt = productInReceipt.toSet().toList();
     result.add(ReceiptTile(
-        journal: journal,
-        productInReceipt: productInReceipt,
-        value: value));
+        journal: journal, productInReceipt: productInReceipt, value: value));
   }
 
   return result;
@@ -56,8 +54,7 @@ class ReceiptTile extends ConsumerWidget {
           selectedJournal.data = journal;
           Navigator.of(context)
               .push(
-                MaterialPageRoute(
-                    builder: (_) => const SalesManagementScreen()),
+                MaterialPageRoute(builder: (_) => const SalesEditScreen()),
               )
               .then((value) => ref.invalidate(isarProvider));
         },
@@ -75,8 +72,12 @@ class ReceiptTile extends ConsumerWidget {
           style: const TextStyle(fontSize: 14),
         ),
         leading: Icon(
-          journal.journalStatus == JournalStatus.posted ? Icons.receipt_long_rounded : Icons.edit_outlined,
-          color: journal.journalStatus == JournalStatus.posted ? Colors.grey : Colors.black,
+          journal.journalStatus == JournalStatus.posted
+              ? Icons.receipt_long_rounded
+              : Icons.edit_outlined,
+          color: journal.journalStatus == JournalStatus.posted
+              ? Colors.grey
+              : Colors.black,
         ),
       ),
     );

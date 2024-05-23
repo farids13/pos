@@ -6,7 +6,7 @@ import 'package:isar/isar.dart';
 
 import '../../../collections/journal/journal.dart';
 import '../../../states/selected_journal_provider.dart';
-import '../receipts/sales_management_screen.dart';
+import '../receipts/sales_edit_screen.dart';
 
 class OutgoingGoodsListScreen extends ConsumerStatefulWidget {
   const OutgoingGoodsListScreen({super.key});
@@ -121,7 +121,7 @@ class _OutgoingGoodsListScreen extends ConsumerState<OutgoingGoodsListScreen> {
     });
     Navigator.of(context)
         .push(
-          MaterialPageRoute(builder: (_) => const SalesManagementScreen()),
+          MaterialPageRoute(builder: (_) => const SalesEditScreen()),
         )
         .then((val) => val != null ? (val ? _getRequests() : null) : null);
   }

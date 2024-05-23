@@ -1,4 +1,14 @@
+import 'package:flutter/material.dart';
+
 class QSizes {
+  static width(BuildContext context) {
+    return MediaQuery.of(context).size.width;
+  }
+
+  static height(BuildContext context) {
+    return MediaQuery.of(context).size.height;
+  }
+
   // Padding and Margin Sizes
   static const double xs = 4.0;
   static const double sm = 8.0;

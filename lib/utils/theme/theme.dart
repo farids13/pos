@@ -1,3 +1,5 @@
+import 'package:cashier_app/utils/constants/dimens.dart';
+import 'package:cashier_app/utils/theme/colors.dart';
 import 'package:cashier_app/utils/theme/custom_theme/appbar_theme.dart';
 import 'package:cashier_app/utils/theme/custom_theme/bottom_sheet_theme.dart';
 import 'package:cashier_app/utils/theme/custom_theme/checkbox_theme.dart';
@@ -11,6 +13,18 @@ import 'package:flutter/material.dart';
 
 class QAppTheme {
   QAppTheme._();
+
+  final Color errorColor = AppColors.red;
+  final Color scaffoldColor = AppColors.white;
+  final Color textSolidColor = AppColors.black;
+  final Color textDisabledColor = AppColors.black[400]!;
+  static final Color borderColor = AppColors.white[500]!;
+  final Color disabledColor = AppColors.black[200]!;
+  final Color inputColor = AppColors.white;
+  static final Color dividerColor = AppColors.white[400]!;
+
+  static DividerThemeData dividerTheme =
+      DividerThemeData(color: dividerColor, space: Dimens.dp24);
 
   static ThemeData lightTheme = ThemeData(
     useMaterial3: true,
@@ -27,6 +41,7 @@ class QAppTheme {
     bottomSheetTheme: QBottomSheetTheme.lightBottomSheetTheme,
     outlinedButtonTheme: QOutlinedButtonTheme.lightOutlinedButtonTheme,
     inputDecorationTheme: QTextFieldTheme.lightInputDecorationTheme,
+    dividerTheme: dividerTheme,
   );
 
   static ThemeData darkTheme = ThemeData(
