@@ -100,10 +100,10 @@ JournalDetail _journalDetailDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = JournalDetail(
+    additionalData: reader.readStringOrNull(offsets[0]) ?? "{}",
     amount: reader.readDoubleOrNull(offsets[1]) ?? 0,
     price: reader.readDoubleOrNull(offsets[3]) ?? 0,
   );
-  object.additionalData = reader.readString(offsets[0]);
   object.created = reader.readDateTime(offsets[2]);
   object.id = id;
   return object;
@@ -117,7 +117,7 @@ P _journalDetailDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringOrNull(offset) ?? "{}") as P;
     case 1:
       return (reader.readDoubleOrNull(offset) ?? 0) as P;
     case 2:

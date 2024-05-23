@@ -15,13 +15,13 @@ class MovingGoodsListScreen extends ConsumerWidget {
     final movingGoods = isar.journals
         .filter()
         .not()
-        .journalStatusEqualTo(JournalStatus.cancelled)
+        .statusEqualTo(JournalStatus.cancelled)
         .and()
         .group(
           (q) => q
-              .journalTypeEqualTo(JournalType.incoming)
+              .typeEqualTo(JournalType.incoming)
               .or()
-              .journalTypeEqualTo(JournalType.outgoing),
+              .typeEqualTo(JournalType.outgoing),
         )
         .sortByCreatedDesc()
         .findAll();

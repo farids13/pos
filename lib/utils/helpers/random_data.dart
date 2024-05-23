@@ -122,8 +122,8 @@ void generateJournal(
   tmps.add(Journal()
     ..code =
         "$code-${(iteration + 1).toString().padLeft(3, "0")}-${RandomGenerator().integer(1000).toString().padLeft(3, "0")}"
-    ..journalType = journalType
-    ..journalStatus = RandomGenerator().element(JournalStatus.values)
+    ..type = journalType
+    ..status = RandomGenerator().element(JournalStatus.values)
     ..created = created);
   for (int j = 0; j < RandomGenerator().integer(10, min: 1); j++) {
     journalDetails.add(JournalDetail()

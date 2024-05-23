@@ -11,18 +11,27 @@ class DashboardUtils {
       String receiptCode, JournalType journalType) {
     Isar isar = ref.watch(isarProvider);
     SelectedJournal s = ref.watch(selectedJournalProvider);
+
+    //butuh template untuk journal numbering
+    String journalCode =
+        "$receiptCode-${DateTime.now().year}${DateTime.now().month}${DateTime.now().day}${DateTime.now().hour}${DateTime.now().minute}${DateTime.now().second}";
+
     Journal j = Journal()
       ..created = DateTime.now()
-      ..code =
-          "$receiptCode-${DateTime.now().year}${DateTime.now().month}${DateTime.now().day}${DateTime.now().hour}${DateTime.now().minute}${DateTime.now().second}"
-      ..journalType = journalType;
+      ..code = journalCode
+      ..type = journalType;
 
     isar.writeTxnSync(() => isar.journals.putSync(j));
 
     s.data = j; // Hapus setState karena ini bukan dalam StatefulWidget
 
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => const SalesEditScreen()),
-    );
+    Navigator.of(context)
+        .push(
+      MaterialPageRoute(builder: (_) => const SalesManagementScreen()),
+    )
+        .then((value) {
+      ref.invalidate(selectedJournalProvider);
+      ref.invalidate(isarProvider);
+    });
   }
 }

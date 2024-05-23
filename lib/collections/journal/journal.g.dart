@@ -27,17 +27,17 @@ const JournalSchema = CollectionSchema(
       name: r'created',
       type: IsarType.dateTime,
     ),
-    r'journalStatus': PropertySchema(
+    r'status': PropertySchema(
       id: 2,
-      name: r'journalStatus',
+      name: r'status',
       type: IsarType.byte,
-      enumMap: _JournaljournalStatusEnumValueMap,
+      enumMap: _JournalstatusEnumValueMap,
     ),
-    r'journalType': PropertySchema(
+    r'type': PropertySchema(
       id: 3,
-      name: r'journalType',
+      name: r'type',
       type: IsarType.byte,
-      enumMap: _JournaljournalTypeEnumValueMap,
+      enumMap: _JournaltypeEnumValueMap,
     )
   },
   estimateSize: _journalEstimateSize,
@@ -94,8 +94,8 @@ void _journalSerialize(
 ) {
   writer.writeString(offsets[0], object.code);
   writer.writeDateTime(offsets[1], object.created);
-  writer.writeByte(offsets[2], object.journalStatus.index);
-  writer.writeByte(offsets[3], object.journalType.index);
+  writer.writeByte(offsets[2], object.status.index);
+  writer.writeByte(offsets[3], object.type.index);
 }
 
 Journal _journalDeserialize(
@@ -105,16 +105,14 @@ Journal _journalDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = Journal(
-    journalStatus:
-        _JournaljournalStatusValueEnumMap[reader.readByteOrNull(offsets[2])] ??
-            JournalStatus.opened,
+    status: _JournalstatusValueEnumMap[reader.readByteOrNull(offsets[2])] ??
+        JournalStatus.opened,
   );
   object.code = reader.readString(offsets[0]);
   object.created = reader.readDateTime(offsets[1]);
   object.id = id;
-  object.journalType =
-      _JournaljournalTypeValueEnumMap[reader.readByteOrNull(offsets[3])] ??
-          JournalType.purchase;
+  object.type = _JournaltypeValueEnumMap[reader.readByteOrNull(offsets[3])] ??
+      JournalType.purchase;
   return object;
 }
 
@@ -130,28 +128,27 @@ P _journalDeserializeProp<P>(
     case 1:
       return (reader.readDateTime(offset)) as P;
     case 2:
-      return (_JournaljournalStatusValueEnumMap[
-              reader.readByteOrNull(offset)] ??
+      return (_JournalstatusValueEnumMap[reader.readByteOrNull(offset)] ??
           JournalStatus.opened) as P;
     case 3:
-      return (_JournaljournalTypeValueEnumMap[reader.readByteOrNull(offset)] ??
+      return (_JournaltypeValueEnumMap[reader.readByteOrNull(offset)] ??
           JournalType.purchase) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
 }
 
-const _JournaljournalStatusEnumValueMap = {
+const _JournalstatusEnumValueMap = {
   'opened': 0,
   'posted': 1,
   'cancelled': 2,
 };
-const _JournaljournalStatusValueEnumMap = {
+const _JournalstatusValueEnumMap = {
   0: JournalStatus.opened,
   1: JournalStatus.posted,
   2: JournalStatus.cancelled,
 };
-const _JournaljournalTypeEnumValueMap = {
+const _JournaltypeEnumValueMap = {
   'purchase': 0,
   'sale': 1,
   'incoming': 2,
@@ -162,7 +159,7 @@ const _JournaljournalTypeEnumValueMap = {
   'brokenProducts': 7,
   'other': 8,
 };
-const _JournaljournalTypeValueEnumMap = {
+const _JournaltypeValueEnumMap = {
   0: JournalType.purchase,
   1: JournalType.sale,
   2: JournalType.incoming,
@@ -598,44 +595,43 @@ extension JournalQueryFilter
     });
   }
 
-  QueryBuilder<Journal, Journal, QAfterFilterCondition> journalStatusEqualTo(
+  QueryBuilder<Journal, Journal, QAfterFilterCondition> statusEqualTo(
       JournalStatus value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'journalStatus',
+        property: r'status',
         value: value,
       ));
     });
   }
 
-  QueryBuilder<Journal, Journal, QAfterFilterCondition>
-      journalStatusGreaterThan(
+  QueryBuilder<Journal, Journal, QAfterFilterCondition> statusGreaterThan(
     JournalStatus value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
-        property: r'journalStatus',
+        property: r'status',
         value: value,
       ));
     });
   }
 
-  QueryBuilder<Journal, Journal, QAfterFilterCondition> journalStatusLessThan(
+  QueryBuilder<Journal, Journal, QAfterFilterCondition> statusLessThan(
     JournalStatus value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
-        property: r'journalStatus',
+        property: r'status',
         value: value,
       ));
     });
   }
 
-  QueryBuilder<Journal, Journal, QAfterFilterCondition> journalStatusBetween(
+  QueryBuilder<Journal, Journal, QAfterFilterCondition> statusBetween(
     JournalStatus lower,
     JournalStatus upper, {
     bool includeLower = true,
@@ -643,7 +639,7 @@ extension JournalQueryFilter
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
-        property: r'journalStatus',
+        property: r'status',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
@@ -652,43 +648,43 @@ extension JournalQueryFilter
     });
   }
 
-  QueryBuilder<Journal, Journal, QAfterFilterCondition> journalTypeEqualTo(
+  QueryBuilder<Journal, Journal, QAfterFilterCondition> typeEqualTo(
       JournalType value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'journalType',
+        property: r'type',
         value: value,
       ));
     });
   }
 
-  QueryBuilder<Journal, Journal, QAfterFilterCondition> journalTypeGreaterThan(
+  QueryBuilder<Journal, Journal, QAfterFilterCondition> typeGreaterThan(
     JournalType value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
-        property: r'journalType',
+        property: r'type',
         value: value,
       ));
     });
   }
 
-  QueryBuilder<Journal, Journal, QAfterFilterCondition> journalTypeLessThan(
+  QueryBuilder<Journal, Journal, QAfterFilterCondition> typeLessThan(
     JournalType value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
-        property: r'journalType',
+        property: r'type',
         value: value,
       ));
     });
   }
 
-  QueryBuilder<Journal, Journal, QAfterFilterCondition> journalTypeBetween(
+  QueryBuilder<Journal, Journal, QAfterFilterCondition> typeBetween(
     JournalType lower,
     JournalType upper, {
     bool includeLower = true,
@@ -696,7 +692,7 @@ extension JournalQueryFilter
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
-        property: r'journalType',
+        property: r'type',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
@@ -794,27 +790,27 @@ extension JournalQuerySortBy on QueryBuilder<Journal, Journal, QSortBy> {
     });
   }
 
-  QueryBuilder<Journal, Journal, QAfterSortBy> sortByJournalStatus() {
+  QueryBuilder<Journal, Journal, QAfterSortBy> sortByStatus() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'journalStatus', Sort.asc);
+      return query.addSortBy(r'status', Sort.asc);
     });
   }
 
-  QueryBuilder<Journal, Journal, QAfterSortBy> sortByJournalStatusDesc() {
+  QueryBuilder<Journal, Journal, QAfterSortBy> sortByStatusDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'journalStatus', Sort.desc);
+      return query.addSortBy(r'status', Sort.desc);
     });
   }
 
-  QueryBuilder<Journal, Journal, QAfterSortBy> sortByJournalType() {
+  QueryBuilder<Journal, Journal, QAfterSortBy> sortByType() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'journalType', Sort.asc);
+      return query.addSortBy(r'type', Sort.asc);
     });
   }
 
-  QueryBuilder<Journal, Journal, QAfterSortBy> sortByJournalTypeDesc() {
+  QueryBuilder<Journal, Journal, QAfterSortBy> sortByTypeDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'journalType', Sort.desc);
+      return query.addSortBy(r'type', Sort.desc);
     });
   }
 }
@@ -857,27 +853,27 @@ extension JournalQuerySortThenBy
     });
   }
 
-  QueryBuilder<Journal, Journal, QAfterSortBy> thenByJournalStatus() {
+  QueryBuilder<Journal, Journal, QAfterSortBy> thenByStatus() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'journalStatus', Sort.asc);
+      return query.addSortBy(r'status', Sort.asc);
     });
   }
 
-  QueryBuilder<Journal, Journal, QAfterSortBy> thenByJournalStatusDesc() {
+  QueryBuilder<Journal, Journal, QAfterSortBy> thenByStatusDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'journalStatus', Sort.desc);
+      return query.addSortBy(r'status', Sort.desc);
     });
   }
 
-  QueryBuilder<Journal, Journal, QAfterSortBy> thenByJournalType() {
+  QueryBuilder<Journal, Journal, QAfterSortBy> thenByType() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'journalType', Sort.asc);
+      return query.addSortBy(r'type', Sort.asc);
     });
   }
 
-  QueryBuilder<Journal, Journal, QAfterSortBy> thenByJournalTypeDesc() {
+  QueryBuilder<Journal, Journal, QAfterSortBy> thenByTypeDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'journalType', Sort.desc);
+      return query.addSortBy(r'type', Sort.desc);
     });
   }
 }
@@ -897,15 +893,15 @@ extension JournalQueryWhereDistinct
     });
   }
 
-  QueryBuilder<Journal, Journal, QDistinct> distinctByJournalStatus() {
+  QueryBuilder<Journal, Journal, QDistinct> distinctByStatus() {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'journalStatus');
+      return query.addDistinctBy(r'status');
     });
   }
 
-  QueryBuilder<Journal, Journal, QDistinct> distinctByJournalType() {
+  QueryBuilder<Journal, Journal, QDistinct> distinctByType() {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'journalType');
+      return query.addDistinctBy(r'type');
     });
   }
 }
@@ -930,16 +926,15 @@ extension JournalQueryProperty
     });
   }
 
-  QueryBuilder<Journal, JournalStatus, QQueryOperations>
-      journalStatusProperty() {
+  QueryBuilder<Journal, JournalStatus, QQueryOperations> statusProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'journalStatus');
+      return query.addPropertyName(r'status');
     });
   }
 
-  QueryBuilder<Journal, JournalType, QQueryOperations> journalTypeProperty() {
+  QueryBuilder<Journal, JournalType, QQueryOperations> typeProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'journalType');
+      return query.addPropertyName(r'type');
     });
   }
 }

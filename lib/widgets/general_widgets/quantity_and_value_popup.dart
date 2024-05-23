@@ -58,7 +58,7 @@ class _QuantityAndValuePopupState extends ConsumerState<QuantityAndValuePopup> {
         .sortByCreatedDesc()
         .findFirstSync();
 
-    if (selectedJournal.data.journalType == JournalType.sale) {
+    if (selectedJournal.data.type == JournalType.sale) {
       itemPrice = productPrice?.price ?? 0;
     } else {
       itemPrice = journalDetail?.price ?? 0;
@@ -81,7 +81,7 @@ class _QuantityAndValuePopupState extends ConsumerState<QuantityAndValuePopup> {
 
     List<Widget> fields = [];
 
-    switch (selectedJournal.data.journalType) {
+    switch (selectedJournal.data.type) {
       case JournalType.outgoing:
       case JournalType.stockAdjustment:
       case JournalType.sale:
@@ -202,7 +202,7 @@ class _QuantityAndValuePopupState extends ConsumerState<QuantityAndValuePopup> {
       ),
     ];
 
-    if (selectedJournal.data.journalType == JournalType.incoming) {
+    if (selectedJournal.data.type == JournalType.incoming) {
       dialogTitle.add(
         TextButton(
           onPressed: () {
@@ -295,7 +295,7 @@ class _QuantityAndValuePopupState extends ConsumerState<QuantityAndValuePopup> {
 
       var price = double.nan;
 
-      if (selectedJournal.data.journalType == JournalType.sale) {
+      if (selectedJournal.data.type == JournalType.sale) {
         price = isar.productPrices
                 .filter()
                 .product((p) => p.idEqualTo(product.id))
@@ -312,7 +312,7 @@ class _QuantityAndValuePopupState extends ConsumerState<QuantityAndValuePopup> {
       setState(() {
         double sellPrice = double.nan;
         if (incomingGoodsCollection
-                .contains(selectedJournal.data.journalType) &&
+                .contains(selectedJournal.data.type) &&
             sellPriceController.text.isNotEmpty) {
           sellPrice = double.parse(sellPriceController.text);
         }

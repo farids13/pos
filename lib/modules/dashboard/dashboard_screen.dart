@@ -30,7 +30,7 @@ class _CashierHomePage extends ConsumerState<CashierHomePage> {
     Isar isar = ref.watch(isarProvider);
     var sales = isar.journals
         .filter()
-        .journalTypeEqualTo(JournalType.sale)
+        .typeEqualTo(JournalType.sale)
         .sortByCreatedDesc()
         .findAllSync();
 
@@ -59,10 +59,10 @@ class _CashierHomePage extends ConsumerState<CashierHomePage> {
       data.add(const Center(child: Text("Empty")));
     } else {
       List<Journal> salesPending = sales
-          .where((element) => element.journalStatus == JournalStatus.opened)
+          .where((element) => element.status == JournalStatus.opened)
           .toList();
       List<Journal> salesPostedToday = sales
-          .where((element) => element.journalStatus == JournalStatus.posted)
+          .where((element) => element.status == JournalStatus.posted)
           .where(
             (element) => DateUtils.isSameDay(
               element.created,
@@ -77,8 +77,8 @@ class _CashierHomePage extends ConsumerState<CashierHomePage> {
                       .copyWith(hour: 23, minute: 59, second: 59)
                       .subtract(const Duration(days: 28))) >=
                   0 &&
-              element.journalStatus != JournalStatus.cancelled &&
-              element.journalStatus != JournalStatus.opened)
+              element.status != JournalStatus.cancelled &&
+              element.status != JournalStatus.opened)
           .toList();
 
       List<Map<String, dynamic>> thisMonthSet = [
@@ -267,7 +267,7 @@ class _CashierHomePage extends ConsumerState<CashierHomePage> {
 
       data.add(
         Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 32.0),
           child: TextButton(
             onPressed: () {
               Navigator.of(context)
@@ -279,7 +279,7 @@ class _CashierHomePage extends ConsumerState<CashierHomePage> {
             },
             child: const Padding(
               padding: EdgeInsets.all(8.0),
-              child: Text("more..."),
+              child: Text("all sales..."),
             ),
           ),
         ),

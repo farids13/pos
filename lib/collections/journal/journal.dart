@@ -6,7 +6,7 @@ part 'journal.g.dart';
 @collection
 class Journal {
   Journal({
-    this.journalStatus = JournalStatus.opened,
+    this.status = JournalStatus.opened,
   }) {
     created = DateTime.now();
   }
@@ -17,10 +17,10 @@ class Journal {
   late String code;
 
   @enumerated
-  late JournalStatus journalStatus;
+  late JournalStatus status;
 
   @enumerated
-  late JournalType journalType;
+  late JournalType type;
 
   @Backlink(to: 'journal')
   final details = IsarLinks<JournalDetail>();
