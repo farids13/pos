@@ -35,7 +35,7 @@ class _CashierHomePage extends ConsumerState<CashierHomePage> {
         .findAllSync();
 
     int openReceiptCount = sales
-        .where((element) => element.journalStatus == JournalStatus.opened)
+        .where((element) => element.status == JournalStatus.opened)
         .toList()
         .length;
 

@@ -28,12 +28,12 @@ class _CartScreenState extends ConsumerState<CartScreen> {
 
     var sales = isar.journals
         .filter()
-        .journalTypeEqualTo(JournalType.sale)
+        .typeEqualTo(JournalType.sale)
         .sortByCreatedDesc()
         .findAllSync();
 
     List<Journal> salesPending = sales
-        .where((element) => element.journalStatus == JournalStatus.opened)
+        .where((element) => element.status == JournalStatus.opened)
         .toList();
 
     return Scaffold(
@@ -140,7 +140,7 @@ class _ItemSectionState extends ConsumerState<_ItemSection> {
                       borderRadius: BorderRadius.circular(Dimens.dp4),
                       color: AppColors.green[800]),
                   child: RegularText.semiBold(
-                    widget.journal.journalStatus.name.toUpperCase(),
+                    widget.journal.status.name.toUpperCase(),
                     style: const TextStyle(
                       fontSize: Dimens.dp10,
                       color: Colors.white,

@@ -56,12 +56,12 @@ class _SalesManagementScreenState extends ConsumerState<SalesEditScreen> {
 
     String journalType = "";
 
-    if (selectedJournal.data.journalStatus == JournalStatus.posted) {
+    if (selectedJournal.data.status == JournalStatus.posted) {
       setState(() {
         _isClosed = true;
       });
     }
-    switch (selectedJournal.data.journalType) {
+    switch (selectedJournal.data.type) {
       case JournalType.incoming:
         journalType = "Incoming Goods";
         break;
@@ -363,12 +363,12 @@ class _buildTestState extends ConsumerState<_buildTest> {
 
     String journalType = "";
 
-    if (selectedJournal.data.journalStatus == JournalStatus.posted) {
+    if (selectedJournal.data.status == JournalStatus.posted) {
       setState(() {
         _isClosed = true;
       });
     }
-    switch (selectedJournal.data.journalType) {
+    switch (selectedJournal.data.type) {
       case JournalType.incoming:
         journalType = "Incoming Goods";
         break;
@@ -427,7 +427,7 @@ class _buildTestState extends ConsumerState<_buildTest> {
                   .map(
                     (journalDetail) => InkWell(
                       onTap: () {
-                        if (widget.selectedJournal.data.journalStatus !=
+                        if (widget.selectedJournal.data.status !=
                             JournalStatus.posted) {
                           setState(() {
                             widget.selectedProduct.data =
@@ -661,7 +661,7 @@ class _buildTestState extends ConsumerState<_buildTest> {
                               onPressed: () {
                                 var isar = ref.watch(isarProvider);
                                 setState(() {
-                                  widget.selectedJournal.data.journalStatus =
+                                  widget.selectedJournal.data.status =
                                       JournalStatus.posted;
                                 });
                                 isar.writeTxnSync(() {
