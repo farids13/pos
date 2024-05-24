@@ -73,8 +73,7 @@ class _ProductDetailScreen extends ConsumerState<ProductDetailScreen> {
 
     var journalAmount = 0.0;
     for (var journalDetail in journalDetails) {
-      if (incomingGoodsCollection
-          .contains(journalDetail.journal.value?.type)) {
+      if (incomingGoodsCollection.contains(journalDetail.journal.value?.type)) {
         journalAmount += journalDetail.amount;
       } else {
         journalAmount -= journalDetail.amount;

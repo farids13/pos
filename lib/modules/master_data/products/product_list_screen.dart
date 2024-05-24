@@ -1,13 +1,19 @@
 import 'package:cashier_app/collections/journal/journal_detail.dart';
 import 'package:cashier_app/collections/product/product.dart';
+import 'package:cashier_app/commons/extensions/extensions.dart';
+import 'package:cashier_app/commons/widgets/text/regular_text.dart';
 import 'package:cashier_app/main.dart';
 import 'package:cashier_app/modules/master_data/products/product_detail_screen.dart';
 import 'package:cashier_app/modules/master_data/products/product_management_screen.dart';
+import 'package:cashier_app/utils/constants/dimens.dart';
+import 'package:cashier_app/utils/helpers/image_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
 
 import '../../../collections/journal/journal.dart';
+
+part 'sections/product_item_section.dart';
 
 class ProductListScreen extends ConsumerWidget {
   const ProductListScreen({super.key});
@@ -68,7 +74,8 @@ class ProductListScreen extends ConsumerWidget {
                             List<JournalDetail> journalDetails = isar
                                 .journalDetails
                                 .filter()
-                            .journal((q) => q.statusEqualTo(JournalStatus.posted))
+                                .journal((q) =>
+                                    q.statusEqualTo(JournalStatus.posted))
                                 .product((q) => q.codeEqualTo(product.code))
                                 .findAllSync();
                             var journalAmount = 0.0;
@@ -80,27 +87,44 @@ class ProductListScreen extends ConsumerWidget {
                                 journalAmount -= journalDetail.amount;
                               }
                             }
-                            return ListTile(
-                              title: Text(product.name),
-                              subtitle: Text(product.code),
-                              trailing: Text(
-                                journalAmount.abs().toStringAsFixed(0),
-                                style: TextStyle(
-                                    fontSize: journalAmount != 0 ? 14 : 10,
-                                    color: journalAmount < 0
-                                        ? Colors.red
-                                        : Colors.black),
+                            return Padding(
+                              padding: const EdgeInsets.all(Dimens.dp24),
+                              child: _ProductItemSection(
+                                product: product,
+                                onDelete: () {},
+                                onEdit: () async {
+                                  ref.watch(productProvider.notifier).state =
+                                      product;
+                                  await Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (_) =>
+                                          const ProductDetailScreen(),
+                                    ),
+                                  );
+                                },
                               ),
-                              onTap: () async {
-                                ref.watch(productProvider.notifier).state =
-                                    product;
-                                await Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (_) => const ProductDetailScreen(),
-                                  ),
-                                );
-                              },
                             );
+                            // return ListTile(
+                            //   title: Text(product.name),
+                            //   subtitle: Text(product.code),
+                            //   trailing: Text(
+                            //     journalAmount.abs().toStringAsFixed(0),
+                            //     style: TextStyle(
+                            //         fontSize: journalAmount != 0 ? 14 : 10,
+                            //         color: journalAmount < 0
+                            //             ? Colors.red
+                            //             : Colors.black),
+                            //   ),
+                            //   onTap: () async {
+                            //     ref.watch(productProvider.notifier).state =
+                            //         product;
+                            //     await Navigator.of(context).push(
+                            //       MaterialPageRoute(
+                            //         builder: (_) => const ProductDetailScreen(),
+                            //       ),
+                            //     );
+                            //   },
+                            // );
                           },
                         );
                 } else if (snapshot.hasError) {
