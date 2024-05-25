@@ -29,74 +29,80 @@ class _ProductItemSection extends ConsumerWidget {
         journalAmount -= journalDetail.amount;
       }
     }
-    return Column(
-      children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(Dimens.dp8),
-              child: product.description.isEmpty
-                  ? Image.network(
-                      'https://indonesiakaya.com/wp-content/uploads/2020/10/langsat1200.jpg',
-                      width: 74,
-                      height: 74,
-                      fit: BoxFit.cover,
-                    )
-                  : Image.memory(
-                      ImageHelper.convertToUint8List(product.name),
-                      width: 74,
-                      height: 74,
-                      fit: BoxFit.cover,
-                    ),
-            ),
-            Dimens.dp12.width,
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  RegularText.semiBold(product.name),
-                  Dimens.dp4.height,
-                  RichText(
-                    text: TextSpan(
-                      text: product.prices.last.price.toString(),
-                      style: context.theme.textTheme.titleMedium,
+    return InkWell(
+      onTap: onEdit,
+      child: Column(
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(Dimens.dp8),
+                child: product.description.isEmpty
+                    ? Image.network(
+                        'https://indonesiakaya.com/wp-content/uploads/2020/10/langsat1200.jpg',
+                        width: 74,
+                        height: 74,
+                        fit: BoxFit.cover,
+                      )
+                    : Image.memory(
+                        ImageHelper.convertToUint8List(product.name),
+                        width: 74,
+                        height: 74,
+                        fit: BoxFit.cover,
+                      ),
+              ),
+              Dimens.dp12.width,
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        TextSpan(
-                          text: ' / ${journalAmount.toStringAsFixed(0)}',
-                          style: TextStyle(
-                              fontWeight: FontWeight.normal,
-                              color: journalAmount < 0
-                                  ? Colors.red
-                                  : Colors.black),
+                        RegularText(
+                          product.name,
+                          style: const TextStyle(fontSize: Dimens.dp20),
                         ),
+                        Dimens.dp4.height,
+                        RegularText(product.code),
+                        Dimens.dp4.height,
+                        RegularText.semiBold(QFormatter.formatCurrencyIndonesia(
+                            product.prices.last.price)),
                       ],
                     ),
-                  ),
-                ],
+                    BorderButton(
+                      journalAmount.toStringAsFixed(0),
+                      isOutlined: journalAmount < 0 ? true : false,
+                      width: 80,
+                      height: 40,
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
-        ),
-        Dimens.dp16.height,
-        Row(
-          children: [
-            Expanded(
-              child: OutlinedButton(
-                onPressed: onEdit,
-                child: const Text('Edit'),
-              ),
-            ),
-            Dimens.dp16.width,
-            Expanded(
-              child: OutlinedButton(
-                onPressed: onDelete,
-                child: const Text('Delete'),
-              ),
-            ),
-          ],
-        ),
-      ],
+            ],
+          ),
+          Dimens.dp16.height,
+          // Row(
+          //   children: [
+          //     Expanded(
+          //       child: OutlinedButton(
+          //         onPressed: onEdit,
+          //         child: const Text('Edit'),
+          //       ),
+          //     ),
+          //     Dimens.dp16.width,
+          //     Expanded(
+          //       child: OutlinedButton(
+          //         onPressed: onDelete,
+          //         child: const Text('Delete'),
+          //       ),
+          //     ),
+          //   ],
+          // ),
+        ],
+      ),
     );
   }
 }

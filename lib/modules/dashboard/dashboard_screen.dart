@@ -214,16 +214,16 @@ class _CashierHomePage extends ConsumerState<CashierHomePage> {
       final formatCurrency = NumberFormat.currency(
           locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0);
 
-      String totalSalesToday = formatCurrency.format(salesPostedToday
-          .map((e) => e.details
-              .map((p) => p.price * p.amount)
-              .reduce((value, element) => value + element))
-          .reduce((value, element) => value + element));
+      // String totalSalesToday = formatCurrency.format(salesPostedToday
+      //     .map((e) => e.details
+      //         .map((p) => p.price * p.amount)
+      //         .reduce((value, element) => value + element))
+      //     .reduce((a, b) => a + b));
       int totalProductToday = salesPostedToday.length;
-      String totalProductTodays = salesPostedToday
-          .map((e) => e.details.length)
-          .reduce((v, e) => v + e)
-          .toString();
+      // String totalProductTodays = salesPostedToday
+      //     .map((e) => e.details.length)
+      //     .reduce((v, e) => v + e)
+      //     .toString();
 
       data.add(
         Padding(
@@ -232,7 +232,7 @@ class _CashierHomePage extends ConsumerState<CashierHomePage> {
             children: [
               _CardSection(
                 label: 'Total Penjualan',
-                value: totalSalesToday,
+                value: "123",
               ),
               Dimens.dp16.height,
               _CardSection(
@@ -242,7 +242,7 @@ class _CashierHomePage extends ConsumerState<CashierHomePage> {
               Dimens.dp16.height,
               _CardSection(
                 label: 'Total Produk',
-                value: totalProductTodays,
+                value: "123",
               ),
             ],
           ),
