@@ -82,9 +82,14 @@ class _SalesManagementScreenState extends ConsumerState<SalesEditScreen> {
                 selectedJournal: selectedJournal,
                 selectedJournalDetail: selectedJournalDetail,
                 selectedProduct: selectedProduct)
-            : SaleEditSection(
-                selectedJournal,
-              ));
+            : SaleEditSection(selectedJournal, addProduct: () async {
+                await Navigator.of(context)
+                    .push(MaterialPageRoute(
+                        builder: (_) => const SearchAndAddProduct()))
+                    .then((value) {
+                  setState(() {});
+                });
+              }));
   }
 }
 

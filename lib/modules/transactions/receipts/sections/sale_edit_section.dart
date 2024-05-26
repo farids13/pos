@@ -2,7 +2,8 @@ part of "../sales_edit_screen.dart";
 
 class SaleEditSection extends ConsumerStatefulWidget {
   final SelectedJournal journal;
-  const SaleEditSection(this.journal, {super.key});
+  final Function() addProduct;
+  const SaleEditSection(this.journal, {super.key, required this.addProduct});
 
   @override
   ConsumerState<SaleEditSection> createState() => _SaleEditSectionState();
@@ -52,17 +53,7 @@ class _SaleEditSectionState extends ConsumerState<SaleEditSection> {
                     BorderButton(
                       "+",
                       isOutlined: false,
-                      onTap: () async {
-                        await Navigator.of(context)
-                            .push(
-                          MaterialPageRoute(
-                            builder: (_) => const SearchAndAddProduct(),
-                          ),
-                        )
-                            .then((value) {
-                          setState(() {});
-                        });
-                      },
+                      onTap: widget.addProduct,
                     )
                   ],
                 ),
