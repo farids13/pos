@@ -55,18 +55,14 @@ class BorderButton extends StatelessWidget {
               ? Border.all(color: borderColor ?? context.theme.primaryColor)
               : null,
         ),
-        child: Center(
-          child: RegularText(
-            textAlign: textAlign,
-            text,
-            style: style?.copyWith(
-              fontSize: fontSize,
-              color: isOutlined != null && isOutlined!
-                  ? (colorText != null ? colorText! : context.theme.canvasColor)
-                  : (colorText != null
-                      ? colorText!
-                      : context.theme.primaryColor),
-            ),
+        child: RegularText(
+          textAlign: textAlign,
+          text,
+          style: style?.copyWith(
+            fontSize: fontSize,
+            color: isOutlined != null && isOutlined!
+                ? (colorText != null ? colorText! : context.theme.canvasColor)
+                : (colorText != null ? colorText! : context.theme.primaryColor),
           ),
         ),
       ),

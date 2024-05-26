@@ -1,9 +1,11 @@
 import 'package:cashier_app/commons/extensions/extensions.dart';
 import 'package:cashier_app/commons/widgets/text/regular_text.dart';
+import 'package:cashier_app/data/api/google/google_sign_in_api.dart';
 import 'package:cashier_app/modules/profile/components/item_menu_setting.dart';
 import 'package:cashier_app/utils/constants/dimens.dart';
 import 'package:cashier_app/utils/helpers/image_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:iconsax/iconsax.dart';
 
 part 'sections/profile_section.dart';
@@ -34,7 +36,10 @@ class ProfileScreen extends StatelessWidget {
                 foregroundColor: context.theme.colorScheme.error,
                 side: BorderSide(color: context.theme.colorScheme.error),
               ),
-              onPressed: () {},
+              onPressed: () {
+                GoogleSignInAPI.handleSignOut();
+                context.pushReplacement("/login");
+              },
               child: const Text('Keluar'),
             ),
           ),

@@ -1,4 +1,5 @@
 import 'package:cashier_app/collections/journal/journal.dart';
+import 'package:cashier_app/commons/widgets/list/list_item_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
@@ -86,8 +87,11 @@ class _IncomingGoodsListScreen extends ConsumerState<IncomingGoodsListScreen> {
                   if (snapshot.hasData) {
                     List<Journal> incomingGoods = snapshot.data!;
 
-                    List<Widget> data =
-                        prepareJournalListTiles(context, incomingGoods);
+                    List<Widget> data = [];
+                    // prepareJournalListTiles(context, incomingGoods);
+                    for (var sale in incomingGoods) {
+                      data.add(ListItem(sale));
+                    }
                     return incomingGoods.isEmpty
                         ? const Center(child: Text('Empty'))
                         : ListView(

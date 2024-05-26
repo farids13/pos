@@ -9,6 +9,7 @@ import 'package:cashier_app/commons/widgets/text/text.dart';
 import 'package:cashier_app/main.dart';
 import 'package:cashier_app/utils/constants/dimens.dart';
 import 'package:cashier_app/utils/constants/sizes.dart';
+import 'package:cashier_app/utils/formatters/formatter.dart';
 import 'package:cashier_app/utils/logging/logger.dart';
 import 'package:cashier_app/utils/theme/colors.dart';
 import 'package:cashier_app/utils/theme/theme.dart';
@@ -24,6 +25,9 @@ import 'package:isar/isar.dart';
 
 import '../../../states/selected_journal_detail_provider.dart';
 
+part 'sections/sale_edit_section.dart';
+part 'sections/item_list_section.dart';
+
 class SalesEditScreen extends ConsumerStatefulWidget {
   const SalesEditScreen({super.key});
 
@@ -32,9 +36,7 @@ class SalesEditScreen extends ConsumerStatefulWidget {
 }
 
 class _SalesManagementScreenState extends ConsumerState<SalesEditScreen> {
-  final double _discount = 0;
-
-  bool _isClosed = false;
+  final bool _isClosed = false;
 
   late SelectedJournal selectedJournal;
   late SelectedJournalDetail selectedJournalDetail;
@@ -48,7 +50,6 @@ class _SalesManagementScreenState extends ConsumerState<SalesEditScreen> {
 
   @override
   Widget build(BuildContext context) {
-    NumberFormat numberFormat = NumberFormat("#,##0.00", "en_US");
     selectedJournal = ref.watch(selectedJournalProvider);
     selectedJournalDetail = ref.watch(selectedJournalDetailProvider);
     selectedProduct = ref.watch(selectedProductProvider);
@@ -56,147 +57,47 @@ class _SalesManagementScreenState extends ConsumerState<SalesEditScreen> {
 
     String journalType = "";
 
-    if (selectedJournal.data.status == JournalStatus.posted) {
-      setState(() {
-        _isClosed = true;
-      });
-    }
-    switch (selectedJournal.data.type) {
-      case JournalType.incoming:
-        journalType = "Incoming Goods";
-        break;
-      case JournalType.outgoing:
-        journalType = "Outgoing Goods";
-        break;
-      case JournalType.purchase:
-        journalType = "Purchasing";
-        break;
-      case JournalType.sale:
-        journalType = "Sales";
-        break;
-      case JournalType.startingStock:
-        journalType = "Starting Stock";
-        break;
-      case JournalType.stockAdjustment:
-        journalType = "Stock Adjustment";
-        break;
-      default:
-        journalType = "";
-        break;
-    }
-
-    totalSales();
-
-    selectedJournal.data.details.loadSync();
-
     var title =
         _isClosed ? "$journalType Receipt Posted" : "Edit $journalType Receipt";
 
     return Scaffold(
-      appBar: AppBar(
-        leading: const BackButton(),
-        title: Text(title),
-      ),
-      bottomNavigationBar: const _BottomBarWidget(),
-      body: true
-          ? _buildTest(
-              selectedJournal: selectedJournal,
-              selectedJournalDetail: selectedJournalDetail,
-              selectedProduct: selectedProduct)
-          : SingleChildScrollView(
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(QSizes.defaultSpace),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        RegularText.semiBold(
-                          "Pesanan",
-                          style: context.theme.textTheme.bodyLarge,
-                        ),
-                        const _ItemsList(),
-                        const _ItemsList(),
-                      ],
-                    ),
-                  ),
-                  const Divider(
-                    thickness: Dimens.dp10,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(QSizes.defaultSpace),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        RegularText(
-                          "Detail Transaksi",
-                          style: context.theme.textTheme.headlineSmall,
-                        ),
-                        const Divider(
-                          thickness: Dimens.dp2,
-                        ),
-                        const _SpaceBetweenField("Jumlah Penjualan", "1"),
-                        const _SpaceBetweenField("Sub Total", "Rp 40.000"),
-                        const _SpaceBetweenField("Pajak", "Rp 0"),
-                        const _SpaceBetweenField("Diskon", "Rp 0"),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-                          child: DottedDivider(
-                            color: AppColors.white[500]!,
-                            spaceLength: 5,
-                            strokeWidth: 2,
-                          ),
-                        ),
-                        _SpaceBetweenField(
-                          "Total",
-                          "Rp 40.000",
-                          style: context.theme.textTheme.bodyLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Dimens.dp14.height,
-                        const _InfoWidget("Additional Info"),
-                        Dimens.dp14.height,
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-    );
-  }
-
-  double totalSales() {
-    var tmp = 0.0;
-    for (var jd in selectedJournal.data.details) {
-      tmp += jd.price * jd.amount;
-    }
-
-    return tmp;
-  }
-
-  updateJournalDetailAmount(JournalDetail journalDetail, double amount) {
-    var isar = ref.watch(isarProvider);
-    if (amount > 0 || journalDetail.amount > 0) {
-      setState(() {
-        journalDetail.amount += amount;
-      });
-      isar.writeTxnSync(() {
-        isar.journalDetails.putSync(journalDetail);
-      });
-    }
+        appBar: AppBar(
+          leading: const BackButton(),
+          title: Text(title),
+        ),
+        bottomNavigationBar: _BottomBarWidget(() {
+          var isar = ref.watch(isarProvider);
+          setState(() {
+            selectedJournal.data.status = JournalStatus.posted;
+          });
+          isar.writeTxnSync(() {
+            isar.journals.putSync(selectedJournal.data);
+          });
+          ref.invalidate(isarProvider);
+          Navigator.of(context).pop();
+          Navigator.of(context).pop();
+        }),
+        body: false
+            ? _buildTest(
+                selectedJournal: selectedJournal,
+                selectedJournalDetail: selectedJournalDetail,
+                selectedProduct: selectedProduct)
+            : SaleEditSection(
+                selectedJournal,
+              ));
   }
 }
 
 class _BottomBarWidget extends StatelessWidget {
-  const _BottomBarWidget();
+  final Function() onPressed;
+  const _BottomBarWidget(this.onPressed);
 
   @override
   Widget build(BuildContext context) {
-    return const Material(
+    return Material(
       elevation: QSizes.lg,
       child: Padding(
-        padding: EdgeInsets.all(Dimens.dp16),
+        padding: const EdgeInsets.all(Dimens.dp16),
         child: BorderButton(
           "Save Changes",
           textAlign: TextAlign.center,
@@ -204,6 +105,30 @@ class _BottomBarWidget extends StatelessWidget {
           fontSize: QSizes.md,
           borderRadius: QSizes.sm,
           paddingVertical: QSizes.md,
+          onTap: () {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text("Confirmation"),
+                  content: const Text(
+                      "Are you sure? Finalized receipt cannot be edited."),
+                  actions: [
+                    TextButton(
+                      child: const Text("Cancel"),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                    TextButton(
+                      onPressed: onPressed,
+                      child: const Text("OK"),
+                    ),
+                  ],
+                );
+              },
+            );
+          },
         ),
       ),
     );
@@ -264,65 +189,6 @@ class _SpaceBetweenField extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-class _ItemsList extends StatelessWidget {
-  const _ItemsList();
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Divider(
-          thickness: 2,
-        ),
-        Dimens.dp10.height,
-        RegularText.semiBold(
-          "Honey",
-          style: context.theme.textTheme.headlineSmall,
-        ),
-        QSizes.spaceBetweenInputFields.height,
-        Row(
-          children: [
-            RegularText.semiBold(
-              "50000",
-              style: context.theme.textTheme.titleLarge,
-            ),
-            const RegularText(" / pcs"),
-          ],
-        ),
-        Dimens.dp16.height,
-        Row(
-          children: [
-            BorderButton(
-              onTap: () => {QLoggerHelper.info("test")},
-              "+ Catatan",
-              isOutlined: false,
-              style: context.theme.textTheme.bodyMedium,
-            ),
-            const Spacer(),
-            Row(
-              children: [
-                BorderButton(
-                  "-",
-                  isOutlined: false,
-                  style: context.theme.textTheme.bodyMedium,
-                ),
-                Dimens.dp14.width,
-                const Text("1000"),
-                Dimens.dp14.width,
-                const BorderButton(
-                  "+",
-                  isOutlined: true,
-                  style: TextStyle(),
-                ),
-              ],
-            )
-          ],
-        ),
-      ],
     );
   }
 }
@@ -392,9 +258,9 @@ class _buildTestState extends ConsumerState<_buildTest> {
         break;
     }
 
-    totalSales();
+    // totalSales();
 
-    selectedJournal.data.details.loadSync();
+    // selectedJournal.data.details.loadSync();
 
     var title =
         _isClosed ? "$journalType Receipt Posted" : "Edit $journalType Receipt";

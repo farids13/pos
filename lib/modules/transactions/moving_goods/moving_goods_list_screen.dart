@@ -1,4 +1,5 @@
 import 'package:cashier_app/collections/journal/journal.dart';
+import 'package:cashier_app/commons/widgets/list/list_item_widget.dart';
 import 'package:cashier_app/main.dart';
 import 'package:cashier_app/utils/helpers/prepare_journal_list_tiles.dart';
 import 'package:flutter/material.dart';
@@ -42,7 +43,11 @@ class MovingGoodsListScreen extends ConsumerWidget {
             if (snapshot.hasData) {
               List<Journal> movingGoods = snapshot.data!;
 
-              List<Widget> data = prepareJournalListTiles(context, movingGoods);
+              List<Widget> data = [];
+              prepareJournalListTiles(context, movingGoods);
+              for (var sale in movingGoods) {
+                data.add(ListItem(sale));
+              }
               return movingGoods.isEmpty
                   ? const Center(child: Text('Empty'))
                   : ListView(

@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:cashier_app/data/api/pos_service_api.dart';
 import 'package:cashier_app/data/dto/auth/login_google_dto.dart';
 import 'package:cashier_app/modules/authentication/error/auth_failure.dart';
-import 'package:cashier_app/modules/authentication/screens/register/register.dart';
 import 'package:cashier_app/utils/config/config.dart';
 import 'package:cashier_app/utils/logging/logger.dart';
 import 'package:dartz/dartz.dart';
@@ -32,10 +31,11 @@ class GoogleSignInAPI {
     });
   }
 
-  Future<Either<AuthFailure, Unit>> handleSignUp(context, Function callback) async {
+  Future<Either<AuthFailure, Unit>> handleSignUp(
+      context, Function callback) async {
     final signIn = await _googleSignIn.signIn();
 
-    if(signIn == null) {
+    if (signIn == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           backgroundColor: Colors.red,
@@ -53,7 +53,6 @@ class GoogleSignInAPI {
     List<String> nameParts = signIn.displayName!.split(' ');
     String? firstName = nameParts.isNotEmpty ? nameParts.first : null;
     String? lastName = nameParts.length > 1 ? nameParts.last : null;
-
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('fullName', fullName);

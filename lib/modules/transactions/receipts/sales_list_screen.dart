@@ -76,7 +76,7 @@ class SalesListScreen extends ConsumerWidget {
                     //   ),
                     // );
 
-                    data.addAll(prepareJournalListTiles(context, sales));
+                    // data.addAll(prepareJournalListTiles(context, sales));
                     for (var sale in sales) {
                       data.add(ListItem(sale));
                     }
@@ -99,7 +99,6 @@ class SalesListScreen extends ConsumerWidget {
 }
 
 // -- Functions
-
 List<Widget> _buildMenu(Color primaryColor, BuildContext context) {
   return [
     Expanded(
@@ -108,6 +107,7 @@ List<Widget> _buildMenu(Color primaryColor, BuildContext context) {
           child: BorderButton(
             "In",
             isOutlined: false,
+            textAlign: TextAlign.center,
             onTap: () {
               Navigator.of(context)
                   .push(
@@ -125,6 +125,7 @@ List<Widget> _buildMenu(Color primaryColor, BuildContext context) {
         child: BorderButton(
           "Out",
           isOutlined: false,
+          textAlign: TextAlign.center,
           onTap: () {
             Navigator.of(context)
                 .push(
@@ -143,6 +144,7 @@ List<Widget> _buildMenu(Color primaryColor, BuildContext context) {
         child: BorderButton(
           "Move",
           isOutlined: false,
+          textAlign: TextAlign.center,
           onTap: () {
             Navigator.of(context)
                 .push(

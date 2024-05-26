@@ -25,13 +25,10 @@ class ProductListScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // get all products
     Isar isar = ref.watch(isarProvider);
 
     Future<List<Product>> products =
         isar.products.where().sortByCode().findAll();
-
-    var primaryColor = Theme.of(context).colorScheme.primary;
 
     return Scaffold(
       appBar: AppBar(
@@ -91,6 +88,8 @@ class ProductListScreen extends ConsumerWidget {
                             return Padding(
                               padding: const EdgeInsets.all(Dimens.dp24),
                               child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   _ProductItemSection(
                                     product: product,

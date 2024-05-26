@@ -40,7 +40,7 @@ class _ProductItemSection extends ConsumerWidget {
                 borderRadius: BorderRadius.circular(Dimens.dp8),
                 child: product.description.isEmpty
                     ? Image.network(
-                        'https://indonesiakaya.com/wp-content/uploads/2020/10/langsat1200.jpg',
+                        'https://source.unsplash.com/random/300x300?product',
                         width: 74,
                         height: 74,
                         fit: BoxFit.cover,
@@ -58,6 +58,7 @@ class _ProductItemSection extends ConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         RegularText(
@@ -67,15 +68,19 @@ class _ProductItemSection extends ConsumerWidget {
                         Dimens.dp4.height,
                         RegularText(product.code),
                         Dimens.dp4.height,
-                        RegularText.semiBold(QFormatter.formatCurrencyIndonesia(
-                            product.prices.last.price)),
+                        RegularText.semiBold(
+                          QFormatter.formatCurrencyIndonesia(
+                            product.prices.last.price,
+                          ),
+                        ),
                       ],
                     ),
+
+                    // Stock View
                     BorderButton(
                       journalAmount.toStringAsFixed(0),
                       isOutlined: journalAmount < 0 ? true : false,
                       width: 80,
-                      height: 40,
                       textAlign: TextAlign.center,
                     ),
                   ],
