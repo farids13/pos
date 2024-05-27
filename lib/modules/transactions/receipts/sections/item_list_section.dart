@@ -20,38 +20,51 @@ class _ItemsListState extends ConsumerState<_ItemsList> {
           thickness: 2,
         ),
         Dimens.dp10.height,
-        RegularText.semiBold(
-          widget.detail.product.value!.name,
-          style: context.theme.textTheme.bodyLarge,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            RegularText.semiBold(
+              widget.detail.product.value!.name,
+              style: context.theme.textTheme.bodyLarge,
+            ),
+            RegularText.medium(
+              QFormatter.formatCurrencyIndonesia(
+                  widget.detail.price * widget.detail.amount.ceil()),
+              style: const TextStyle(fontSize: Dimens.dp16),
+            )
+          ],
         ),
         QSizes.spaceBetweenInputFields.height,
         Row(
           children: [
-            RegularText.semiBold(
-              widget.detail.product.value!.prices.first.price.toString(),
-              style: context.theme.textTheme.titleLarge,
+            RegularText.medium(
+              QFormatter.formatCurrencyIndonesia(
+                widget.detail.product.value!.prices.first.price,
+              ),
             ),
             const RegularText(" / pcs"),
           ],
         ),
         Dimens.dp16.height,
         Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             BorderButton(
               onTap: () => {QLoggerHelper.info("test")},
               "+ Catatan",
-              isOutlined: false,
+              isOutlined: true,
               style: context.theme.textTheme.bodyMedium,
             ),
-            const Spacer(),
-            Row(
-              children: [
-                BorderButton("-", isOutlined: false, onTap: widget.onTapMin),
-                Dimens.dp24.width,
-                RegularText("${widget.detail.amount.ceil()}"),
-                Dimens.dp24.width,
-                BorderButton("+", isOutlined: true, onTap: widget.onTapPlus),
-              ],
+            Container(
+              width: 120,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  BorderButton("-", isOutlined: true, onTap: widget.onTapMin),
+                  RegularText("${widget.detail.amount.ceil()}"),
+                  BorderButton("+", isOutlined: false, onTap: widget.onTapPlus),
+                ],
+              ),
             )
           ],
         ),

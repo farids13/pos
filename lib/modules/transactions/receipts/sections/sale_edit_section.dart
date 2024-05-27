@@ -31,7 +31,6 @@ class _SaleEditSectionState extends ConsumerState<SaleEditSection> {
         tmp += jd.price * jd.amount;
       }
 
-      QLoggerHelper.info(tmp.toString());
       return tmp;
     }
 
