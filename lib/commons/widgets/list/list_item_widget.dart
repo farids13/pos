@@ -24,9 +24,11 @@ class ListItemSection extends ConsumerState<ListItem> {
     final formatCurrency =
         NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0);
 
-    String total = formatCurrency.format(widget.journal.details
-        .map((e) => e.price * e.amount)
-        .reduce((v, e) => v + e));
+    String total = widget.journal.details.isEmpty
+        ? '0'
+        : formatCurrency.format(widget.journal.details
+            .map((e) => e.price * e.amount)
+            .reduce((v, e) => v + e));
 
     return InkWell(
       onTap: () {
