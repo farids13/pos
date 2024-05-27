@@ -17,7 +17,8 @@ class BarcodeScannerWithList extends ConsumerStatefulWidget {
 class _BarcodeScannerWithListState extends ConsumerState<BarcodeScannerWithList>
     with WidgetsBindingObserver {
   MobileScannerController scannerController = MobileScannerController(
-    detectionSpeed: DetectionSpeed.noDuplicates,
+    detectionSpeed: DetectionSpeed.normal,
+    detectionTimeoutMs: 750,
     facing: CameraFacing.back,
     returnImage: false,
   );
@@ -88,7 +89,7 @@ class _BarcodeScannerWithListState extends ConsumerState<BarcodeScannerWithList>
             ),
           ),
         ),
-        const Text("kentang"),
+        Text("Text from the camera: $result"),
       ],
     );
   }

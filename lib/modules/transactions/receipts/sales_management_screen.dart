@@ -5,6 +5,7 @@ import 'package:cashier_app/collections/journal/journal_detail.dart';
 import 'package:cashier_app/main.dart';
 import 'package:cashier_app/states/selected_journal_provider.dart';
 import 'package:cashier_app/states/selected_product_provider.dart';
+import 'package:cashier_app/widgets/barcode_scanner_with_list.dart';
 import 'package:cashier_app/widgets/general_widgets/quantity_and_value_popup.dart';
 import 'package:cashier_app/widgets/products/search_and_add_product.dart';
 import 'package:flutter/material.dart';
@@ -308,6 +309,27 @@ class _SalesManagementScreenState extends ConsumerState<SalesManagementScreen> {
                         child: const Padding(
                           padding: EdgeInsets.all(8.0),
                           child: Text("Add items from stock"),
+                        )),
+                  ),
+            _isClosed
+                ? const SizedBox()
+                : Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextButton(
+                        onPressed: () async {
+                          await Navigator.of(context)
+                              .push(
+                            MaterialPageRoute(
+                              builder: (_) => const BarcodeScannerWithList(),
+                            ),
+                          )
+                              .then((value) {
+                            setState(() {});
+                          });
+                        },
+                        child: const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text("Scan Item"),
                         )),
                   ),
             const Padding(

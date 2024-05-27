@@ -30,7 +30,6 @@ class DashboardUtils {
       MaterialPageRoute(builder: (_) => const SalesManagementScreen()),
     )
         .then((value) {
-      // ref.invalidate(selectedJournalProvider);
       ref.invalidate(isarProvider);
     });
   }
