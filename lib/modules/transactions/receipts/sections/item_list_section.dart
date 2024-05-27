@@ -4,6 +4,7 @@ class _ItemsList extends ConsumerStatefulWidget {
   final JournalDetail detail;
   final Function()? onTapPlus;
   final Function()? onTapMin;
+
   const _ItemsList(this.detail, this.onTapPlus, this.onTapMin);
 
   @override
@@ -51,8 +52,8 @@ class _ItemsListState extends ConsumerState<_ItemsList> {
           children: [
             BorderButton(
               onTap: () => {QLoggerHelper.info("test")},
-              "+ Catatan",
-              isOutlined: true,
+              "Detail",
+              isOutlined: false,
               style: context.theme.textTheme.bodyMedium,
             ),
             Container(

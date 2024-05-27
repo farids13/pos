@@ -3,10 +3,11 @@ import 'package:cashier_app/collections/journal/journal_detail.dart';
 import 'package:cashier_app/commons/extensions/extensions.dart';
 import 'package:cashier_app/commons/widgets/button/border_button_widget.dart';
 import 'package:cashier_app/commons/widgets/divider/dotted_divider_widget.dart';
-import 'package:cashier_app/commons/widgets/text/heading_text.dart';
 import 'package:cashier_app/commons/widgets/text/regular_text.dart';
 import 'package:cashier_app/commons/widgets/text/text.dart';
 import 'package:cashier_app/main.dart';
+import 'package:cashier_app/states/selected_journal_provider.dart';
+import 'package:cashier_app/states/selected_product_provider.dart';
 import 'package:cashier_app/utils/constants/dimens.dart';
 import 'package:cashier_app/utils/constants/sizes.dart';
 import 'package:cashier_app/utils/formatters/formatter.dart';
@@ -14,8 +15,6 @@ import 'package:cashier_app/utils/logging/logger.dart';
 import 'package:cashier_app/utils/theme/colors.dart';
 import 'package:cashier_app/utils/theme/theme.dart';
 import 'package:cashier_app/widgets/general_widgets/quantity_and_value_popup.dart';
-import 'package:cashier_app/states/selected_journal_provider.dart';
-import 'package:cashier_app/states/selected_product_provider.dart';
 import 'package:cashier_app/widgets/products/search_and_add_product.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -24,9 +23,10 @@ import 'package:intl/intl.dart';
 import 'package:isar/isar.dart';
 
 import '../../../states/selected_journal_detail_provider.dart';
+import '../../../widgets/barcode_scanner_with_list.dart';
 
-part 'sections/sale_edit_section.dart';
 part 'sections/item_list_section.dart';
+part 'sections/sale_edit_section.dart';
 
 class SalesEditScreen extends ConsumerStatefulWidget {
   const SalesEditScreen({super.key});
@@ -57,44 +57,81 @@ class _SalesManagementScreenState extends ConsumerState<SalesEditScreen> {
 
     String journalType = "";
 
+    switch (selectedJournal.data.type) {
+      case JournalType.incoming:
+        journalType = "Incoming Goods";
+        break;
+      case JournalType.outgoing:
+        journalType = "Outgoing Goods";
+        break;
+      case JournalType.purchase:
+        journalType = "Purchasing";
+        break;
+      case JournalType.sale:
+        journalType = "Sales";
+        break;
+      case JournalType.startingStock:
+        journalType = "Starting Stock";
+        break;
+      case JournalType.stockAdjustment:
+        journalType = "Stock Adjustment";
+        break;
+      default:
+        journalType = "";
+        break;
+    }
+
     var title =
         _isClosed ? "$journalType Receipt Posted" : "Edit $journalType Receipt";
 
     return Scaffold(
-        appBar: AppBar(
-          leading: const BackButton(),
-          title: Text(title),
-        ),
-        bottomNavigationBar: _BottomBarWidget(() {
-          var isar = ref.watch(isarProvider);
-          setState(() {
-            selectedJournal.data.status = JournalStatus.posted;
-          });
-          isar.writeTxnSync(() {
-            isar.journals.putSync(selectedJournal.data);
-          });
-          ref.invalidate(isarProvider);
-          Navigator.of(context).pop();
-          Navigator.of(context).pop();
-        }),
-        body: false
-            ? _buildTest(
-                selectedJournal: selectedJournal,
-                selectedJournalDetail: selectedJournalDetail,
-                selectedProduct: selectedProduct)
-            : SaleEditSection(selectedJournal, addProduct: () async {
+      appBar: AppBar(
+        leading: const BackButton(),
+        title: Text(title),
+      ),
+      bottomNavigationBar: _BottomBarWidget(() {
+        var isar = ref.watch(isarProvider);
+        setState(() {
+          selectedJournal.data.status = JournalStatus.posted;
+        });
+        isar.writeTxnSync(() {
+          isar.journals.putSync(selectedJournal.data);
+        });
+        ref.invalidate(isarProvider);
+        Navigator.of(context).pop();
+        Navigator.of(context).pop();
+      }),
+      body: false
+          ? _buildTest(
+              selectedJournal: selectedJournal,
+              selectedJournalDetail: selectedJournalDetail,
+              selectedProduct: selectedProduct)
+          : SaleEditSection(
+              selectedJournal,
+              addProduct: () async {
                 await Navigator.of(context)
                     .push(MaterialPageRoute(
                         builder: (_) => const SearchAndAddProduct()))
                     .then((value) {
                   setState(() {});
                 });
-              }));
+              },
+              scanBarcode: () async {
+                await Navigator.of(context)
+                    .push(MaterialPageRoute(
+                        builder: (_) => const BarcodeScannerWithList()))
+                    .then((value) {
+                  setState(() {});
+                });
+              },
+            ),
+    );
   }
 }
 
 class _BottomBarWidget extends StatelessWidget {
   final Function() onPressed;
+
   const _BottomBarWidget(this.onPressed);
 
   @override
@@ -142,6 +179,7 @@ class _BottomBarWidget extends StatelessWidget {
 
 class _InfoWidget extends StatelessWidget {
   final String text;
+
   const _InfoWidget(this.text);
 
   @override
@@ -202,6 +240,7 @@ class _buildTest extends ConsumerStatefulWidget {
   final SelectedProduct selectedProduct;
   final SelectedJournal selectedJournal;
   final SelectedJournalDetail selectedJournalDetail;
+
   const _buildTest({
     super.key,
     required this.selectedJournal,
