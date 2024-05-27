@@ -56,17 +56,21 @@ class _ItemsListState extends ConsumerState<_ItemsList> {
               isOutlined: false,
               style: context.theme.textTheme.bodyMedium,
             ),
-            Container(
-              width: 120,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  BorderButton("-", isOutlined: true, onTap: widget.onTapMin),
-                  RegularText("${widget.detail.amount.ceil()}"),
-                  BorderButton("+", isOutlined: false, onTap: widget.onTapPlus),
-                ],
+            if (widget.detail.journal.value?.status == JournalStatus.opened)
+              SizedBox(
+                width: 120,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    BorderButton("-", isOutlined: true, onTap: widget.onTapMin),
+                    RegularText("${widget.detail.amount.ceil()}"),
+                    BorderButton("+",
+                        isOutlined: false, onTap: widget.onTapPlus),
+                  ],
+                ),
               ),
-            )
+            if (widget.detail.journal.value?.status != JournalStatus.opened)
+              RegularText("${widget.detail.amount.ceil()} pcs"),
           ],
         ),
       ],
