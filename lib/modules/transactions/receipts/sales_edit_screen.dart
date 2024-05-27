@@ -36,8 +36,6 @@ class SalesEditScreen extends ConsumerStatefulWidget {
 }
 
 class _SalesManagementScreenState extends ConsumerState<SalesEditScreen> {
-  final bool _isClosed = false;
-
   late SelectedJournal selectedJournal;
   late SelectedJournalDetail selectedJournalDetail;
   late SelectedProduct selectedProduct;
@@ -81,8 +79,10 @@ class _SalesManagementScreenState extends ConsumerState<SalesEditScreen> {
         break;
     }
 
+    bool isClosed = selectedJournal.data.status == JournalStatus.posted;
+
     var title =
-        _isClosed ? "$journalType Receipt Posted" : "Edit $journalType Receipt";
+        isClosed ? "$journalType Receipt" : "Edit $journalType Receipt";
 
     return Scaffold(
       appBar: AppBar(
@@ -113,6 +113,7 @@ class _SalesManagementScreenState extends ConsumerState<SalesEditScreen> {
                     .push(MaterialPageRoute(
                         builder: (_) => const SearchAndAddProduct()))
                     .then((value) {
+                      selectedJournal.data.details.loadSync();
                   setState(() {});
                 });
               },
@@ -121,6 +122,7 @@ class _SalesManagementScreenState extends ConsumerState<SalesEditScreen> {
                     .push(MaterialPageRoute(
                         builder: (_) => const BarcodeScannerWithList()))
                     .then((value) {
+                  selectedJournal.data.details.loadSync();
                   setState(() {});
                 });
               },

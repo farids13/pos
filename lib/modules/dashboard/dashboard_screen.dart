@@ -1,23 +1,19 @@
-import 'dart:math';
-
+import 'package:badges/badges.dart' as badges;
 import 'package:cashier_app/collections/journal/journal.dart';
 import 'package:cashier_app/commons/extensions/extensions.dart';
-import 'package:cashier_app/commons/styles/spacing_styles.dart';
 import 'package:cashier_app/commons/widgets/list/list_item_widget.dart';
 import 'package:cashier_app/commons/widgets/text/heading_text.dart';
 import 'package:cashier_app/commons/widgets/text/regular_text.dart';
 import 'package:cashier_app/main.dart';
 import 'package:cashier_app/modules/transactions/receipts/sales_list_screen.dart';
 import 'package:cashier_app/utils/constants/dimens.dart';
-import 'package:cashier_app/utils/constants/sizes.dart';
-import 'package:cashier_app/utils/helpers/prepare_journal_list_tiles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 import 'package:isar/isar.dart';
-import 'package:badges/badges.dart' as badges;
+
 import '../../utils/helpers/random_data.dart';
 
 part 'sections/card_section.dart';
@@ -61,17 +57,13 @@ class _CashierHomePage extends ConsumerState<CashierHomePage> {
       },
       child: const Text("Random"),
     );
-    data.add(Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: randomButton,
-    ));
 
     if (sales.isEmpty) {
       data.add(const Center(child: Text("Empty")));
     } else {
-      List<Journal> salesPending = sales
-          .where((element) => element.status == JournalStatus.opened)
-          .toList();
+      // List<Journal> salesPending = sales
+      //     .where((element) => element.status == JournalStatus.opened)
+      //     .toList();
       List<Journal> salesPostedToday = sales
           .where((element) => element.status == JournalStatus.posted)
           .where(
@@ -341,6 +333,10 @@ class _CashierHomePage extends ConsumerState<CashierHomePage> {
       //     ),
       //   ),
       // );
+      data.add(Padding(
+        padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 48.0),
+        child: randomButton,
+      ));
     }
 
     return Scaffold(

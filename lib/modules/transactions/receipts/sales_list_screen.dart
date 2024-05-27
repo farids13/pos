@@ -43,11 +43,6 @@ class SalesListScreen extends ConsumerWidget {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text("Transaction"),
-        actions: [
-          CloseButton(
-            onPressed: () => Navigator.of(context).pop(true),
-          ),
-        ],
       ),
       body: Column(
         children: [

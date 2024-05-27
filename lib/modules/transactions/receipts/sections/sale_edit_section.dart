@@ -13,6 +13,7 @@ class SaleEditSection extends ConsumerStatefulWidget {
 }
 
 class _SaleEditSectionState extends ConsumerState<SaleEditSection> {
+
   @override
   Widget build(BuildContext context) {
     updateJournalDetailAmount(JournalDetail journalDetail, double amount) {

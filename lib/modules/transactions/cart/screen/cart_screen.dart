@@ -32,7 +32,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Cart"),
+        title: const Text("Open Receipts"),
       ),
       body: salesPending.isNotEmpty
           ? ListView.builder(

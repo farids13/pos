@@ -23,14 +23,14 @@ class _CardSection extends StatelessWidget {
               value,
               style: const TextStyle(fontSize: Dimens.dp24),
             ),
-            Dimens.dp6.height,
-            RegularText.semiBold(
-              'Lihat Detail',
-              style: TextStyle(
-                fontSize: Dimens.dp12,
-                color: context.theme.primaryColor,
-              ),
-            ),
+            // Dimens.dp6.height,
+            // RegularText.semiBold(
+            //   'Lihat Detail',
+            //   style: TextStyle(
+            //     fontSize: Dimens.dp12,
+            //     color: context.theme.primaryColor,
+            //   ),
+            // ),
           ],
         ),
       ),
