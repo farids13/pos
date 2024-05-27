@@ -24,14 +24,13 @@ class DashboardUtils {
 
     isar.writeTxnSync(() => isar.journals.putSync(j));
 
-    s.data = j; // Hapus setState karena ini bukan dalam StatefulWidget
+    s.data = j;
 
     Navigator.of(context)
         .push(
       MaterialPageRoute(builder: (_) => const SalesManagementScreen()),
     )
         .then((value) {
-      ref.invalidate(selectedJournalProvider);
       ref.invalidate(isarProvider);
     });
   }

@@ -54,9 +54,13 @@ class ReceiptTile extends ConsumerWidget {
           selectedJournal.data = journal;
           Navigator.of(context)
               .push(
-                MaterialPageRoute(builder: (_) => const SalesEditScreen()),
-              )
-              .then((value) => ref.invalidate(isarProvider));
+            MaterialPageRoute(builder: (_) => const SalesEditScreen()),
+          )
+              .then((value) {
+            if (context.mounted) {
+              ref.invalidate(isarProvider);
+            }
+          });
         },
         title: Text(journal.code),
         subtitle: Row(

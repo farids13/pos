@@ -1,8 +1,11 @@
+import 'dart:developer';
+
 import 'package:cashier_app/collections/journal/journal.dart';
 import 'package:cashier_app/collections/journal/journal_detail.dart';
 import 'package:cashier_app/main.dart';
 import 'package:cashier_app/states/selected_journal_provider.dart';
 import 'package:cashier_app/states/selected_product_provider.dart';
+import 'package:cashier_app/widgets/barcode_scanner_with_list.dart';
 import 'package:cashier_app/widgets/general_widgets/quantity_and_value_popup.dart';
 import 'package:cashier_app/widgets/products/search_and_add_product.dart';
 import 'package:flutter/material.dart';
@@ -88,7 +91,42 @@ class _SalesManagementScreenState extends ConsumerState<SalesManagementScreen> {
           actions: [
             selectedJournal.data.status == JournalStatus.opened
                 ? TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text("Confirmation"),
+                            content: const Text(
+                                "Are you sure? Deleted receipt cannot be reversed."),
+                            actions: [
+                              TextButton(
+                                child: const Text("Cancel"),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                              TextButton(
+                                child: const Text("OK"),
+                                onPressed: () {
+                                  var isar = ref.watch(isarProvider);
+                                  setState(() {
+                                    selectedJournal.data.status =
+                                        JournalStatus.cancelled;
+                                  });
+                                  isar.writeTxnSync(() {
+                                    isar.journals.putSync(selectedJournal.data);
+                                  });
+                                  ref.invalidate(isarProvider);
+                                  Navigator.of(context).pop();
+                                  log("${Navigator.of(context).canPop()}");
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
                     style: ButtonStyle(
                       foregroundColor:
                           MaterialStateProperty.all<Color>(Colors.red),
@@ -273,6 +311,27 @@ class _SalesManagementScreenState extends ConsumerState<SalesManagementScreen> {
                           child: Text("Add items from stock"),
                         )),
                   ),
+            _isClosed
+                ? const SizedBox()
+                : Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextButton(
+                        onPressed: () async {
+                          await Navigator.of(context)
+                              .push(
+                            MaterialPageRoute(
+                              builder: (_) => const BarcodeScannerWithList(),
+                            ),
+                          )
+                              .then((value) {
+                            setState(() {});
+                          });
+                        },
+                        child: const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text("Scan Item"),
+                        )),
+                  ),
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 8.0),
               child: Divider(thickness: 0.5),
@@ -373,7 +432,6 @@ class _SalesManagementScreenState extends ConsumerState<SalesManagementScreen> {
                                           .putSync(selectedJournal.data);
                                     });
                                     ref.invalidate(isarProvider);
-                                    Navigator.of(context).pop();
                                     Navigator.of(context).pop();
                                   },
                                 ),

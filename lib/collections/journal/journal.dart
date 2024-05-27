@@ -7,6 +7,7 @@ part 'journal.g.dart';
 class Journal {
   Journal({
     this.status = JournalStatus.opened,
+    this.type = JournalType.other,
   }) {
     created = DateTime.now();
   }
