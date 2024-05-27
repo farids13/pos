@@ -111,7 +111,7 @@ class _ProductDetailScreen extends ConsumerState<ProductDetailScreen> {
                   decoration: const BoxDecoration(
                     image: DecorationImage(
                       image: NetworkImage(
-                        'https://source.unsplash.com/random/300x300?product',
+                        'https://store.storeimages.cdn-apple.com/1/as-images.apple.com/is/iphone-13-finish-select-202207-product-red?wid=5120&hei=2880&fmt=webp&qlt=70&.v=WGQwVDZoTWdLODlMWERUbVY5M013a1NCSGJEVklzV3dtVWxKME5oOWltbkt6V25EMGNydWRwby94NjVGeDRTU2d2S3NaRzcrU0dmYjNHTUFiMnlsWFRocXAvNjVVaCtjTTZGTUNzOU8wNkVrTVNTQnN4UXUvYlU2WmdlRmt1Y3o=&traceId=1',
                       ),
                       fit: BoxFit.cover,
                     ),

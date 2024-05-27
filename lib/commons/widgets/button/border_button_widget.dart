@@ -2,6 +2,7 @@ import 'package:cashier_app/commons/extensions/extensions.dart';
 import 'package:cashier_app/commons/widgets/text/regular_text.dart';
 import 'package:cashier_app/utils/constants/dimens.dart';
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
 
 class BorderButton extends StatelessWidget {
   final String text;
@@ -17,6 +18,9 @@ class BorderButton extends StatelessWidget {
   final Function()? onTap;
   final TextAlign? textAlign;
   final double? borderRadius;
+  final IconData? suffixIcon;
+  final IconData? prefixIcon;
+  final MainAxisAlignment? iconAlign;
   const BorderButton(
     this.text, {
     super.key,
@@ -32,6 +36,9 @@ class BorderButton extends StatelessWidget {
     this.borderRadius,
     this.paddingHorizontal,
     this.paddingVertical,
+    this.suffixIcon,
+    this.prefixIcon,
+    this.iconAlign,
   });
 
   @override
@@ -48,22 +55,57 @@ class BorderButton extends StatelessWidget {
         ),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(borderRadius ?? Dimens.dp4),
-          color: isOutlined != null && !isOutlined!
+          color: isOutlined != null && isOutlined!
               ? null
               : context.theme.primaryColor,
-          border: isOutlined != null && !isOutlined!
+          border: isOutlined != null && isOutlined!
               ? Border.all(color: borderColor ?? context.theme.primaryColor)
               : null,
         ),
-        child: RegularText(
-          textAlign: textAlign,
-          text,
-          style: style?.copyWith(
-            fontSize: fontSize,
-            color: isOutlined != null && isOutlined!
-                ? (colorText != null ? colorText! : context.theme.canvasColor)
-                : (colorText != null ? colorText! : context.theme.primaryColor),
-          ),
+        child: Row(
+          mainAxisAlignment: iconAlign ?? MainAxisAlignment.center,
+          children: [
+            // First Icon
+            if (prefixIcon != null)
+              Icon(
+                prefixIcon,
+                size: fontSize ?? Dimens.dp20,
+                color: isOutlined != null && !isOutlined!
+                    ? (colorText != null
+                        ? colorText!
+                        : context.theme.canvasColor)
+                    : (colorText != null
+                        ? colorText!
+                        : context.theme.primaryColor),
+              ),
+            RegularText(
+              textAlign: textAlign,
+              text,
+              style: style?.copyWith(
+                fontSize: fontSize,
+                color: isOutlined != null && !isOutlined!
+                    ? (colorText != null
+                        ? colorText!
+                        : context.theme.canvasColor)
+                    : (colorText != null
+                        ? colorText!
+                        : context.theme.primaryColor),
+              ),
+            ),
+            // Last Icon
+            if (suffixIcon != null)
+              Icon(
+                suffixIcon,
+                size: fontSize ?? Dimens.dp20,
+                color: isOutlined != null && !isOutlined!
+                    ? (colorText != null
+                        ? colorText!
+                        : context.theme.canvasColor)
+                    : (colorText != null
+                        ? colorText!
+                        : context.theme.primaryColor),
+              ),
+          ],
         ),
       ),
     );

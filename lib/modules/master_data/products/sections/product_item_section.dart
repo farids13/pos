@@ -31,37 +31,45 @@ class _ProductItemSection extends ConsumerWidget {
     }
     return InkWell(
       onTap: onEdit,
-      child: Column(
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ClipRRect(
+      child: Padding(
+        padding: const EdgeInsets.only(left: Dimens.dp18, right: Dimens.dp18),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Center(
+              child: ClipRRect(
                 borderRadius: BorderRadius.circular(Dimens.dp8),
                 child: product.description.isEmpty
                     ? Image.network(
-                        'https://source.unsplash.com/random/300x300?product',
-                        width: 74,
-                        height: 74,
+                        'https://store.storeimages.cdn-apple.com/1/as-images.apple.com/is/iphone-13-finish-select-202207-product-red?wid=5120&hei=2880&fmt=webp&qlt=70&.v=WGQwVDZoTWdLODlMWERUbVY5M013a1NCSGJEVklzV3dtVWxKME5oOWltbkt6V25EMGNydWRwby94NjVGeDRTU2d2S3NaRzcrU0dmYjNHTUFiMnlsWFRocXAvNjVVaCtjTTZGTUNzOU8wNkVrTVNTQnN4UXUvYlU2WmdlRmt1Y3o=&traceId=1',
+                        width: 100,
+                        height: 100,
                         fit: BoxFit.cover,
                       )
                     : Image.memory(
                         ImageHelper.convertToUint8List(product.name),
-                        width: 74,
-                        height: 74,
+                        width: 100,
+                        height: 100,
                         fit: BoxFit.cover,
                       ),
               ),
-              Dimens.dp12.width,
-              Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
+            ),
+            Dimens.dp12.width,
+            Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width <= 400
+                        ? 100
+                        : MediaQuery.of(context).size.width - 250,
+                    child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        RegularText(
+                        Text(
+                          overflow: TextOverflow.ellipsis,
                           product.name,
                           style: const TextStyle(fontSize: Dimens.dp20),
                         ),
@@ -75,38 +83,20 @@ class _ProductItemSection extends ConsumerWidget {
                         ),
                       ],
                     ),
+                  ),
 
-                    // Stock View
-                    BorderButton(
-                      journalAmount.toStringAsFixed(0),
-                      isOutlined: journalAmount < 0 ? true : false,
-                      width: 80,
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
+                  // Stock View
+                  BorderButton(
+                    journalAmount.toStringAsFixed(0),
+                    isOutlined: journalAmount >= 0 ? true : false,
+                    width: 80,
+                    textAlign: TextAlign.center,
+                  ),
+                ],
               ),
-            ],
-          ),
-          Dimens.dp16.height,
-          // Row(
-          //   children: [
-          //     Expanded(
-          //       child: OutlinedButton(
-          //         onPressed: onEdit,
-          //         child: const Text('Edit'),
-          //       ),
-          //     ),
-          //     Dimens.dp16.width,
-          //     Expanded(
-          //       child: OutlinedButton(
-          //         onPressed: onDelete,
-          //         child: const Text('Delete'),
-          //       ),
-          //     ),
-          //   ],
-          // ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }
