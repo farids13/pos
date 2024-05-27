@@ -4,6 +4,7 @@ class _ItemsList extends ConsumerStatefulWidget {
   final JournalDetail detail;
   final Function()? onTapPlus;
   final Function()? onTapMin;
+
   const _ItemsList(this.detail, this.onTapPlus, this.onTapMin);
 
   @override
@@ -39,18 +40,34 @@ class _ItemsListState extends ConsumerState<_ItemsList> {
           children: [
             BorderButton(
               onTap: () => {QLoggerHelper.info("test")},
-              "+ Catatan",
+              "Detail",
               isOutlined: false,
               style: context.theme.textTheme.bodyMedium,
             ),
             const Spacer(),
             Row(
               children: [
-                BorderButton("-", isOutlined: false, onTap: widget.onTapMin),
+                widget.detail.journal.value?.status == JournalStatus.opened
+                    ? BorderButton("-",
+                        isOutlined: false, onTap: widget.onTapMin)
+                    : const SizedBox(),
                 Dimens.dp24.width,
-                RegularText("${widget.detail.amount.ceil()}"),
+                widget.detail.journal.value?.status == JournalStatus.opened
+                    ? RegularText("${widget.detail.amount.ceil()}")
+                    : Row(
+                        children: [
+                          RegularText.semiBold(
+                            "${widget.detail.amount.ceil()}",
+                            style: context.theme.textTheme.titleLarge,
+                          ),
+                          const RegularText(" pcs"),
+                        ],
+                      ),
                 Dimens.dp24.width,
-                BorderButton("+", isOutlined: true, onTap: widget.onTapPlus),
+                widget.detail.journal.value?.status == JournalStatus.opened
+                    ? BorderButton("+",
+                        isOutlined: true, onTap: widget.onTapPlus)
+                    : const SizedBox(),
               ],
             )
           ],

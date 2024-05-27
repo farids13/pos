@@ -3,7 +3,10 @@ part of "../sales_edit_screen.dart";
 class SaleEditSection extends ConsumerStatefulWidget {
   final SelectedJournal journal;
   final Function() addProduct;
-  const SaleEditSection(this.journal, {super.key, required this.addProduct});
+  final Function() scanBarcode;
+
+  const SaleEditSection(this.journal,
+      {super.key, required this.addProduct, required this.scanBarcode});
 
   @override
   ConsumerState<SaleEditSection> createState() => _SaleEditSectionState();
@@ -50,11 +53,27 @@ class _SaleEditSectionState extends ConsumerState<SaleEditSection> {
                       "Pesanan",
                       style: context.theme.textTheme.headlineSmall,
                     ),
-                    BorderButton(
-                      "+",
-                      isOutlined: false,
-                      onTap: widget.addProduct,
-                    )
+                    SizedBox(
+                      child: Row(
+                        children: [
+                          widget.journal.data.status == JournalStatus.opened
+                              ?
+                          BorderButton(
+                            "+",
+                            isOutlined: false,
+                            onTap: widget.addProduct,
+                          ):const SizedBox(),
+                          Dimens.dp8.width,
+                          widget.journal.data.status == JournalStatus.opened
+                              ? BorderButton(
+                                  "֎",
+                                  isOutlined: false,
+                                  onTap: widget.scanBarcode,
+                                )
+                              : const SizedBox(),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
                 ...widget.journal.data.details.map((e) => _ItemsList(
