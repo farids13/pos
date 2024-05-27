@@ -21,22 +21,34 @@ class _ItemsListState extends ConsumerState<_ItemsList> {
           thickness: 2,
         ),
         Dimens.dp10.height,
-        RegularText.semiBold(
-          widget.detail.product.value!.name,
-          style: context.theme.textTheme.bodyLarge,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            RegularText.semiBold(
+              widget.detail.product.value!.name,
+              style: context.theme.textTheme.bodyLarge,
+            ),
+            RegularText.medium(
+              QFormatter.formatCurrencyIndonesia(
+                  widget.detail.price * widget.detail.amount.ceil()),
+              style: const TextStyle(fontSize: Dimens.dp16),
+            )
+          ],
         ),
         QSizes.spaceBetweenInputFields.height,
         Row(
           children: [
-            RegularText.semiBold(
-              widget.detail.product.value!.prices.first.price.toString(),
-              style: context.theme.textTheme.titleLarge,
+            RegularText.medium(
+              QFormatter.formatCurrencyIndonesia(
+                widget.detail.product.value!.prices.first.price,
+              ),
             ),
             const RegularText(" / pcs"),
           ],
         ),
         Dimens.dp16.height,
         Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             BorderButton(
               onTap: () => {QLoggerHelper.info("test")},
@@ -44,32 +56,21 @@ class _ItemsListState extends ConsumerState<_ItemsList> {
               isOutlined: false,
               style: context.theme.textTheme.bodyMedium,
             ),
-            const Spacer(),
-            Row(
-              children: [
-                widget.detail.journal.value?.status == JournalStatus.opened
-                    ? BorderButton("-",
-                        isOutlined: false, onTap: widget.onTapMin)
-                    : const SizedBox(),
-                Dimens.dp24.width,
-                widget.detail.journal.value?.status == JournalStatus.opened
-                    ? RegularText("${widget.detail.amount.ceil()}")
-                    : Row(
-                        children: [
-                          RegularText.semiBold(
-                            "${widget.detail.amount.ceil()}",
-                            style: context.theme.textTheme.titleLarge,
-                          ),
-                          const RegularText(" pcs"),
-                        ],
-                      ),
-                Dimens.dp24.width,
-                widget.detail.journal.value?.status == JournalStatus.opened
-                    ? BorderButton("+",
-                        isOutlined: true, onTap: widget.onTapPlus)
-                    : const SizedBox(),
-              ],
-            )
+            if (widget.detail.journal.value?.status == JournalStatus.opened)
+              SizedBox(
+                width: 120,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    BorderButton("-", isOutlined: true, onTap: widget.onTapMin),
+                    RegularText("${widget.detail.amount.ceil()}"),
+                    BorderButton("+",
+                        isOutlined: false, onTap: widget.onTapPlus),
+                  ],
+                ),
+              ),
+            if (widget.detail.journal.value?.status != JournalStatus.opened)
+              RegularText("${widget.detail.amount.ceil()} pcs"),
           ],
         ),
       ],
