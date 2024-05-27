@@ -1,3 +1,5 @@
+// ignore_for_file: unused_import
+
 import 'package:cashier_app/collections/journal/journal_detail.dart';
 import 'package:cashier_app/collections/product/product.dart';
 import 'package:cashier_app/commons/extensions/extensions.dart';
@@ -12,8 +14,8 @@ import 'package:cashier_app/utils/constants/sizes.dart';
 import 'package:cashier_app/utils/formatters/formatter.dart';
 import 'package:cashier_app/utils/helpers/image_helper.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:isar/isar.dart';
 
 import '../../../collections/journal/journal.dart';
@@ -37,29 +39,21 @@ class ProductListScreen extends ConsumerWidget {
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(Dimens.dp10),
-                    child: BorderButton(
-                      "Add Product",
-                      textAlign: TextAlign.center,
-                      isOutlined: true,
-                      onTap: () {
-                        ref.watch(productProvider.notifier).state = Product();
-                        Navigator.of(context).push(MaterialPageRoute(
-                          builder: (_) => const ProductManagementScreen(),
-                        ));
-                      },
-                    ),
-                  ),
-                )
-              ],
+            padding: const EdgeInsets.all(QSizes.defaultSpace),
+            child: BorderButton(
+              "Add Product",
+              prefixIcon: Iconsax.add,
+              textAlign: TextAlign.center,
+              isOutlined: true,
+              onTap: () {
+                ref.watch(productProvider.notifier).state = Product();
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (_) => const ProductManagementScreen(),
+                ));
+              },
             ),
           ),
+          // ====== List View Product =====
           Expanded(
             child: FutureBuilder(
               future: products,
@@ -85,54 +79,29 @@ class ProductListScreen extends ConsumerWidget {
                                   journalDetail.journal.value?.type)) {
                               } else {}
                             }
-                            return Padding(
-                              padding: const EdgeInsets.all(Dimens.dp24),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  _ProductItemSection(
-                                    product: product,
-                                    onDelete: () {},
-                                    onEdit: () async {
-                                      ref
-                                          .watch(productProvider.notifier)
-                                          .state = product;
-                                      await Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (_) =>
-                                              const ProductDetailScreen(),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                  const Divider(
-                                    thickness: Dimens.dp10,
-                                  )
-                                ],
-                              ),
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                _ProductItemSection(
+                                  product: product,
+                                  onDelete: () {},
+                                  onEdit: () async {
+                                    ref.watch(productProvider.notifier).state =
+                                        product;
+                                    await Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (_) =>
+                                            const ProductDetailScreen(),
+                                      ),
+                                    );
+                                  },
+                                ),
+                                const Divider(
+                                  thickness: Dimens.dp10,
+                                )
+                              ],
                             );
-                            // return ListTile(
-                            //   title: Text(product.name),
-                            //   subtitle: Text(product.code),
-                            //   trailing: Text(
-                            //     journalAmount.abs().toStringAsFixed(0),
-                            //     style: TextStyle(
-                            //         fontSize: journalAmount != 0 ? 14 : 10,
-                            //         color: journalAmount < 0
-                            //             ? Colors.red
-                            //             : Colors.black),
-                            //   ),
-                            //   onTap: () async {
-                            //     ref.watch(productProvider.notifier).state =
-                            //         product;
-                            //     await Navigator.of(context).push(
-                            //       MaterialPageRoute(
-                            //         builder: (_) => const ProductDetailScreen(),
-                            //       ),
-                            //     );
-                            //   },
-                            // );
                           },
                         );
                 } else if (snapshot.hasError) {
