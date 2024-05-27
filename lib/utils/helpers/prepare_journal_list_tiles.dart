@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 
 import '../../collections/journal/journal.dart';
 import '../../collections/product/product.dart';
-import '../../modules/transactions/receipts/sales_management_screen.dart';
+import '../../modules/transactions/receipts/sales_edit_screen.dart';
 import '../../states/selected_journal_provider.dart';
 
 List<Widget> prepareJournalListTiles(
@@ -54,7 +54,7 @@ class ReceiptTile extends ConsumerWidget {
           selectedJournal.data = journal;
           Navigator.of(context)
               .push(
-            MaterialPageRoute(builder: (_) => const SalesManagementScreen()),
+            MaterialPageRoute(builder: (_) => const SalesEditScreen()),
           )
               .then((value) {
             if (context.mounted) {

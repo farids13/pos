@@ -1,3 +1,4 @@
+import 'package:cashier_app/commons/widgets/list/list_item_widget.dart';
 import 'package:cashier_app/main.dart';
 import 'package:cashier_app/utils/helpers/prepare_journal_list_tiles.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +7,7 @@ import 'package:isar/isar.dart';
 
 import '../../../collections/journal/journal.dart';
 import '../../../states/selected_journal_provider.dart';
-import '../receipts/sales_management_screen.dart';
+import '../receipts/sales_edit_screen.dart';
 
 class OutgoingGoodsListScreen extends ConsumerStatefulWidget {
   const OutgoingGoodsListScreen({super.key});
@@ -86,8 +87,11 @@ class _OutgoingGoodsListScreen extends ConsumerState<OutgoingGoodsListScreen> {
                   if (snapshot.hasData) {
                     List<Journal> outgoingGoods = snapshot.data!;
 
-                    List<Widget> data =
-                        prepareJournalListTiles(context, outgoingGoods);
+                    List<Widget> data = [];
+                    // prepareJournalListTiles(context, outgoingGoods);
+                    for (var sale in outgoingGoods) {
+                      data.add(ListItem(sale));
+                    }
                     return outgoingGoods.isEmpty
                         ? const Center(child: Text('Empty'))
                         : ListView(
@@ -121,7 +125,7 @@ class _OutgoingGoodsListScreen extends ConsumerState<OutgoingGoodsListScreen> {
     });
     Navigator.of(context)
         .push(
-          MaterialPageRoute(builder: (_) => const SalesManagementScreen()),
+          MaterialPageRoute(builder: (_) => const SalesEditScreen()),
         )
         .then((val) => val != null ? (val ? _getRequests() : null) : null);
   }

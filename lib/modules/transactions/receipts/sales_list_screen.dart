@@ -1,7 +1,10 @@
+import 'package:cashier_app/commons/widgets/button/border_button_widget.dart';
+import 'package:cashier_app/commons/widgets/list/list_item_widget.dart';
 import 'package:cashier_app/main.dart';
 import 'package:cashier_app/modules/transactions/incoming_goods/incoming_goods_list_screen.dart';
 import 'package:cashier_app/modules/transactions/moving_goods/moving_goods_list_screen.dart';
 import 'package:cashier_app/modules/transactions/outgoing_goods/outgoing_goods_list_screen.dart';
+import 'package:cashier_app/utils/constants/dimens.dart';
 import 'package:cashier_app/utils/helpers/prepare_journal_list_tiles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -40,7 +43,7 @@ class SalesListScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text("Sales"),
+        title: const Text("Transaction"),
         actions: [
           CloseButton(
             onPressed: () => Navigator.of(context).pop(true),
@@ -65,23 +68,24 @@ class SalesListScreen extends ConsumerWidget {
                     List<Journal> sales = snapshot.data!;
 
                     List<Widget> data = [];
-                    data.add(
-                      ListTile(
-                        title: Center(
-                            child: Text(
-                                "${from?.year}/${from?.month}/${from?.day} : ${to?.year}/${to?.month}/${to?.day}")),
-                      ),
-                    );
+                    // data.add(
+                    //   ListTile(
+                    //     title: Center(
+                    //         child: Text(
+                    //             "${from?.year}/${from?.month}/${from?.day} : ${to?.year}/${to?.month}/${to?.day}")),
+                    //   ),
+                    // );
 
-                    data.addAll(prepareJournalListTiles(context, sales));
+                    // data.addAll(prepareJournalListTiles(context, sales));
+                    for (var sale in sales) {
+                      data.add(ListItem(sale));
+                    }
 
                     return sales.isEmpty
                         ? Center(
                             child: Text(
                                 '${from?.year}/${from?.month}/${from?.day} : ${to?.year}/${to?.month}/${to?.day} is Empty'))
-                        : ListView(
-                            children: data,
-                          );
+                        : ListView(children: data);
                   }
                   return const Center(
                     child: CircularProgressIndicator(),
@@ -95,46 +99,34 @@ class SalesListScreen extends ConsumerWidget {
 }
 
 // -- Functions
-
 List<Widget> _buildMenu(Color primaryColor, BuildContext context) {
   return [
     Expanded(
       child: Padding(
-        padding: const EdgeInsets.all(2.0),
-        child: TextButton(
-          style: TextButton.styleFrom(
-            side: BorderSide(width: 1, color: primaryColor),
-          ),
-          onPressed: () {
-            Navigator.of(context)
-                .push(
-                  MaterialPageRoute(
-                      builder: (_) => const IncomingGoodsListScreen()),
-                )
-                .then((val) =>
-                    val != null ? (val ? _getRequests() : null) : null);
-          },
-          child: const Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: 4,
-              vertical: 2,
-            ),
-            child: Text(
-              textAlign: TextAlign.center,
-              "In",
-            ),
-          ),
-        ),
-      ),
+          padding: const EdgeInsets.all(Dimens.dp10),
+          child: BorderButton(
+            "In",
+            isOutlined: false,
+            textAlign: TextAlign.center,
+            onTap: () {
+              Navigator.of(context)
+                  .push(
+                    MaterialPageRoute(
+                        builder: (_) => const IncomingGoodsListScreen()),
+                  )
+                  .then((val) =>
+                      val != null ? (val ? _getRequests() : null) : null);
+            },
+          )),
     ),
     Expanded(
       child: Padding(
-        padding: const EdgeInsets.all(2.0),
-        child: TextButton(
-          style: TextButton.styleFrom(
-            side: BorderSide(width: 1, color: primaryColor),
-          ),
-          onPressed: () {
+        padding: const EdgeInsets.all(Dimens.dp10),
+        child: BorderButton(
+          "Out",
+          isOutlined: false,
+          textAlign: TextAlign.center,
+          onTap: () {
             Navigator.of(context)
                 .push(
                   MaterialPageRoute(
@@ -143,27 +135,17 @@ List<Widget> _buildMenu(Color primaryColor, BuildContext context) {
                 .then((val) =>
                     val != null ? (val ? _getRequests() : null) : null);
           },
-          child: const Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: 4,
-              vertical: 2,
-            ),
-            child: Text(
-              textAlign: TextAlign.center,
-              "Out",
-            ),
-          ),
         ),
       ),
     ),
     Expanded(
       child: Padding(
-        padding: const EdgeInsets.all(2.0),
-        child: TextButton(
-          style: TextButton.styleFrom(
-            side: BorderSide(width: 1, color: primaryColor),
-          ),
-          onPressed: () {
+        padding: const EdgeInsets.all(Dimens.dp10),
+        child: BorderButton(
+          "Move",
+          isOutlined: false,
+          textAlign: TextAlign.center,
+          onTap: () {
             Navigator.of(context)
                 .push(
                   MaterialPageRoute(
@@ -172,16 +154,6 @@ List<Widget> _buildMenu(Color primaryColor, BuildContext context) {
                 .then((val) =>
                     val != null ? (val ? _getRequests() : null) : null);
           },
-          child: const Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: 4,
-              vertical: 2,
-            ),
-            child: Text(
-              textAlign: TextAlign.center,
-              "Move",
-            ),
-          ),
         ),
       ),
     ),
@@ -189,7 +161,7 @@ List<Widget> _buildMenu(Color primaryColor, BuildContext context) {
     // -- deprecated
     // Expanded(
     //   child: Padding(
-    //     padding: const EdgeInsets.all(2.0),
+    //     padding: const EdgeInsets.all(Dimens.dp10),
     //     child: TextButton(
     //       style: TextButton.styleFrom(
     //         side: BorderSide(width: 1, color: primaryColor),

@@ -1,4 +1,5 @@
 import 'package:cashier_app/collections/journal/journal.dart';
+import 'package:cashier_app/commons/widgets/list/list_item_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
@@ -6,13 +7,14 @@ import 'package:isar/isar.dart';
 import '../../../main.dart';
 import '../../../states/selected_journal_provider.dart';
 import '../../../utils/helpers/prepare_journal_list_tiles.dart';
-import '../receipts/sales_management_screen.dart';
+import '../receipts/sales_edit_screen.dart';
 
 class IncomingGoodsListScreen extends ConsumerStatefulWidget {
   const IncomingGoodsListScreen({super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _IncomingGoodsListScreen();
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      _IncomingGoodsListScreen();
 }
 
 class _IncomingGoodsListScreen extends ConsumerState<IncomingGoodsListScreen> {
@@ -85,8 +87,11 @@ class _IncomingGoodsListScreen extends ConsumerState<IncomingGoodsListScreen> {
                   if (snapshot.hasData) {
                     List<Journal> incomingGoods = snapshot.data!;
 
-                    List<Widget> data =
-                        prepareJournalListTiles(context, incomingGoods);
+                    List<Widget> data = [];
+                    // prepareJournalListTiles(context, incomingGoods);
+                    for (var sale in incomingGoods) {
+                      data.add(ListItem(sale));
+                    }
                     return incomingGoods.isEmpty
                         ? const Center(child: Text('Empty'))
                         : ListView(
@@ -120,8 +125,8 @@ class _IncomingGoodsListScreen extends ConsumerState<IncomingGoodsListScreen> {
     });
     Navigator.of(context)
         .push(
-      MaterialPageRoute(builder: (_) => const SalesManagementScreen()),
-    )
+          MaterialPageRoute(builder: (_) => const SalesEditScreen()),
+        )
         .then((val) => val != null ? (val ? _getRequests() : null) : null);
   }
 

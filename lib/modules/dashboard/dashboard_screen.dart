@@ -1,12 +1,26 @@
+import 'dart:math';
+
 import 'package:cashier_app/collections/journal/journal.dart';
+import 'package:cashier_app/commons/extensions/extensions.dart';
+import 'package:cashier_app/commons/styles/spacing_styles.dart';
+import 'package:cashier_app/commons/widgets/list/list_item_widget.dart';
+import 'package:cashier_app/commons/widgets/text/heading_text.dart';
+import 'package:cashier_app/commons/widgets/text/regular_text.dart';
 import 'package:cashier_app/main.dart';
 import 'package:cashier_app/modules/transactions/receipts/sales_list_screen.dart';
+import 'package:cashier_app/utils/constants/dimens.dart';
+import 'package:cashier_app/utils/constants/sizes.dart';
 import 'package:cashier_app/utils/helpers/prepare_journal_list_tiles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:iconsax/iconsax.dart';
+import 'package:intl/intl.dart';
 import 'package:isar/isar.dart';
-
+import 'package:badges/badges.dart' as badges;
 import '../../utils/helpers/random_data.dart';
+
+part 'sections/card_section.dart';
 
 class CashierHomePage extends ConsumerStatefulWidget {
   final String title;
@@ -21,6 +35,7 @@ class _CashierHomePage extends ConsumerState<CashierHomePage> {
   @override
   Widget build(BuildContext context) {
     List<Widget> data = [];
+
     var primaryColor = Theme.of(context).colorScheme.primary;
 
     Isar isar = ref.watch(isarProvider);
@@ -29,6 +44,11 @@ class _CashierHomePage extends ConsumerState<CashierHomePage> {
         .typeEqualTo(JournalType.sale)
         .sortByCreatedDesc()
         .findAllSync();
+
+    int openReceiptCount = sales
+        .where((element) => element.status == JournalStatus.opened)
+        .toList()
+        .length;
 
     TextButton randomButton = TextButton(
       style: TextButton.styleFrom(
@@ -112,9 +132,12 @@ class _CashierHomePage extends ConsumerState<CashierHomePage> {
           thisMonthSet[indexToAdd]["quantity"] += value;
         }
       }
+
       List<ListTile> summary = [];
+
       DateTime today = DateTime.now();
       today = today.copyWith(hour: 0, minute: 0, second: 0);
+
       for (var element in thisMonthSet) {
         DateTime dayFrom = DateTime(0);
         DateTime dayTo = DateTime(0);
@@ -155,127 +178,201 @@ class _CashierHomePage extends ConsumerState<CashierHomePage> {
         );
       }
 
-      data.add(
-        Padding(
-          padding: const EdgeInsets.only(top: 8.0),
-          child: Center(
-            child: Text(
-              "Open Receipt",
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.primary,
-              ),
-            ),
-          ),
-        ),
-      );
-      data.add(
-        Card(
-          elevation: 0,
-          child: salesPending.isEmpty
-              ? Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Center(
-                    child: Text(
-                      "Empty",
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.secondary),
-                    ),
-                  ),
-                )
-              : Column(
-                  children: prepareJournalListTiles(context, salesPending),
-                ),
-        ),
-      );
-      data.add(
-        Padding(
-          padding: const EdgeInsets.only(top: 8.0),
-          child: Center(
-            child: Text(
-              "Sales Today",
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.primary,
-              ),
-            ),
-          ),
-        ),
-      );
-      data.add(
-        Card(
-          elevation: 0,
-          child: salesPostedToday.isEmpty
-              ? Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Center(
-                    child: Text(
-                      "Empty",
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.secondary),
-                    ),
-                  ),
-                )
-              : Column(
-                  children: prepareJournalListTiles(context, salesPostedToday),
-                ),
-        ),
-      );
+      // -- Deprecated
+      // data.add(
+      //   Padding(
+      //     padding: const EdgeInsets.only(top: 8.0),
+      //     child: Center(
+      //       child: Text(
+      //         "Open Receipt",
+      //         style: TextStyle(
+      //           color: Theme.of(context).colorScheme.primary,
+      //         ),
+      //       ),
+      //     ),
+      //   ),
+      // );
+      // data.add(
+      //   Card(
+      //     elevation: 0,
+      //     child: salesPending.isEmpty
+      //         ? Padding(
+      //             padding: const EdgeInsets.all(8.0),
+      //             child: Center(
+      //               child: Text(
+      //                 "Empty",
+      //                 style: TextStyle(
+      //                     color: Theme.of(context).colorScheme.secondary),
+      //               ),
+      //             ),
+      //           )
+      //         : Column(
+      //             children: prepareJournalListTiles(context, salesPending),
+      //           ),
+      //   ),
+      // );
+      final formatCurrency = NumberFormat.currency(
+          locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0);
+
+      String totalSalesToday = salesPostedToday.isNotEmpty
+          ? formatCurrency.format(salesPostedToday
+              .map((e) => e.details
+                  .map((p) => p.price * p.amount)
+                  .reduce((value, element) => value + element))
+              .reduce((a, b) => a + b))
+          : "0";
+      int totalProductToday = salesPostedToday.length;
+      String totalProductTodays = salesPostedToday.isNotEmpty
+          ? salesPostedToday
+              .map((e) => e.details.length)
+              .reduce((v, e) => v + e)
+              .toString()
+          : "0";
 
       data.add(
         Padding(
-          padding: const EdgeInsets.only(top: 8.0),
-          child: Center(
-            child: Text(
-              "Summaries",
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.primary,
+          padding: const EdgeInsets.all(Dimens.dp16),
+          child: Column(
+            children: [
+              _CardSection(
+                label: 'Total Penjualan',
+                value: totalSalesToday,
               ),
-            ),
+              Dimens.dp16.height,
+              _CardSection(
+                label: 'Total Transaksi',
+                value: totalProductToday.toString(),
+              ),
+              Dimens.dp16.height,
+              _CardSection(
+                label: 'Total Produk',
+                value: totalProductTodays,
+              ),
+            ],
           ),
         ),
       );
-      data.add(
-        Card(
-          child: summary.isEmpty
-              ? Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Center(
-                    child: Text(
-                      "Empty",
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.secondary),
-                    ),
-                  ),
-                )
-              : Column(
-                  children: summary,
-                ),
-        ),
-      );
-
+      data.add(const Divider(
+        thickness: Dimens.dp4,
+      ));
       data.add(
         Padding(
-          padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 32.0),
-          child: TextButton(
-            onPressed: () {
-              Navigator.of(context)
-                  .push(
-                    MaterialPageRoute(builder: (_) => const SalesListScreen()),
-                  )
-                  .then((val) =>
-                      val != null ? (val ? _getRequests() : null) : null);
-            },
-            child: const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text("all sales..."),
-            ),
+          padding: const EdgeInsets.all(Dimens.dp16),
+          child: RegularText(
+            "Sales Today",
+            style: context.theme.textTheme.headlineSmall,
           ),
         ),
       );
+      for (var element in salesPostedToday) {
+        data.add(Padding(
+          padding: const EdgeInsets.all(Dimens.dp16),
+          child: ListItem(element),
+        ));
+      }
+      // data.add(
+      //   Card(
+      //     elevation: 0,
+      //     child: salesPostedToday.isEmpty
+      //         ? Padding(
+      //             padding: const EdgeInsets.all(Dimens.dp12),
+      //             child: Center(
+      //               child: Text(
+      //                 "Empty",
+      //                 style: TextStyle(
+      //                     color: Theme.of(context).colorScheme.secondary),
+      //               ),
+      //             ),
+      //           )
+      //         : Column(
+      //             children: prepareJournalListTiles(context, salesPostedToday),
+      //           ),
+      //   ),
+      // );
+
+      // data.add(
+      //   Padding(
+      //     padding: const EdgeInsets.only(top: 8.0),
+      //     child: Center(
+      //       child: Text(
+      //         "Summaries",
+      //         style: TextStyle(
+      //           color: Theme.of(context).colorScheme.primary,
+      //         ),
+      //       ),
+      //     ),
+      //   ),
+      // );
+      // data.add(
+      //   Card(
+      //     child: summary.isEmpty
+      //         ? Padding(
+      //             padding: const EdgeInsets.all(8.0),
+      //             child: Center(
+      //               child: Text(
+      //                 "Empty",
+      //                 style: TextStyle(
+      //                     color: Theme.of(context).colorScheme.secondary),
+      //               ),
+      //             ),
+      //           )
+      //         : Column(
+      //             children: summary,
+      //           ),
+      //   ),
+      // );
+
+      // data.add(
+      //   Padding(
+      //     padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 32.0),
+      //     child: TextButton(
+      //       onPressed: () {
+      //         Navigator.of(context)
+      //             .push(
+      //               MaterialPageRoute(builder: (_) => const SalesListScreen()),
+      //             )
+      //             .then((val) =>
+      //                 val != null ? (val ? _getRequests() : null) : null);
+      //       },
+      //       child: const Padding(
+      //         padding: EdgeInsets.all(8.0),
+      //         child: Text("all sales..."),
+      //       ),
+      //     ),
+      //   ),
+      // );
     }
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Hi ${widget.title}"),
+        title: Row(
+          children: [
+            Text("Hi ${widget.title}"),
+            const Spacer(),
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(Iconsax.notification),
+            ),
+            badges.Badge(
+              badgeContent: Text(openReceiptCount.toString(),
+                  style: const TextStyle(color: Colors.white, fontSize: 10)),
+              badgeStyle: const badges.BadgeStyle(
+                  badgeColor: Colors.red,
+                  padding: EdgeInsets.all(8),
+                  elevation: 20),
+              showBadge: openReceiptCount > 0 ? true : false,
+              position: badges.BadgePosition.custom(start: 25),
+              child: IconButton(
+                onPressed: () {
+                  context.push("/cart");
+                },
+                icon: const Icon(
+                  Iconsax.shopping_bag,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: LayoutBuilder(
