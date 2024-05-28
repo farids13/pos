@@ -3,6 +3,15 @@ import 'package:flutter/material.dart';
 class AppColors {
   AppColors._();
 
+  static final Color errorColor = AppColors.red;
+  static const Color scaffoldColor = AppColors.white;
+  static final Color textSolidColor = AppColors.black;
+  static final Color textDisabledColor = AppColors.black[400]!;
+  static final Color borderColor = AppColors.white[500]!;
+  static final Color disabledColor = AppColors.black[200]!;
+  static final Color inputColor = AppColors.white;
+  static final Color dividerColor = AppColors.white[400]!;
+
   static const green = MaterialColor(0xff2DBE78, {
     200: Color(0xff5ED99E),
     400: Color(0xff35CF85),

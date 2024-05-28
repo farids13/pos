@@ -187,7 +187,7 @@ class _InfoWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: QAppTheme.borderColor),
+        border: Border.all(color: AppColors.borderColor),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Padding(

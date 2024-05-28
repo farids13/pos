@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cashier_app/collections/journal/journal_detail.dart';
 import 'package:cashier_app/collections/product/product.dart';
 import 'package:cashier_app/collections/product/product_price.dart';
+import 'package:cashier_app/commons/widgets/input/search_input.dart';
 import 'package:cashier_app/commons/widgets/page/empty_page.dart';
 import 'package:cashier_app/modules/master_data/products/widget/list_product_widget.dart';
 import 'package:cashier_app/states/selected_journal_detail_provider.dart';
@@ -56,24 +57,34 @@ class _SearchAndAddProduct extends ConsumerState<SearchAndAddProduct> {
       body: ListView(
         children: products.isEmpty
             ? [const EmptyPage("No product found")]
-            : products
-                .map(
-                  (e) => ListProductWidget(
-                    product: e,
-                    onDelete: () {},
-                    onEdit: () {
-                      setState(() {
-                        selectedProduct.data = e;
-                        selectedJournalDetail.data = JournalDetail();
-                      });
-                      showDialog(
-                        context: context,
-                        builder: (context) => const QuantityAndValuePopup(),
-                      );
-                    },
+            : [
+                SizedBox(
+                  width: 10,
+                  height: 100,
+                  child: SearchTextInput(
+                    controller: _searchQueryController,
+                    hintText: 'Search by product name...',
                   ),
-                )
-                .toList(),
+                ),
+                ...products
+                    .map(
+                      (e) => ListProductWidget(
+                        product: e,
+                        onDelete: () {},
+                        onEdit: () {
+                          setState(() {
+                            selectedProduct.data = e;
+                            selectedJournalDetail.data = JournalDetail();
+                          });
+                          showDialog(
+                            context: context,
+                            builder: (context) => const QuantityAndValuePopup(),
+                          );
+                        },
+                      ),
+                    )
+                    .toList()
+              ],
       ),
     );
   }
