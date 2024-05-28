@@ -257,12 +257,14 @@ class _CashierHomePage extends ConsumerState<CashierHomePage> {
           ),
         ),
       );
-      for (var element in salesPostedToday) {
-        data.add(Padding(
+      data.add(
+        Padding(
           padding: const EdgeInsets.all(Dimens.dp16),
-          child: ListItem(element),
-        ));
-      }
+          child: Column(
+            children: salesPostedToday.map((e) => ListItem(e)).toList(),
+          ),
+        ),
+      );
       // data.add(
       //   Card(
       //     elevation: 0,

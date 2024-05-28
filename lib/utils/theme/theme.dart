@@ -1,3 +1,4 @@
+import 'package:cashier_app/utils/constants/constant.dart';
 import 'package:cashier_app/utils/constants/dimens.dart';
 import 'package:cashier_app/utils/theme/colors.dart';
 import 'package:cashier_app/utils/theme/custom_theme/appbar_theme.dart';
@@ -34,7 +35,7 @@ class QAppTheme {
     fontFamily: 'Poppins',
     brightness: Brightness.light,
     iconButtonTheme: QIconButtonTheme.ligthIconButtonTheme,
-    primaryColor: AppColors.green,
+    primaryColor: QColors.primary,
     textTheme: QTextTheme.lightTextTheme,
     chipTheme: QChipTheme.lightChipTheme,
     scaffoldBackgroundColor: AppColors.scaffoldColor,
@@ -54,7 +55,7 @@ class QAppTheme {
     fontFamily: 'Poppins',
     brightness: Brightness.dark,
     iconButtonTheme: QIconButtonTheme.darkIconButtonTheme,
-    primaryColor: Colors.green,
+    primaryColor: QColors.primary,
     textTheme: QTextTheme.darkTextTheme,
     chipTheme: QChipTheme.darkChipTheme,
     scaffoldBackgroundColor: AppColors.black[800]!,

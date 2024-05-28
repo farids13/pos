@@ -137,8 +137,14 @@ class _BottomBarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      elevation: QSizes.lg,
+    return Container(
+      decoration: BoxDecoration(boxShadow: [
+        BoxShadow(
+          color: context.theme.scaffoldBackgroundColor,
+          blurRadius: 10,
+          offset: const Offset(0, -5),
+        ),
+      ]),
       child: Padding(
         padding: const EdgeInsets.all(Dimens.dp16),
         child: BorderButton(

@@ -72,25 +72,25 @@ class _SearchAndAddProduct extends ConsumerState<SearchAndAddProduct> {
                 if (products.isEmpty)
                   const EmptyPage("No product found")
                 else
-                  ...products
-                      .map(
-                        (e) => ListProductWidget(
-                          product: e,
-                          onDelete: () {},
-                          onEdit: () {
-                            setState(() {
-                              selectedProduct.data = e;
-                              selectedJournalDetail.data = JournalDetail();
-                            });
-                            showDialog(
-                              context: context,
-                              builder: (context) =>
-                                  const QuantityAndValuePopup(),
-                            );
-                          },
-                        ),
-                      )
-                      .toList(),
+                  ...products.map(
+                    (e) => Padding(
+                      padding: const EdgeInsets.all(Dimens.dp10),
+                      child: ListProductWidget(
+                        product: e,
+                        onDelete: () {},
+                        onEdit: () {
+                          setState(() {
+                            selectedProduct.data = e;
+                            selectedJournalDetail.data = JournalDetail();
+                          });
+                          showDialog(
+                            context: context,
+                            builder: (context) => const QuantityAndValuePopup(),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
               ],
             ),
           ),

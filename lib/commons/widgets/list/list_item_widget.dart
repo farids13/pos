@@ -6,6 +6,7 @@ import 'package:cashier_app/modules/transactions/receipts/sales_edit_screen.dart
 import 'package:cashier_app/states/selected_journal_provider.dart';
 import 'package:cashier_app/utils/constants/constant.dart';
 import 'package:cashier_app/utils/constants/dimens.dart';
+import 'package:cashier_app/utils/formatters/formatter.dart';
 import 'package:cashier_app/utils/theme/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -24,12 +25,9 @@ class ListItem extends ConsumerStatefulWidget {
 class ListItemSection extends ConsumerState<ListItem> {
   @override
   Widget build(BuildContext context) {
-    final formatCurrency =
-        NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0);
-
     String total = widget.journal.details.isEmpty
         ? '0'
-        : formatCurrency.format(widget.journal.details
+        : QFormatter.formatCurrencyIndonesia(widget.journal.details
             .map((e) => e.price * e.amount)
             .reduce((v, e) => v + e));
 
