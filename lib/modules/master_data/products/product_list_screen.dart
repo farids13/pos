@@ -10,6 +10,7 @@ import 'package:cashier_app/commons/widgets/text/text.dart';
 import 'package:cashier_app/main.dart';
 import 'package:cashier_app/modules/master_data/products/product_detail_screen.dart';
 import 'package:cashier_app/modules/master_data/products/product_management_screen.dart';
+import 'package:cashier_app/modules/master_data/products/widget/list_product_widget.dart';
 import 'package:cashier_app/utils/constants/dimens.dart';
 import 'package:cashier_app/utils/constants/sizes.dart';
 import 'package:cashier_app/utils/formatters/formatter.dart';
@@ -20,8 +21,6 @@ import 'package:iconsax/iconsax.dart';
 import 'package:isar/isar.dart';
 
 import '../../../collections/journal/journal.dart';
-
-part 'sections/product_item_section.dart';
 
 class ProductListScreen extends ConsumerWidget {
   const ProductListScreen({super.key});
@@ -84,7 +83,7 @@ class ProductListScreen extends ConsumerWidget {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                _ProductItemSection(
+                                ListProductWidget(
                                   product: product,
                                   onDelete: () {},
                                   onEdit: () async {
