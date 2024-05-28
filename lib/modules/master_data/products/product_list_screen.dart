@@ -4,6 +4,7 @@ import 'package:cashier_app/collections/journal/journal_detail.dart';
 import 'package:cashier_app/collections/product/product.dart';
 import 'package:cashier_app/commons/extensions/extensions.dart';
 import 'package:cashier_app/commons/widgets/button/border_button_widget.dart';
+import 'package:cashier_app/commons/widgets/page/empty_page.dart';
 import 'package:cashier_app/commons/widgets/text/regular_text.dart';
 import 'package:cashier_app/commons/widgets/text/text.dart';
 import 'package:cashier_app/main.dart';
@@ -61,7 +62,7 @@ class ProductListScreen extends ConsumerWidget {
                 if (snapshot.hasData) {
                   List<Product> products = snapshot.data!;
                   return products.isEmpty
-                      ? const Center(child: Text('Empty'))
+                      ? const EmptyPage("No Product Yet")
                       : ListView.builder(
                           itemCount: products.length,
                           itemBuilder: (context, index) {

@@ -4,11 +4,14 @@ import 'package:cashier_app/commons/widgets/text/regular_text.dart';
 import 'package:cashier_app/main.dart';
 import 'package:cashier_app/modules/transactions/receipts/sales_edit_screen.dart';
 import 'package:cashier_app/states/selected_journal_provider.dart';
+import 'package:cashier_app/utils/constants/constant.dart';
 import 'package:cashier_app/utils/constants/dimens.dart';
 import 'package:cashier_app/utils/theme/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+
+part 'section/status_section.dart';
 
 class ListItem extends ConsumerStatefulWidget {
   final Journal journal;
@@ -49,7 +52,7 @@ class ListItemSection extends ConsumerState<ListItem> {
               children: [
                 Container(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: Dimens.dp12,
+                    horizontal: Dimens.dp16,
                     vertical: Dimens.dp6,
                   ),
                   decoration: BoxDecoration(
@@ -75,39 +78,33 @@ class ListItemSection extends ConsumerState<ListItem> {
               ],
             ),
             Dimens.dp16.height,
-            Row(
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    RegularText.semiBold(
-                      widget.journal.code,
-                    ),
-                    Dimens.dp8.height,
-                    RegularText.semiBold(
-                      total,
-                      style: TextStyle(color: context.theme.primaryColor),
-                    ),
-                  ],
-                ),
-                const Spacer(),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: Dimens.dp12,
-                    vertical: Dimens.dp6,
+            Padding(
+              padding: const EdgeInsets.only(left: 10, right: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      RegularText.semiBold(
+                        _getTypeName(widget.journal.type),
+                      ),
+                      Dimens.dp8.height,
+                      RegularText(
+                        widget.journal.code,
+                        style: const TextStyle(fontSize: Dimens.dp10),
+                      ),
+                      Dimens.dp8.height,
+                      RegularText.medium(
+                        total,
+                      ),
+                    ],
                   ),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(Dimens.dp4),
-                      color: AppColors.green[800]),
-                  child: RegularText.semiBold(
-                    widget.journal.status.name.toUpperCase(),
-                    style: const TextStyle(
-                      fontSize: Dimens.dp10,
-                      color: Colors.white,
-                    ),
-                  ),
-                )
-              ],
+                  _StatusBorder(
+                    text: widget.journal.status.name.toUpperCase(),
+                  )
+                ],
+              ),
             ),
             const Divider(
               thickness: 1,
@@ -116,5 +113,25 @@ class ListItemSection extends ConsumerState<ListItem> {
         ),
       ),
     );
+  }
+}
+
+// Function Private
+String _getTypeName(JournalType type) {
+  switch (type) {
+    case JournalType.incoming:
+      return "Incoming Goods";
+    case JournalType.outgoing:
+      return "Outgoing Goods";
+    case JournalType.purchase:
+      return "Purchasing";
+    case JournalType.sale:
+      return "Sales";
+    case JournalType.startingStock:
+      return "Starting Stock";
+    case JournalType.stockAdjustment:
+      return "Stock Adjustment";
+    default:
+      return "No Options";
   }
 }
