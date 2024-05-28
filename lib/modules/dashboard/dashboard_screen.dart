@@ -2,6 +2,7 @@ import 'package:badges/badges.dart' as badges;
 import 'package:cashier_app/collections/journal/journal.dart';
 import 'package:cashier_app/commons/extensions/extensions.dart';
 import 'package:cashier_app/commons/widgets/list/list_item_widget.dart';
+import 'package:cashier_app/commons/widgets/page/empty_page.dart';
 import 'package:cashier_app/commons/widgets/text/heading_text.dart';
 import 'package:cashier_app/commons/widgets/text/regular_text.dart';
 import 'package:cashier_app/main.dart';
@@ -59,7 +60,7 @@ class _CashierHomePage extends ConsumerState<CashierHomePage> {
     );
 
     if (sales.isEmpty) {
-      data.add(const Center(child: Text("Empty")));
+      data.add(const EmptyPage("There No Sales Yet"));
     } else {
       // List<Journal> salesPending = sales
       //     .where((element) => element.status == JournalStatus.opened)

@@ -17,10 +17,7 @@ class _StatusBorder extends StatelessWidget {
           color: _getStatusColor(text)),
       child: RegularText.semiBold(
         text,
-        style: TextStyle(
-          fontSize: Dimens.dp10,
-          color: context.theme.canvasColor,
-        ),
+        style: const TextStyle(fontSize: Dimens.dp10, color: AppColors.white),
       ),
     );
   }

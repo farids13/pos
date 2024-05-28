@@ -1,6 +1,7 @@
 import 'package:cashier_app/commons/extensions/extensions.dart';
 import 'package:cashier_app/commons/widgets/input/label_input.dart';
 import 'package:cashier_app/utils/constants/dimens.dart';
+import 'package:cashier_app/utils/constants/sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -55,7 +56,13 @@ class RegularTextInput extends StatelessWidget {
           onChanged: onChanged,
           keyboardType: keyboardType,
           decoration: InputDecoration(
-            prefixIcon: prefixIcon != null ? Icon(prefixIcon) : null,
+            prefixIcon: prefixIcon != null
+                ? Padding(
+                    padding: const EdgeInsets.only(
+                        right: QSizes.defaultSpace, left: QSizes.defaultSpace),
+                    child: Icon(prefixIcon),
+                  )
+                : null,
             hintText: hintText,
             suffixIcon: suffix,
           ),

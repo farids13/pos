@@ -5,6 +5,7 @@ class QTextFieldTheme {
   QTextFieldTheme._();
 
   static InputDecorationTheme lightInputDecorationTheme = InputDecorationTheme(
+    fillColor: AppColors.inputColor,
     errorMaxLines: 3,
     prefixIconColor: Colors.grey,
     suffixIconColor: Colors.grey,

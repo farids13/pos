@@ -9,8 +9,10 @@ import 'package:cashier_app/modules/master_data/products/widget/list_product_wid
 import 'package:cashier_app/states/selected_journal_detail_provider.dart';
 import 'package:cashier_app/states/selected_journal_provider.dart';
 import 'package:cashier_app/utils/constants/dimens.dart';
+import 'package:cashier_app/utils/constants/sizes.dart';
 import 'package:cashier_app/widgets/general_widgets/quantity_and_value_popup.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:isar/isar.dart';
@@ -54,37 +56,45 @@ class _SearchAndAddProduct extends ConsumerState<SearchAndAddProduct> {
         title: const Text("Select Product"),
         actions: _buildActions(),
       ),
-      body: ListView(
-        children: products.isEmpty
-            ? [const EmptyPage("No product found")]
-            : [
-                SizedBox(
-                  width: 10,
-                  height: 100,
-                  child: SearchTextInput(
-                    controller: _searchQueryController,
-                    hintText: 'Search by product name...',
-                  ),
-                ),
-                ...products
-                    .map(
-                      (e) => ListProductWidget(
-                        product: e,
-                        onDelete: () {},
-                        onEdit: () {
-                          setState(() {
-                            selectedProduct.data = e;
-                            selectedJournalDetail.data = JournalDetail();
-                          });
-                          showDialog(
-                            context: context,
-                            builder: (context) => const QuantityAndValuePopup(),
-                          );
-                        },
-                      ),
-                    )
-                    .toList()
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(Dimens.dp20),
+            child: SearchTextInput(
+              controller: _searchQueryController,
+              hintText: 'Search by product name...',
+              onChanged: (query) => _onSearchChanged(query),
+            ),
+          ),
+          Expanded(
+            child: ListView(
+              children: [
+                if (products.isEmpty)
+                  const EmptyPage("No product found")
+                else
+                  ...products
+                      .map(
+                        (e) => ListProductWidget(
+                          product: e,
+                          onDelete: () {},
+                          onEdit: () {
+                            setState(() {
+                              selectedProduct.data = e;
+                              selectedJournalDetail.data = JournalDetail();
+                            });
+                            showDialog(
+                              context: context,
+                              builder: (context) =>
+                                  const QuantityAndValuePopup(),
+                            );
+                          },
+                        ),
+                      )
+                      .toList(),
               ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -117,22 +127,22 @@ class _SearchAndAddProduct extends ConsumerState<SearchAndAddProduct> {
   //   return items;
   // }
 
-  Widget _buildSearchField() {
-    return Column(
-      children: [
-        Text("Select Product"),
-        TextField(
-          controller: _searchQueryController,
-          autofocus: true,
-          decoration: const InputDecoration(
-            hintText: "Product Name...",
-            border: InputBorder.none,
-          ),
-          onChanged: (query) => _onSearchChanged(query),
-        ),
-      ],
-    );
-  }
+  // Widget _buildSearchField() {
+  //   return Column(
+  //     children: [
+  //       Text("Select Product"),
+  //       TextField(
+  //         controller: _searchQueryController,
+  //         autofocus: true,
+  //         decoration: const InputDecoration(
+  //           hintText: "Product Name...",
+  //           border: InputBorder.none,
+  //         ),
+  //         onChanged: (query) => _onSearchChanged(query),
+  //       ),
+  //     ],
+  //   );
+  // }
 
   _onSearchChanged(String query) {
     if (_debounceTimer?.isActive ?? false) _debounceTimer?.cancel();
