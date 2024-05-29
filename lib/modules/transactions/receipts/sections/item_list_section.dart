@@ -4,8 +4,9 @@ class _ItemsList extends ConsumerStatefulWidget {
   final JournalDetail detail;
   final Function()? onTapPlus;
   final Function()? onTapMin;
+  final Function()? onTapDel;
 
-  const _ItemsList(this.detail, this.onTapPlus, this.onTapMin);
+  const _ItemsList(this.detail, this.onTapPlus, this.onTapMin, this.onTapDel);
 
   @override
   ConsumerState<_ItemsList> createState() => _ItemsListState();
@@ -14,6 +15,7 @@ class _ItemsList extends ConsumerStatefulWidget {
 class _ItemsListState extends ConsumerState<_ItemsList> {
   @override
   Widget build(BuildContext context) {
+    bool hasAmount = widget.detail.amount > 0;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -62,7 +64,14 @@ class _ItemsListState extends ConsumerState<_ItemsList> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    BorderButton("-", isOutlined: true, onTap: widget.onTapMin),
+                    hasAmount
+                        ? BorderButton("-",
+                            isOutlined: true, onTap: widget.onTapMin)
+                        : BorderButton("x",
+                            borderColor: context.theme.colorScheme.error,
+                            colorText: context.theme.colorScheme.error,
+                            isOutlined: true,
+                            onTap: widget.onTapDel),
                     RegularText("${widget.detail.amount.ceil()}"),
                     BorderButton("+",
                         isOutlined: false, onTap: widget.onTapPlus),

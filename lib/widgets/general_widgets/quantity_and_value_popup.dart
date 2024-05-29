@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:cashier_app/collections/product/product_price.dart';
-import 'package:cashier_app/commons/widgets/input/regular_input.dart';
 import 'package:cashier_app/states/selected_product_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

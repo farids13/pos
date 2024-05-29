@@ -178,6 +178,7 @@ class _ProductManagementScreenState
                   },
                   child: const Text('Submit'),
                 ),
+                const SizedBox(height: 92.0),
               ],
             ),
           ),

@@ -54,8 +54,8 @@ class CustomBottomBar extends ConsumerWidget {
               return Padding(
                 padding: const EdgeInsets.only(
                   top: QSizes.defaultSpace - 10,
-                  left: QSizes.defaultSpace - 10,
-                  right: QSizes.defaultSpace - 10,
+                  left: QSizes.defaultSpace - 16,
+                  right: QSizes.defaultSpace - 16,
                 ),
                 child: IconButton(
                   onPressed: () => onTap?.call(index),

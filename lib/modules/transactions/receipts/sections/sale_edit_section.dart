@@ -27,6 +27,35 @@ class _SaleEditSectionState extends ConsumerState<SaleEditSection> {
       }
     }
 
+    deleteJournalDetail(JournalDetail journalDetail) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text("Hapus Detail"),
+          content: const Text("Yakin ingin menghapus detail ini?"),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Tidak"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                var isar = ref.watch(isarProvider);
+                isar.writeTxnSync(() {
+                  widget.journal.data.details.remove(journalDetail);
+                  isar.journalDetails.deleteSync(journalDetail.id);
+                  ref.invalidate(isarProvider);
+                  widget.journal.data.details.loadSync();
+                });
+              },
+              child: const Text("Ya"),
+            )
+          ],
+        ),
+      );
+    }
+
     double totalSales() {
       var data = ref.watch(selectedJournalProvider);
       var tmp = 0.0;
@@ -78,7 +107,8 @@ class _SaleEditSectionState extends ConsumerState<SaleEditSection> {
                 ...widget.journal.data.details.map((e) => _ItemsList(
                     e,
                     () => updateJournalDetailAmount(e, 1),
-                    () => updateJournalDetailAmount(e, -1))),
+                    () => updateJournalDetailAmount(e, -1),
+                    () => deleteJournalDetail(e))),
               ],
             ),
           ),
