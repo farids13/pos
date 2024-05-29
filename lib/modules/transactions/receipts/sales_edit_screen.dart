@@ -85,18 +85,20 @@ class _SalesManagementScreenState extends ConsumerState<SalesEditScreen> {
         leading: const BackButton(),
         title: Text(title),
       ),
-      bottomNavigationBar: _BottomBarWidget(() {
-        var isar = ref.watch(isarProvider);
-        setState(() {
-          selectedJournal.data.status = JournalStatus.posted;
-        });
-        isar.writeTxnSync(() {
-          isar.journals.putSync(selectedJournal.data);
-        });
-        ref.invalidate(isarProvider);
-        Navigator.of(context).pop();
-        Navigator.of(context).pop();
-      }),
+      bottomNavigationBar: _BottomBarWidget(
+        onPressed: () {
+          var isar = ref.watch(isarProvider);
+          setState(() {
+            selectedJournal.data.status = JournalStatus.posted;
+          });
+          isar.writeTxnSync(() {
+            isar.journals.putSync(selectedJournal.data);
+          });
+          ref.invalidate(isarProvider);
+          Navigator.of(context).pop();
+          Navigator.of(context).pop();
+        },
+      ),
       body: SaleEditSection(
         selectedJournal,
         addProduct: () async {
@@ -125,7 +127,7 @@ class _SalesManagementScreenState extends ConsumerState<SalesEditScreen> {
 class _BottomBarWidget extends StatelessWidget {
   final Function() onPressed;
 
-  const _BottomBarWidget(this.onPressed);
+  const _BottomBarWidget({required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -140,7 +142,7 @@ class _BottomBarWidget extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(Dimens.dp16),
         child: BorderButton(
-          "Save Changes",
+          "Post Changes",
           textAlign: TextAlign.center,
           isOutlined: true,
           fontSize: QSizes.md,
@@ -151,19 +153,19 @@ class _BottomBarWidget extends StatelessWidget {
               context: context,
               builder: (BuildContext context) {
                 return AlertDialog(
-                  title: const Text("Confirmation"),
+                  title: const Text("Konfirmasi"),
                   content: const Text(
-                      "Are you sure? Finalized receipt cannot be edited."),
+                      "Apakah Anda yakin? Nota yang telah difinalisasi tidak dapat diedit."),
                   actions: [
                     TextButton(
-                      child: const Text("Cancel"),
+                      child: const Text("Tidak"),
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
                     ),
                     TextButton(
                       onPressed: onPressed,
-                      child: const Text("OK"),
+                      child: const Text("Ya"),
                     ),
                   ],
                 );
