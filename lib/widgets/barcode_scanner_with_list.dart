@@ -126,29 +126,32 @@ class _BarcodeScannerWithListState extends ConsumerState<BarcodeScannerWithList>
 
   void _addProduct(String barcode) {
     Isar isar = ref.watch(isarProvider);
-    Product product =
-        isar.products.filter().barcodeEqualTo(barcode).findFirstSync()!;
-    double price = isar.productPrices
-            .filter()
-            .product((p) => p.idEqualTo(product.id))
-            .sortByCreatedDesc()
-            .findFirstSync()
-            ?.price ??
-        0;
+    Product? product =
+        isar.products.filter().barcodeEqualTo(barcode).findFirstSync();
+    if (product != null) {
+      selectedJournal.data.details.loadSync();
+      double price = isar.productPrices
+              .filter()
+              .product((p) => p.idEqualTo(product.id))
+              .sortByCreatedDesc()
+              .findFirstSync()
+              ?.price ??
+          0;
 
-    JournalDetail jd = selectedJournal.data.details.firstWhere(
-        (element) => element.product.value?.barcode == barcode, orElse: () {
-      JournalDetail t = JournalDetail()
-        ..journal.value = selectedJournal.data
-        ..product.value = product
-        ..amount = 0
-        ..price = price;
-      selectedJournal.data.details.add(t);
-      isar.writeTxnSync(() => selectedJournal.data.details.saveSync());
-      return t;
-    });
-    jd.amount += 1;
-    isar.writeTxnSync(() => isar.journalDetails.putSync(jd));
+      JournalDetail jd = selectedJournal.data.details.firstWhere(
+          (element) => element.product.value?.barcode == barcode, orElse: () {
+        JournalDetail t = JournalDetail()
+          ..journal.value = selectedJournal.data
+          ..product.value = product
+          ..amount = 0
+          ..price = price;
+        selectedJournal.data.details.add(t);
+        isar.writeTxnSync(() => selectedJournal.data.details.saveSync());
+        return t;
+      });
+      jd.amount += 1;
+      isar.writeTxnSync(() => isar.journalDetails.putSync(jd));
+    }
   }
 
   void _handleBarcode(BarcodeCapture? capture) {
