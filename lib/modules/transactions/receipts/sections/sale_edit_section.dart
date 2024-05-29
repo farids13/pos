@@ -13,7 +13,6 @@ class SaleEditSection extends ConsumerStatefulWidget {
 }
 
 class _SaleEditSectionState extends ConsumerState<SaleEditSection> {
-
   @override
   Widget build(BuildContext context) {
     updateJournalDetailAmount(JournalDetail journalDetail, double amount) {
@@ -57,12 +56,12 @@ class _SaleEditSectionState extends ConsumerState<SaleEditSection> {
                       child: Row(
                         children: [
                           widget.journal.data.status == JournalStatus.opened
-                              ?
-                          BorderButton(
-                            "+",
-                            isOutlined: false,
-                            onTap: widget.addProduct,
-                          ):const SizedBox(),
+                              ? BorderButton(
+                                  "+",
+                                  isOutlined: false,
+                                  onTap: widget.addProduct,
+                                )
+                              : const SizedBox(),
                           Dimens.dp8.width,
                           widget.journal.data.status == JournalStatus.opened
                               ? BorderButton(
