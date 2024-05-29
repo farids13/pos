@@ -1,10 +1,15 @@
 import 'dart:async';
 
+import 'package:cashier_app/collections/journal/journal_detail.dart';
+import 'package:cashier_app/collections/product/product.dart';
+import 'package:cashier_app/collections/product/product_price.dart';
+import 'package:cashier_app/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:isar/isar.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
-final resultProvider = Provider<String>((_) => '');
+import '../states/selected_journal_provider.dart';
 
 class BarcodeScannerWithList extends ConsumerStatefulWidget {
   const BarcodeScannerWithList({super.key});
@@ -17,14 +22,16 @@ class BarcodeScannerWithList extends ConsumerStatefulWidget {
 class _BarcodeScannerWithListState extends ConsumerState<BarcodeScannerWithList>
     with WidgetsBindingObserver {
   MobileScannerController scannerController = MobileScannerController(
-    detectionSpeed: DetectionSpeed.normal,
+    detectionSpeed: DetectionSpeed.noDuplicates,
     detectionTimeoutMs: 750,
     facing: CameraFacing.back,
     returnImage: false,
   );
+  late SelectedJournal selectedJournal;
+
   StreamSubscription<Object?>? _subscription;
 
-  String result = '';
+  List result = [];
   bool dialogOpened = false;
 
   @override
@@ -70,28 +77,38 @@ class _BarcodeScannerWithListState extends ConsumerState<BarcodeScannerWithList>
 
   @override
   Widget build(BuildContext context) {
-    result = ref.watch(resultProvider);
+    selectedJournal = ref.watch(selectedJournalProvider);
 
     var aspectRatio = MediaQuery.of(context).size.aspectRatio;
-    return Column(
-      children: [
-        SizedBox(
-          height: aspectRatio > 1
-              ? MediaQuery.of(context).size.height - 96
-              : MediaQuery.of(context).size.width,
-          width: aspectRatio < 1
-              ? MediaQuery.of(context).size.width
-              : MediaQuery.of(context).size.height,
-          child: Center(
-            child: MobileScanner(
-              fit: BoxFit.cover,
-              controller: scannerController,
+    return Scaffold(
+      appBar: AppBar(),
+      body: Column(
+        children: [
+          SizedBox(
+            height: aspectRatio > 1
+                ? MediaQuery.of(context).size.height - 96
+                : MediaQuery.of(context).size.width,
+            width: aspectRatio < 1
+                ? MediaQuery.of(context).size.width
+                : MediaQuery.of(context).size.height,
+            child: Center(
+              child: MobileScanner(
+                fit: BoxFit.cover,
+                controller: scannerController,
+              ),
             ),
           ),
-        ),
-        Text("Text from the camera: $result"),
-      ],
+          Text("Text from the camera: ${result.join(', ')}"),
+          TextButton(onPressed: () => retake(), child: const Text("Retake")),
+        ],
+      ),
     );
+  }
+
+  void retake() {
+    scannerController
+        .stop()
+        .then((value) => unawaited(scannerController.start()));
   }
 
   @override
@@ -107,38 +124,65 @@ class _BarcodeScannerWithListState extends ConsumerState<BarcodeScannerWithList>
     await scannerController.dispose();
   }
 
+  void _addProduct(String barcode) {
+    Isar isar = ref.watch(isarProvider);
+    Product product =
+        isar.products.filter().barcodeEqualTo(barcode).findFirstSync()!;
+    double price = isar.productPrices
+            .filter()
+            .product((p) => p.idEqualTo(product.id))
+            .sortByCreatedDesc()
+            .findFirstSync()
+            ?.price ??
+        0;
+
+    JournalDetail jd = selectedJournal.data.details.firstWhere(
+        (element) => element.product.value?.barcode == barcode, orElse: () {
+      JournalDetail t = JournalDetail()
+        ..journal.value = selectedJournal.data
+        ..product.value = product
+        ..amount = 0
+        ..price = price;
+      selectedJournal.data.details.add(t);
+      isar.writeTxnSync(() => selectedJournal.data.details.saveSync());
+      return t;
+    });
+    jd.amount += 1;
+    isar.writeTxnSync(() => isar.journalDetails.putSync(jd));
+  }
+
   void _handleBarcode(BarcodeCapture? capture) {
     if (capture != null) {
       final List<Barcode> barcodes = capture.barcodes;
       // final Uint8List? image = capture.image;
       for (final barcode in barcodes) {
         setState(() {
-          result = barcode.rawValue!;
+          result.add(barcode.rawValue!);
         });
-        debugPrint('Barcode found! ${barcode.rawValue}');
+        _addProduct(barcode.rawValue!);
       }
-      if (!dialogOpened) {
-        showDialog(
-          context: context,
-          builder: (context) => Dialog.fullscreen(
-            child: Column(
-              children: [
-                Center(
-                  child: Text(result),
-                ),
-                Center(
-                  child: TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: const Text("Close"),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      }
+      // if (!dialogOpened) {
+      //   showDialog(
+      //     context: context,
+      //     builder: (context) => Dialog.fullscreen(
+      //       child: Column(
+      //         children: [
+      //           Center(
+      //             child: Text(result),
+      //           ),
+      //           Center(
+      //             child: TextButton(
+      //               onPressed: () {
+      //                 Navigator.pop(context);
+      //               },
+      //               child: const Text("Close"),
+      //             ),
+      //           ),
+      //         ],
+      //       ),
+      //     ),
+      //   );
+      // }
     }
   }
 }
