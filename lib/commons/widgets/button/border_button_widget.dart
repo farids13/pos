@@ -73,7 +73,7 @@ class BorderButton extends StatelessWidget {
                 color: isOutlined != null && !isOutlined!
                     ? (colorText != null
                         ? colorText!
-                        : context.theme.canvasColor)
+                        : context.theme.scaffoldBackgroundColor)
                     : (colorText != null
                         ? colorText!
                         : context.theme.primaryColor),
@@ -86,7 +86,7 @@ class BorderButton extends StatelessWidget {
                 color: isOutlined != null && !isOutlined!
                     ? (colorText != null
                         ? colorText!
-                        : context.theme.canvasColor)
+                        : context.theme.scaffoldBackgroundColor)
                     : (colorText != null
                         ? colorText!
                         : context.theme.primaryColor),
@@ -100,7 +100,7 @@ class BorderButton extends StatelessWidget {
                 color: isOutlined != null && !isOutlined!
                     ? (colorText != null
                         ? colorText!
-                        : context.theme.canvasColor)
+                        : context.theme.scaffoldBackgroundColor)
                     : (colorText != null
                         ? colorText!
                         : context.theme.primaryColor),

@@ -15,7 +15,7 @@ import 'package:cashier_app/utils/logging/logger.dart';
 import 'package:cashier_app/utils/theme/colors.dart';
 import 'package:cashier_app/utils/theme/theme.dart';
 import 'package:cashier_app/widgets/general_widgets/quantity_and_value_popup.dart';
-import 'package:cashier_app/widgets/products/search_and_add_product.dart';
+import 'package:cashier_app/modules/master_data/products/widget/search_and_add_product.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
@@ -81,8 +81,7 @@ class _SalesManagementScreenState extends ConsumerState<SalesEditScreen> {
 
     bool isClosed = selectedJournal.data.status == JournalStatus.posted;
 
-    var title =
-        isClosed ? "$journalType Receipt" : "Edit $journalType Receipt";
+    var title = isClosed ? "$journalType Receipt" : "Edit $journalType Receipt";
 
     return Scaffold(
       appBar: AppBar(
@@ -113,7 +112,7 @@ class _SalesManagementScreenState extends ConsumerState<SalesEditScreen> {
                     .push(MaterialPageRoute(
                         builder: (_) => const SearchAndAddProduct()))
                     .then((value) {
-                      selectedJournal.data.details.loadSync();
+                  selectedJournal.data.details.loadSync();
                   setState(() {});
                 });
               },
@@ -138,8 +137,14 @@ class _BottomBarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      elevation: QSizes.lg,
+    return Container(
+      decoration: BoxDecoration(boxShadow: [
+        BoxShadow(
+          color: context.theme.scaffoldBackgroundColor,
+          blurRadius: 10,
+          offset: const Offset(0, -5),
+        ),
+      ]),
       child: Padding(
         padding: const EdgeInsets.all(Dimens.dp16),
         child: BorderButton(
@@ -188,7 +193,7 @@ class _InfoWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: QAppTheme.borderColor),
+        border: Border.all(color: AppColors.borderColor),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Padding(

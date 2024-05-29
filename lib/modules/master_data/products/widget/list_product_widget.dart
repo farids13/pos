@@ -1,7 +1,20 @@
-part of '../product_list_screen.dart';
+import 'package:cashier_app/collections/journal/journal.dart';
+import 'package:cashier_app/collections/journal/journal_detail.dart';
+import 'package:cashier_app/collections/product/product.dart';
+import 'package:cashier_app/commons/extensions/extensions.dart';
+import 'package:cashier_app/commons/widgets/button/border_button_widget.dart';
+import 'package:cashier_app/commons/widgets/text/regular_text.dart';
+import 'package:cashier_app/main.dart';
+import 'package:cashier_app/utils/constants/dimens.dart';
+import 'package:cashier_app/utils/formatters/formatter.dart';
+import 'package:cashier_app/utils/helpers/image_helper.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:isar/isar.dart';
 
-class _ProductItemSection extends ConsumerWidget {
-  const _ProductItemSection({
+class ListProductWidget extends ConsumerWidget {
+  const ListProductWidget({
+    super.key,
     required this.product,
     required this.onDelete,
     required this.onEdit,

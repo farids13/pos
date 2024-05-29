@@ -1,5 +1,6 @@
 import 'package:cashier_app/commons/widgets/button/border_button_widget.dart';
 import 'package:cashier_app/commons/widgets/list/list_item_widget.dart';
+import 'package:cashier_app/commons/widgets/page/empty_page.dart';
 import 'package:cashier_app/main.dart';
 import 'package:cashier_app/modules/transactions/incoming_goods/incoming_goods_list_screen.dart';
 import 'package:cashier_app/modules/transactions/moving_goods/moving_goods_list_screen.dart';
@@ -19,10 +20,6 @@ class SalesListScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var primaryColor = Theme.of(context).colorScheme.primary;
-    List<Widget> menus = [];
-    menus = _buildMenu(primaryColor, context);
-
     final isar = ref.watch(isarProvider);
     var salesBuilder = isar.journals
         .filter()
@@ -50,7 +47,7 @@ class SalesListScreen extends ConsumerWidget {
             padding: const EdgeInsets.all(8.0),
             child: IntrinsicHeight(
               child: Row(
-                children: menus,
+                children: _optionMenu(context),
               ),
             ),
           ),
@@ -60,17 +57,10 @@ class SalesListScreen extends ConsumerWidget {
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     List<Journal> sales = snapshot.data!;
-
-                    List<Widget> data = [];
-                    for (var sale in sales) {
-                      data.add(ListItem(sale));
-                    }
-
                     return sales.isEmpty
-                        ? Center(
-                            child: Text(
-                                '${from?.year}/${from?.month}/${from?.day} : ${to?.year}/${to?.month}/${to?.day} is Empty'))
-                        : ListView(children: data);
+                        ? const EmptyPage("No Transaction yet")
+                        : ListView(
+                            children: sales.map((e) => ListItem(e)).toList());
                   }
                   return const Center(
                     child: CircularProgressIndicator(),
@@ -83,8 +73,9 @@ class SalesListScreen extends ConsumerWidget {
   }
 }
 
-// -- Functions
-List<Widget> _buildMenu(Color primaryColor, BuildContext context) {
+// ========= Function =========
+
+List<Widget> _optionMenu(BuildContext context) {
   return [
     Expanded(
       child: Padding(

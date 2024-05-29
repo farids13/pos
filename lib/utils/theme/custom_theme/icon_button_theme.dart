@@ -1,3 +1,4 @@
+import 'package:cashier_app/utils/constants/constant.dart';
 import 'package:flutter/material.dart';
 
 class QIconButtonTheme {
@@ -5,9 +6,13 @@ class QIconButtonTheme {
 
   static IconButtonThemeData ligthIconButtonTheme = IconButtonThemeData(
     style: IconButton.styleFrom(
-      foregroundColor: Colors.black,
+      foregroundColor: QColors.black,
     ),
   );
 
-  static IconButtonThemeData darkIconButtonTheme = const IconButtonThemeData();
+  static IconButtonThemeData darkIconButtonTheme = IconButtonThemeData(
+    style: IconButton.styleFrom(
+      foregroundColor: QColors.white,
+    ),
+  );
 }

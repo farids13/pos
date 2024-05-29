@@ -1,6 +1,8 @@
+import 'package:cashier_app/commons/extensions/extensions.dart';
 import 'package:cashier_app/utils/constants/constant.dart';
 import 'package:cashier_app/utils/constants/sizes.dart';
 import 'package:cashier_app/utils/helpers/helper_function.dart';
+import 'package:cashier_app/utils/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -20,8 +22,6 @@ class CustomBottomBar extends ConsumerWidget {
       {super.key,
       required this.items,
       required this.onTap,
-      this.selectedColor = const Color(0xff0D6EFD),
-      this.unselectedColor = Colors.black,
       this.currentIndex = 0})
       : assert(
           items.length == 4,
@@ -31,12 +31,12 @@ class CustomBottomBar extends ConsumerWidget {
 
   final List<CustomBottomBarItem> items;
   final ValueChanged<int>? onTap;
-  final Color unselectedColor;
-  final Color selectedColor;
   final int currentIndex;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final Color unselectedColor = context.theme.canvasColor;
+    final Color selectedColor = context.theme.primaryColor;
     final Size size = MediaQuery.of(context).size;
     // ignore: sized_box_for_whitespace
     return Container(

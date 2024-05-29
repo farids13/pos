@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:cashier_app/collections/product/product_price.dart';
+import 'package:cashier_app/commons/widgets/input/regular_input.dart';
 import 'package:cashier_app/states/selected_product_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -311,8 +312,7 @@ class _QuantityAndValuePopupState extends ConsumerState<QuantityAndValuePopup> {
 
       setState(() {
         double sellPrice = double.nan;
-        if (incomingGoodsCollection
-                .contains(selectedJournal.data.type) &&
+        if (incomingGoodsCollection.contains(selectedJournal.data.type) &&
             sellPriceController.text.isNotEmpty) {
           sellPrice = double.parse(sellPriceController.text);
         }

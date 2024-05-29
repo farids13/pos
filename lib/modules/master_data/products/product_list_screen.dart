@@ -4,11 +4,13 @@ import 'package:cashier_app/collections/journal/journal_detail.dart';
 import 'package:cashier_app/collections/product/product.dart';
 import 'package:cashier_app/commons/extensions/extensions.dart';
 import 'package:cashier_app/commons/widgets/button/border_button_widget.dart';
+import 'package:cashier_app/commons/widgets/page/empty_page.dart';
 import 'package:cashier_app/commons/widgets/text/regular_text.dart';
 import 'package:cashier_app/commons/widgets/text/text.dart';
 import 'package:cashier_app/main.dart';
 import 'package:cashier_app/modules/master_data/products/product_detail_screen.dart';
 import 'package:cashier_app/modules/master_data/products/product_management_screen.dart';
+import 'package:cashier_app/modules/master_data/products/widget/list_product_widget.dart';
 import 'package:cashier_app/utils/constants/dimens.dart';
 import 'package:cashier_app/utils/constants/sizes.dart';
 import 'package:cashier_app/utils/formatters/formatter.dart';
@@ -19,8 +21,6 @@ import 'package:iconsax/iconsax.dart';
 import 'package:isar/isar.dart';
 
 import '../../../collections/journal/journal.dart';
-
-part 'sections/product_item_section.dart';
 
 class ProductListScreen extends ConsumerWidget {
   const ProductListScreen({super.key});
@@ -61,7 +61,7 @@ class ProductListScreen extends ConsumerWidget {
                 if (snapshot.hasData) {
                   List<Product> products = snapshot.data!;
                   return products.isEmpty
-                      ? const Center(child: Text('Empty'))
+                      ? const EmptyPage("No Product Yet")
                       : ListView.builder(
                           itemCount: products.length,
                           itemBuilder: (context, index) {
@@ -83,7 +83,7 @@ class ProductListScreen extends ConsumerWidget {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                _ProductItemSection(
+                                ListProductWidget(
                                   product: product,
                                   onDelete: () {},
                                   onEdit: () async {

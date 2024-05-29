@@ -1,4 +1,5 @@
 import 'package:cashier_app/collections/journal/journal.dart';
+import 'package:cashier_app/commons/extensions/extensions.dart';
 import 'package:cashier_app/commons/widgets/navbar/controller/bottom_navigation_controller.dart';
 import 'package:cashier_app/commons/widgets/navbar/custom_navbar.dart';
 import 'package:cashier_app/modules/dashboard/utils/dashboard_utils.dart';
@@ -45,23 +46,22 @@ class _DashBoardScreenState extends ConsumerState<ScaffoldWithNavBar> {
           borderRadius: const BorderRadius.all(Radius.circular(180)),
           boxShadow: [
             BoxShadow(
-              color: Colors.blue.withOpacity(0.4),
+              color: context.theme.primaryColor.withOpacity(0.5),
               blurRadius: 3,
               spreadRadius: 1,
             ),
           ],
         ),
         child: FloatingActionButton(
-          backgroundColor: QColors.primary,
+          backgroundColor: context.theme.primaryColor,
           elevation: 4.0,
-          hoverColor: QColors.accent,
+          hoverColor: context.theme.primaryColor.withAlpha(100),
           onPressed: () {
-            // GoRouter.of(context).push("/login");
             DashboardUtils.createNewReceipt(
                 ref, context, "SLS", JournalType.sale);
           },
           shape: const CircleBorder(),
-          child: const Icon(Iconsax.scanner, color: Colors.white),
+          child: Icon(Iconsax.scanner, color: context.theme.canvasColor),
         ),
       ),
       bottomNavigationBar: Material(
@@ -69,9 +69,10 @@ class _DashBoardScreenState extends ConsumerState<ScaffoldWithNavBar> {
         child: CustomBottomBar(
           items: [
             CustomBottomBarItem(
-                iconData: Iconsax.home,
-                selectedIconData: Iconsax.home,
-                label: "Home"),
+              iconData: Iconsax.home,
+              selectedIconData: Iconsax.home,
+              label: "Home",
+            ),
             CustomBottomBarItem(
                 iconData: Iconsax.heart,
                 selectedIconData: Iconsax.heart,

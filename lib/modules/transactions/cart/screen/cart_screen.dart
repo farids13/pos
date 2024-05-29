@@ -1,9 +1,7 @@
 import 'package:cashier_app/collections/journal/journal.dart';
-import 'package:cashier_app/commons/styles/spacing_styles.dart';
 import 'package:cashier_app/commons/widgets/list/list_item_widget.dart';
+import 'package:cashier_app/commons/widgets/page/empty_page.dart';
 import 'package:cashier_app/main.dart';
-import 'package:cashier_app/utils/constants/image_strings.dart';
-import 'package:cashier_app/utils/constants/sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
@@ -41,34 +39,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
               },
               itemCount: salesPending.length,
             )
-          : const _EmptyCart(),
-    );
-  }
-}
-
-class _EmptyCart extends StatelessWidget {
-  const _EmptyCart();
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: QSpacingStyle.paddingWithAppHeightBar,
-      child: Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Image(image: AssetImage(QImages.emptyImage)),
-            const SizedBox(
-              height: QSizes.defaultSpace,
-            ),
-            Text(
-              "There are no cart here",
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
-      ),
+          : const EmptyPage("There No Cart Yet"),
     );
   }
 }

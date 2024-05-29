@@ -1,15 +1,18 @@
+import 'package:cashier_app/utils/theme/colors.dart';
 import 'package:flutter/material.dart';
 
 class QTextFieldTheme {
   QTextFieldTheme._();
 
   static InputDecorationTheme lightInputDecorationTheme = InputDecorationTheme(
+    fillColor: AppColors.inputColor,
     errorMaxLines: 3,
     prefixIconColor: Colors.grey,
     suffixIconColor: Colors.grey,
 // constraints: const BoxConstraints.expand(height: 14.inputFieldHeight),
     labelStyle: const TextStyle().copyWith(fontSize: 14, color: Colors.black),
-    hintStyle: const TextStyle().copyWith(fontSize: 14, color: Colors.black),
+    hintStyle: const TextStyle()
+        .copyWith(fontWeight: FontWeight.normal, color: AppColors.black[200]),
     errorStyle: const TextStyle().copyWith(fontStyle: FontStyle.normal),
     floatingLabelStyle:
         const TextStyle().copyWith(color: Colors.black.withOpacity(0.8)),
